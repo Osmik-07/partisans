@@ -1,0 +1,17 @@
+[Unit]
+Description=NotSpyBot Telegram Bot
+After=network.target postgresql.service redis.service
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/notspybot
+EnvironmentFile=/home/ubuntu/notspybot/.env
+ExecStart=/home/ubuntu/notspybot/venv/bin/python -m bot.main
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
