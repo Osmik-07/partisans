@@ -3,6 +3,7 @@ FSM-хендлер для авторизации userbot через бота.
 Команда /userbot запускает процесс.
 """
 from aiogram import Router, F
+from html import escape
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
@@ -123,7 +124,7 @@ async def process_phone(message: Message, state: FSMContext):
     else:
         await state.clear()
         await message.answer(
-            f"❌ Ошибка: {result['error']}\n\nПопробуй снова: /userbot",
+            f"❌ Ошибка:\n<code>{escape(str(result['error']))}</code>\n\nПопробуй снова: /userbot",
             parse_mode="HTML",
         )
 
@@ -160,7 +161,7 @@ async def process_code(message: Message, state: FSMContext):
         if "expired" in error.lower() or "истёк" in error.lower():
             await state.clear()
         await message.answer(
-            f"❌ {error}",
+            f"❌ <code>{escape(str(error))}</code>",
             reply_markup=_cancel_kb() if await state.get_state() else None,
             parse_mode="HTML",
         )
@@ -191,7 +192,7 @@ async def process_password(message: Message, state: FSMContext):
         )
     else:
         await message.answer(
-            f"❌ {result.get('error', 'Ошибка')}",
+            f"❌ <code>{escape(str(result.get('error', 'Ошибка')))}</code>",
             reply_markup=_cancel_kb(),
             parse_mode="HTML",
         )

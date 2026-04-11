@@ -86,7 +86,12 @@ def create_dispatcher() -> Dispatcher:
 async def main_polling():
     bot = create_bot()
     dp = create_dispatcher()
-    dp.startup.register(lambda: on_startup(bot))
+
+    async def startup():
+        await on_startup(bot)
+
+    dp.startup.register(startup)
+
     await dp.start_polling(bot)
 
 
