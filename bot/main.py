@@ -9,7 +9,8 @@ from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_applicati
 from aiohttp import web
 
 from bot.config import settings
-from bot.handlers import start, subscription, business, admin
+from bot.handlers import start, subscription, business, admin, userbot
+from bot.services import userbot_manager
 from bot.middlewares.db import DbSessionMiddleware
 from bot.middlewares.subscription import SubscriptionMiddleware
 from bot.middlewares.throttling import ThrottlingMiddleware
@@ -24,6 +25,9 @@ logger = logging.getLogger(__name__)
 
 async def on_startup(bot: Bot):
     start_scheduler(bot)
+    userbot_manager.set_bot(bot)
+    if settings.telegram_api_id and settings.telegram_api_hash:
+        await userbot_manager.load_all_sessions()
 
     if settings.use_webhook:
         await bot.set_webhook(
@@ -59,6 +63,7 @@ def create_dispatcher() -> Dispatcher:
     dp.update.middleware(SubscriptionMiddleware())
 
     dp.include_router(admin.router)
+    dp.include_router(userbot.router)
     dp.include_router(start.router)
     dp.include_router(subscription.router)
     dp.include_router(business.router)

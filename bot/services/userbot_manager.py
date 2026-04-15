@@ -41,6 +41,7 @@ async def create_client_from_session(user_id: int, session_string: str) -> Clien
         api_hash=settings.telegram_api_hash,
         session_string=session_string,
         in_memory=True,
+        no_updates=False,
     )
     _register_handlers(client, user_id)
     await client.start()
@@ -86,14 +87,13 @@ def _register_handlers(client: Client, owner_id: int):
 
     @client.on_message(filters.private)
     async def on_any_message(c: Client, message: PyroMessage):
-        """Перехватываем одноразовые медиа."""
-        # Проверяем что это одноразовое сообщение
         if not getattr(message, "ttl_seconds", None):
             return
-
-        logger.info(f"[userbot:{owner_id}] Vanishing media from {message.from_user.id if message.from_user else '?'}")
-
-        await _handle_vanishing_media(owner_id, message)
+        try:
+            logger.info(f"[userbot:{owner_id}] Vanishing media from {message.from_user.id if message.from_user else '?'}")
+            await _handle_vanishing_media(owner_id, message)
+        except Exception as e:
+            logger.error(f"[userbot:{owner_id}] on_any_message error: {e}")
 
     @client.on_message(filters.private & (filters.photo | filters.video | filters.document))
     async def on_media(c: Client, message: PyroMessage):
