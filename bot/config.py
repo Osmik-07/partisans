@@ -8,9 +8,12 @@ class Settings(BaseSettings):
     bot_token: str
     admin_ids: list[int] = []
 
-    # Pyrogram (MTProto) — получить на my.telegram.org
+    # Pyrogram (MTProto)
     telegram_api_id: int = 0
     telegram_api_hash: str = ""
+
+    # Mini App
+    miniapp_domain: str = "traceapp.ru"  # твой домен
 
     # Database
     db_host: str = "localhost"
@@ -26,7 +29,7 @@ class Settings(BaseSettings):
     cryptobot_token: str = ""
     cryptobot_webhook_secret: str = ""
 
-    # Webhook
+    # Webhook / Mini App server
     webhook_host: str = ""
     webhook_path: str = "/webhook"
     webhook_port: int = 8443

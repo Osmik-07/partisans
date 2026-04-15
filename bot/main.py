@@ -10,13 +10,10 @@ from aiohttp import web
 
 from bot.config import settings
 from bot.handlers import start, subscription, business, admin
-from bot.handlers import userbot
 from bot.middlewares.db import DbSessionMiddleware
 from bot.middlewares.subscription import SubscriptionMiddleware
 from bot.middlewares.throttling import ThrottlingMiddleware
 from bot.services.scheduler import start_scheduler
-from bot.services import userbot_manager
-from db.base import create_tables
 
 logging.basicConfig(
     level=logging.INFO,
@@ -26,17 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 async def on_startup(bot: Bot):
-    await create_tables()
     start_scheduler(bot)
-
-    # Передаём бота в менеджер userbot-клиентов
-    userbot_manager.set_bot(bot)
-
-    # Загружаем все сохранённые сессии из БД
-    if settings.telegram_api_id and settings.telegram_api_hash:
-        await userbot_manager.load_all_sessions()
-    else:
-        logger.warning("TELEGRAM_API_ID / TELEGRAM_API_HASH not set — userbot disabled")
 
     if settings.use_webhook:
         await bot.set_webhook(
@@ -65,17 +52,13 @@ def create_bot() -> Bot:
 
 
 def create_dispatcher() -> Dispatcher:
-    # FSM нужен для userbot авторизации
     dp = Dispatcher(storage=MemoryStorage())
 
-    # Middlewares
     dp.update.middleware(DbSessionMiddleware())
     dp.update.middleware(ThrottlingMiddleware())
     dp.update.middleware(SubscriptionMiddleware())
 
-    # Routers
     dp.include_router(admin.router)
-    dp.include_router(userbot.router)      # userbot авторизация
     dp.include_router(start.router)
     dp.include_router(subscription.router)
     dp.include_router(business.router)
@@ -91,7 +74,6 @@ async def main_polling():
         await on_startup(bot)
 
     dp.startup.register(startup)
-
     await dp.start_polling(bot)
 
 
@@ -102,9 +84,11 @@ async def main_webhook():
 
     app = web.Application()
     app["bot"] = bot
+
     handler = SimpleRequestHandler(dispatcher=dp, bot=bot)
     handler.register(app, path=settings.webhook_path)
     setup_application(app, dp, bot=bot)
+
     from bot.webhooks.cryptobot import register_cryptobot_webhook
     register_cryptobot_webhook(app)
 
@@ -113,6 +97,7 @@ async def main_webhook():
     site = web.TCPSite(runner, "0.0.0.0", settings.webhook_port)
     await site.start()
     logger.info(f"Webhook server started on port {settings.webhook_port}")
+
     await asyncio.Event().wait()
 
 

