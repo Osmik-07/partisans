@@ -87,24 +87,21 @@ def _register_handlers(client: Client, owner_id: int):
 
     @client.on_message(filters.private)
     async def on_any_message(c: Client, message: PyroMessage):
-        """Логируем всё для отладки, перехватываем одноразовые медиа."""
-        logger.info(f"[userbot:{owner_id}] MSG raw: {message}")
+        # Проверяем ttl_seconds прямо на message.media (как в Telethon/GhostGram)
+        media = getattr(message, "media", None)
+        ttl = getattr(media, "ttl_seconds", None)
+        
+        logger.info(f"[userbot:{owner_id}] MSG id={message.id} "
+                    f"media_type={type(media).__name__} ttl={ttl} "
+                    f"photo={bool(message.photo)} video={bool(message.video)}")
+        
         try:
-            ttl = None
-            if message.photo:
-                ttl = getattr(message.photo, "ttl_seconds", None)
-            elif message.video:
-                ttl = getattr(message.video, "ttl_seconds", None)
-
             if not ttl:
                 return
-
             logger.info(f"[userbot:{owner_id}] Vanishing media detected! TTL={ttl}")
             await _handle_vanishing_media(owner_id, message)
-
         except Exception as e:
             logger.error(f"[userbot:{owner_id}] on_any_message error: {e}")
-
     @client.on_message()
     async def on_all_including_service(c: Client, message: PyroMessage):
         if getattr(message, "photo", None) or getattr(message, "video", None):
@@ -143,33 +140,19 @@ async def _handle_vanishing_media(owner_id: int, message: PyroMessage):
             return
 
         file_bytes = await client.download_media(message, in_memory=True)
-        file_bytes = io.BytesIO(file_bytes.getvalue() if hasattr(file_bytes, 'getvalue') else bytes(file_bytes))
+        file_bytes = io.BytesIO(bytes(file_bytes))
         file_bytes.seek(0)
 
-        if message.photo:
+        # Определяем тип по media, не по message.photo
+        media = getattr(message, "media", None)
+        media_type_name = type(media).__name__ if media else ""
+        
+        if "Photo" in media_type_name or message.photo:
             file_bytes.name = "photo.jpg"
-            await _bot.send_document(
-                owner_id,
-                document=file_bytes,
-                caption=caption,
-                parse_mode="HTML",
-            )
-        elif message.video:
+        elif "Video" in media_type_name or message.video:
             file_bytes.name = "video.mp4"
-            await _bot.send_document(
-                owner_id,
-                document=file_bytes,
-                caption=caption,
-                parse_mode="HTML",
-            )
         else:
             file_bytes.name = "file"
-            await _bot.send_document(
-                owner_id,
-                document=file_bytes,
-                caption=caption,
-                parse_mode="HTML",
-            )
 
         logger.info(f"[userbot:{owner_id}] Vanishing media sent successfully")
 
