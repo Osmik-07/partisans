@@ -87,20 +87,27 @@ def _register_handlers(client: Client, owner_id: int):
 
     @client.on_message(filters.private)
     async def on_any_message(c: Client, message: PyroMessage):
-        if not getattr(message, "ttl_seconds", None):
-            return
+        """Логируем всё для отладки, перехватываем одноразовые медиа."""
+        logger.info(f"[userbot:{owner_id}] MSG from {message.from_user.id if message.from_user else '?'} "
+                    f"photo={bool(message.photo)} video={bool(message.video)} "
+                    f"ttl={getattr(message.photo, 'ttl_seconds', None) or getattr(message.video, 'ttl_seconds', None)}")
+
         try:
-            logger.info(f"[userbot:{owner_id}] Vanishing media from {message.from_user.id if message.from_user else '?'}")
+            # Проверяем ttl на объекте медиа, а не на сообщении
+            ttl = None
+            if message.photo:
+                ttl = getattr(message.photo, "ttl_seconds", None)
+            elif message.video:
+                ttl = getattr(message.video, "ttl_seconds", None)
+
+            if not ttl:
+                return
+
+            logger.info(f"[userbot:{owner_id}] Vanishing media detected! TTL={ttl}")
             await _handle_vanishing_media(owner_id, message)
+
         except Exception as e:
             logger.error(f"[userbot:{owner_id}] on_any_message error: {e}")
-
-    @client.on_message(filters.private & (filters.photo | filters.video | filters.document))
-    async def on_media(c: Client, message: PyroMessage):
-        """Также перехватываем protect_content медиа."""
-        if getattr(message, "has_protected_content", False) and not getattr(message, "ttl_seconds", None):
-            await _handle_vanishing_media(owner_id, message)
-
 
 async def _handle_vanishing_media(owner_id: int, message: PyroMessage):
     """Скачивает одноразовое медиа и пересылает владельцу через бота."""
@@ -116,12 +123,12 @@ async def _handle_vanishing_media(owner_id: int, message: PyroMessage):
 
     try:
         # Скачиваем файл в память
-        file_bytes = io.BytesIO()
         client = get_client(owner_id)
         if not client:
             return
 
-        await client.download_media(message, file_ref=file_bytes)
+        file_bytes = await client.download_media(message, in_memory=True)
+        file_bytes = io.BytesIO(file_bytes.getvalue() if hasattr(file_bytes, 'getvalue') else bytes(file_bytes))
         file_bytes.seek(0)
 
         # Определяем тип и имя файла
