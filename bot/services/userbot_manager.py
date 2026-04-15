@@ -88,10 +88,7 @@ def _register_handlers(client: Client, owner_id: int):
     @client.on_message(filters.private)
     async def on_any_message(c: Client, message: PyroMessage):
         """Логируем всё для отладки, перехватываем одноразовые медиа."""
-        logger.info(f"[userbot:{owner_id}] MSG from {message.from_user.id if message.from_user else '?'} "
-                    f"photo={bool(message.photo)} video={bool(message.video)} "
-                    f"ttl={getattr(message.photo, 'ttl_seconds', None) or getattr(message.video, 'ttl_seconds', None)}")
-
+        logger.info(f"[userbot:{owner_id}] MSG raw: {message}")
         try:
             # Проверяем ttl на объекте медиа, а не на сообщении
             ttl = None
