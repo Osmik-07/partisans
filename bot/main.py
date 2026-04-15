@@ -66,6 +66,33 @@ def create_dispatcher() -> Dispatcher:
     return dp
 
 
+async def start_miniapp_server(bot: Bot, dp: Dispatcher) -> web.AppRunner:
+    app = web.Application()
+    app["bot"] = bot
+
+    # Mini App routes
+    from bot.webhooks.miniapp_api import register_miniapp
+    register_miniapp(app)
+
+    # CryptoBot webhook routes
+    from bot.webhooks.cryptobot import register_cryptobot_webhook
+    register_cryptobot_webhook(app)
+
+    # Telegram webhook route — используется только если use_webhook=True
+    if settings.use_webhook:
+        handler = SimpleRequestHandler(dispatcher=dp, bot=bot)
+        handler.register(app, path=settings.webhook_path)
+        setup_application(app, dp, bot=bot)
+
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", settings.webhook_port)
+    await site.start()
+
+    logger.info(f"Mini app / webhook server started on port {settings.webhook_port}")
+    return runner
+
+
 async def main_polling():
     bot = create_bot()
     dp = create_dispatcher()
@@ -74,7 +101,15 @@ async def main_polling():
         await on_startup(bot)
 
     dp.startup.register(startup)
-    await dp.start_polling(bot)
+
+    # Поднимаем miniapp server даже в polling
+    server_task = asyncio.create_task(start_miniapp_server(bot, dp))
+    try:
+        await dp.start_polling(bot)
+    finally:
+        server_task.cancel()
+        with contextlib.suppress(asyncio.CancelledError):
+            await server_task
 
 
 async def main_webhook():
@@ -82,26 +117,14 @@ async def main_webhook():
     dp = create_dispatcher()
     await on_startup(bot)
 
-    app = web.Application()
-    app["bot"] = bot
-
-    handler = SimpleRequestHandler(dispatcher=dp, bot=bot)
-    handler.register(app, path=settings.webhook_path)
-    setup_application(app, dp, bot=bot)
-
-    from bot.webhooks.cryptobot import register_cryptobot_webhook
-    register_cryptobot_webhook(app)
-
-    runner = web.AppRunner(app)
-    await runner.setup()
-    site = web.TCPSite(runner, "0.0.0.0", settings.webhook_port)
-    await site.start()
-    logger.info(f"Webhook server started on port {settings.webhook_port}")
+    await start_miniapp_server(bot, dp)
 
     await asyncio.Event().wait()
 
 
 if __name__ == "__main__":
+    import contextlib
+
     if settings.use_webhook:
         asyncio.run(main_webhook())
     else:
