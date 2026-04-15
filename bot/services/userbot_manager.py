@@ -7,7 +7,7 @@ import logging
 import io
 from typing import Optional
 
-from pyrogram import Client, filters
+from pyrogram import Client, filters, raw
 from pyrogram.types import Message as PyroMessage
 from pyrogram.errors import SessionPasswordNeeded, PhoneCodeInvalid, PhoneCodeExpired
 
@@ -90,7 +90,6 @@ def _register_handlers(client: Client, owner_id: int):
         """Логируем всё для отладки, перехватываем одноразовые медиа."""
         logger.info(f"[userbot:{owner_id}] MSG raw: {message}")
         try:
-            # Проверяем ttl на объекте медиа, а не на сообщении
             ttl = None
             if message.photo:
                 ttl = getattr(message.photo, "ttl_seconds", None)
@@ -106,6 +105,18 @@ def _register_handlers(client: Client, owner_id: int):
         except Exception as e:
             logger.error(f"[userbot:{owner_id}] on_any_message error: {e}")
 
+    @client.on_message()
+    async def on_all_including_service(c: Client, message: PyroMessage):
+        if getattr(message, "photo", None) or getattr(message, "video", None):
+            logger.info(f"[userbot:{owner_id}] MEDIA MSG: photo={message.photo} ttl_photo={getattr(message.photo, 'ttl_seconds', None)}")
+
+    @client.on_raw_update()
+    async def on_raw(c: Client, update, users, chats):
+        update_type = type(update).__name__
+        if "message" in update_type.lower() or "media" in update_type.lower():
+            logger.info(f"[userbot:{owner_id}] RAW UPDATE: {update_type}")
+
+
 async def _handle_vanishing_media(owner_id: int, message: PyroMessage):
     """Скачивает одноразовое медиа и пересылает владельцу через бота."""
     if not _bot:
@@ -119,7 +130,6 @@ async def _handle_vanishing_media(owner_id: int, message: PyroMessage):
     caption = f"📸 <b>Одноразовое медиа</b> от <b>{sender_name}</b>"
 
     try:
-        # Скачиваем файл в память
         client = get_client(owner_id)
         if not client:
             return
@@ -128,7 +138,6 @@ async def _handle_vanishing_media(owner_id: int, message: PyroMessage):
         file_bytes = io.BytesIO(file_bytes.getvalue() if hasattr(file_bytes, 'getvalue') else bytes(file_bytes))
         file_bytes.seek(0)
 
-        # Определяем тип и имя файла
         if message.photo:
             file_bytes.name = "photo.jpg"
             await _bot.send_document(
@@ -156,7 +165,6 @@ async def _handle_vanishing_media(owner_id: int, message: PyroMessage):
 
         logger.info(f"[userbot:{owner_id}] Vanishing media sent successfully")
 
-        # Сохраняем в БД
         async with AsyncSessionLocal() as db:
             from db.models import SavedMessage, MessageType
             saved = SavedMessage(
