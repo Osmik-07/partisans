@@ -113,8 +113,16 @@ def _register_handlers(client: Client, owner_id: int):
     @client.on_raw_update()
     async def on_raw(c: Client, update, users, chats):
         update_type = type(update).__name__
-        if "message" in update_type.lower() or "media" in update_type.lower():
-            logger.info(f"[userbot:{owner_id}] RAW UPDATE: {update_type}")
+        logger.info(f"[userbot:{owner_id}] RAW UPDATE: {update_type}")
+        
+        # Ловим любое новое сообщение через raw
+        if hasattr(update, "message"):
+            msg = update.message
+            msg_type = type(msg).__name__
+            media = getattr(msg, "media", None)
+            media_type = type(media).__name__ if media else None
+            ttl = getattr(media, "ttl_seconds", None)
+            logger.info(f"[userbot:{owner_id}] RAW MSG: type={msg_type} media={media_type} ttl={ttl}")
 
 
 async def _handle_vanishing_media(owner_id: int, message: PyroMessage):
