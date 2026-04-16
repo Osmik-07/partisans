@@ -65,9 +65,18 @@ async def cb_buy_plan(call: CallbackQuery):
         return  # обрабатывается выше
 
     label = PLAN_LABELS.get(plan_key, plan_key)
+
+    from aiogram.utils.keyboard import InlineKeyboardBuilder
+
+    kb = InlineKeyboardBuilder()
+    kb.button(text="💎 Крипта (CryptoBot)", callback_data=f"pay:crypto:{plan_key}")
+    kb.button(text="⭐️ Telegram Stars", callback_data=f"pay:stars:{plan_key}")
+    kb.button(text="« Назад", callback_data="sub:plans")
+    kb.adjust(1)
+
     await call.message.edit_text(
         f"💳 <b>Оплата тарифа «{label}»</b>\n\nВыбери способ оплаты:",
-        reply_markup=payment_method_kb(plan_key),
+        reply_markup=kb.as_markup(),
         parse_mode="HTML",
     )
     await call.answer()
