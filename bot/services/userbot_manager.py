@@ -4,7 +4,7 @@
 import io
 import logging
 from typing import Optional
-
+from aiogram.types import BufferedInputFile
 from telethon import TelegramClient, events
 from telethon.sessions import StringSession
 from telethon.tl.types import MessageMediaPhoto, MessageMediaDocument
@@ -120,9 +120,13 @@ async def _handle_vanishing_media(owner_id: int, event):
         else:
             file_bytes.name = "photo.jpg"
 
+        tg_file = BufferedInputFile(
+            file=file_bytes.read(),
+            filename=file_bytes.name,
+        )
         await _bot.send_document(
             owner_id,
-            document=file_bytes,
+            document=tg_file,
             caption=caption,
             parse_mode="HTML",
         )
