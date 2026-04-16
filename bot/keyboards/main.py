@@ -27,13 +27,13 @@ def plans_kb(lang: str = "en", trial_available: bool = False) -> InlineKeyboardM
     return b.as_markup()
 
 
-def payment_method_kb(lang: str, plan: str) -> InlineKeyboardMarkup:
-    b = InlineKeyboardBuilder()
-    b.button(text="💎 CryptoBot (USDT/TON/BTC)", callback_data=f"pay:crypto:{plan}")
-    b.button(text="⭐️ Telegram Stars",           callback_data=f"pay:stars:{plan}")
-    b.button(text=t("btn_back", lang),            callback_data="sub:plans")
-    b.adjust(1)
-    return b.as_markup()
+def payment_method_kb(plan: str) -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.button(text="💎 Крипта (CryptoBot)", callback_data=f"pay:crypto:{plan}")
+    builder.button(text="⭐️ Telegram Stars", callback_data=f"pay:stars:{plan}")
+    builder.button(text="« Назад", callback_data="sub:plans")
+    builder.adjust(1)
+    return builder.as_markup()
 
 
 def pay_crypto_kb(lang: str, pay_url: str) -> InlineKeyboardMarkup:
