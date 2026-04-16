@@ -1,26 +1,20 @@
 """
-Менеджер Pyrogram клиентов.
-Каждый пользователь = отдельный Client, работающий в фоне.
+Менеджер Telethon клиентов.
 """
-import asyncio
-import logging
 import io
+import logging
 from typing import Optional
 
-from pyrogram import Client, filters, raw
-from pyrogram.types import Message as PyroMessage
-from pyrogram.errors import SessionPasswordNeeded, PhoneCodeInvalid, PhoneCodeExpired
+from telethon import TelegramClient, events
+from telethon.sessions import StringSession
+from telethon.tl.types import MessageMediaPhoto, MessageMediaDocument
 
 from bot.config import settings
 from db.base import AsyncSessionLocal
-from db.models import UserbotSession, User
 
 logger = logging.getLogger(__name__)
 
-# Словарь активных клиентов: user_id -> Client
-_clients: dict[int, Client] = {}
-
-# Aiogram bot instance (устанавливается при старте)
+_clients: dict[int, TelegramClient] = {}
 _bot = None
 
 
@@ -29,42 +23,37 @@ def set_bot(bot):
     _bot = bot
 
 
-def get_client(user_id: int) -> Optional[Client]:
+def get_client(user_id: int) -> Optional[TelegramClient]:
     return _clients.get(user_id)
 
 
-async def create_client_from_session(user_id: int, session_string: str) -> Client:
-    """Создаёт и запускает Pyrogram клиент из строки сессии."""
-    client = Client(
-        name=f"user_{user_id}",
+async def create_client_from_session(user_id: int, session_string: str) -> TelegramClient:
+    client = TelegramClient(
+        StringSession(session_string),
         api_id=settings.telegram_api_id,
         api_hash=settings.telegram_api_hash,
-        session_string=session_string,
-        in_memory=True,
-        no_updates=False,
     )
+    await client.connect()
     _register_handlers(client, user_id)
-    await client.start()
     _clients[user_id] = client
     logger.info(f"Userbot started for user {user_id}")
     return client
 
 
 async def stop_client(user_id: int):
-    """Останавливает клиент пользователя."""
     client = _clients.pop(user_id, None)
     if client:
         try:
-            await client.stop()
+            await client.disconnect()
         except Exception:
             pass
         logger.info(f"Userbot stopped for user {user_id}")
 
 
 async def load_all_sessions():
-    """При старте бота загружает все активные сессии из БД."""
     async with AsyncSessionLocal() as session:
         from sqlalchemy import select
+        from db.models import UserbotSession
         result = await session.execute(
             select(UserbotSession).where(
                 UserbotSession.is_active == True,
@@ -82,55 +71,34 @@ async def load_all_sessions():
     logger.info(f"Loaded {len(sessions)} userbot sessions")
 
 
-def _register_handlers(client: Client, owner_id: int):
-    """Регистрирует обработчики для конкретного клиента."""
+def _register_handlers(client: TelegramClient, owner_id: int):
 
-    @client.on_message(filters.private)
-    async def on_any_message(c: Client, message: PyroMessage):
-        # Проверяем ttl_seconds прямо на message.media (как в Telethon/GhostGram)
-        media = getattr(message, "media", None)
+    @client.on(events.NewMessage(incoming=True, func=lambda e: e.is_private))
+    async def on_new_message(event):
+        msg = event.message
+        media = msg.media
+
         ttl = getattr(media, "ttl_seconds", None)
-        
-        logger.info(f"[userbot:{owner_id}] MSG id={message.id} "
-                    f"media_type={type(media).__name__} ttl={ttl} "
-                    f"photo={bool(message.photo)} video={bool(message.video)}")
-        
-        try:
-            if not ttl:
-                return
-            logger.info(f"[userbot:{owner_id}] Vanishing media detected! TTL={ttl}")
-            await _handle_vanishing_media(owner_id, message)
-        except Exception as e:
-            logger.error(f"[userbot:{owner_id}] on_any_message error: {e}")
-    @client.on_message()
-    async def on_all_including_service(c: Client, message: PyroMessage):
-        if getattr(message, "photo", None) or getattr(message, "video", None):
-            logger.info(f"[userbot:{owner_id}] MEDIA MSG: photo={message.photo} ttl_photo={getattr(message.photo, 'ttl_seconds', None)}")
+        logger.info(f"[userbot:{owner_id}] MSG id={msg.id} "
+                    f"media={type(media).__name__} ttl={ttl}")
 
-    @client.on_raw_update()
-    async def on_raw(c: Client, update, users, chats):
-        update_type = type(update).__name__
-        logger.info(f"[userbot:{owner_id}] RAW UPDATE: {update_type}")
-        
-        # Ловим любое новое сообщение через raw
-        if hasattr(update, "message"):
-            msg = update.message
-            msg_type = type(msg).__name__
-            media = getattr(msg, "media", None)
-            media_type = type(media).__name__ if media else None
-            ttl = getattr(media, "ttl_seconds", None)
-            logger.info(f"[userbot:{owner_id}] RAW MSG: type={msg_type} media={media_type} ttl={ttl}")
+        if not ttl:
+            return
+
+        logger.info(f"[userbot:{owner_id}] Vanishing media! TTL={ttl}")
+        await _handle_vanishing_media(owner_id, event)
 
 
-async def _handle_vanishing_media(owner_id: int, message: PyroMessage):
-    """Скачивает одноразовое медиа и пересылает владельцу через бота."""
+async def _handle_vanishing_media(owner_id: int, event):
     if not _bot:
         return
 
-    sender = message.from_user
-    sender_name = sender.first_name if sender else "Неизвестный"
-    if sender and sender.username:
-        sender_name += f" (@{sender.username})"
+    msg = event.message
+    sender = await event.get_sender()
+    sender_name = getattr(sender, "first_name", "Неизвестный") or "Неизвестный"
+    username = getattr(sender, "username", None)
+    if username:
+        sender_name += f" (@{username})"
 
     caption = f"📸 <b>Одноразовое медиа</b> от <b>{sender_name}</b>"
 
@@ -139,20 +107,25 @@ async def _handle_vanishing_media(owner_id: int, message: PyroMessage):
         if not client:
             return
 
-        file_bytes = await client.download_media(message, in_memory=True)
-        file_bytes = io.BytesIO(bytes(file_bytes))
+        file_bytes = io.BytesIO()
+        await client.download_media(msg, file=file_bytes)
         file_bytes.seek(0)
 
-        # Определяем тип по media, не по message.photo
-        media = getattr(message, "media", None)
-        media_type_name = type(media).__name__ if media else ""
-        
-        if "Photo" in media_type_name or message.photo:
+        media = msg.media
+        if isinstance(media, MessageMediaPhoto):
             file_bytes.name = "photo.jpg"
-        elif "Video" in media_type_name or message.video:
-            file_bytes.name = "video.mp4"
+        elif isinstance(media, MessageMediaDocument):
+            mime = getattr(media.document, "mime_type", "")
+            file_bytes.name = "video.mp4" if "video" in mime else "file"
         else:
-            file_bytes.name = "file"
+            file_bytes.name = "photo.jpg"
+
+        await _bot.send_document(
+            owner_id,
+            document=file_bytes,
+            caption=caption,
+            parse_mode="HTML",
+        )
 
         logger.info(f"[userbot:{owner_id}] Vanishing media sent successfully")
 
@@ -161,11 +134,11 @@ async def _handle_vanishing_media(owner_id: int, message: PyroMessage):
             saved = SavedMessage(
                 owner_id=owner_id,
                 message_type=MessageType.VANISHING_PHOTO,
-                from_user_id=sender.id if sender else None,
-                from_username=sender.username if sender else None,
-                from_first_name=sender.first_name if sender else None,
-                chat_id=message.chat.id if message.chat else None,
-                message_id=message.id,
+                from_user_id=getattr(sender, "id", None),
+                from_username=getattr(sender, "username", None),
+                from_first_name=getattr(sender, "first_name", None),
+                chat_id=msg.chat_id,
+                message_id=msg.id,
             )
             db.add(saved)
             await db.commit()
