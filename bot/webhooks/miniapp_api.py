@@ -103,4 +103,5 @@ def register_miniapp(app: web.Application):
     app.router.add_post("/api/auth/send_code", api_send_code)
     app.router.add_post("/api/auth/sign_in",   api_sign_in)
     app.router.add_post("/api/auth/2fa",        api_2fa)
+    app.router.add_static("/static", path=os.path.join(MINIAPP_DIR), name="static")
     logger.info("Mini App API registered")

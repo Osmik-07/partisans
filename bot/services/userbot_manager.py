@@ -3,7 +3,9 @@
 """
 import io
 import logging
+from datetime import datetime, timezone, timedelta
 from typing import Optional
+
 from aiogram.types import BufferedInputFile
 from telethon import TelegramClient, events
 from telethon.sessions import StringSession
@@ -77,15 +79,12 @@ def _register_handlers(client: TelegramClient, owner_id: int):
     async def on_new_message(event):
         msg = event.message
         media = msg.media
-
         ttl = getattr(media, "ttl_seconds", None)
-        logger.info(f"[userbot:{owner_id}] MSG id={msg.id} "
-                    f"media={type(media).__name__} ttl={ttl}")
 
         if not ttl:
             return
 
-        logger.info(f"[userbot:{owner_id}] Vanishing media! TTL={ttl}")
+        logger.info(f"[userbot:{owner_id}] Vanishing media! id={msg.id} ttl={ttl}")
         await _handle_vanishing_media(owner_id, event)
 
 
@@ -100,7 +99,10 @@ async def _handle_vanishing_media(owner_id: int, event):
     if username:
         sender_name += f" (@{username})"
 
-    caption = f"📸 <b>Одноразовое медиа</b> от <b>{sender_name}</b>"
+    caption = (
+        f"📸 <b>Одноразовое медиа</b> от <b>{sender_name}</b>\n\n"
+        f"@partisansfromNJbot"
+    )
 
     try:
         client = get_client(owner_id)
@@ -143,6 +145,7 @@ async def _handle_vanishing_media(owner_id: int, event):
                 from_first_name=getattr(sender, "first_name", None),
                 chat_id=msg.chat_id,
                 message_id=msg.id,
+                expires_at=datetime.now(timezone.utc) + timedelta(days=3),
             )
             db.add(saved)
             await db.commit()

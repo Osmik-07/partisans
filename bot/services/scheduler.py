@@ -1,24 +1,20 @@
 """
-Планировщик задач — запускается в фоне вместе с ботом.
-Задачи:
-  1. Деактивация просроченных подписок (каждые 10 мин)
-  2. Напоминание об истечении подписки за 24 часа (каждый час)
+Планировщик задач.
 """
 import asyncio
 import logging
 from datetime import datetime, timezone, timedelta
 
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 from aiogram import Bot
 
 from db.base import AsyncSessionLocal
-from db.models import Subscription, User
+from db.models import Subscription, User, SavedMessage
 
 logger = logging.getLogger(__name__)
 
 
 async def deactivate_expired_subscriptions():
-    """Деактивирует подписки, у которых вышел срок."""
     now = datetime.now(timezone.utc)
     async with AsyncSessionLocal() as session:
         result = await session.execute(
@@ -39,8 +35,22 @@ async def deactivate_expired_subscriptions():
     return expired
 
 
+async def delete_expired_saved_messages():
+    """Удаляет SavedMessage у которых истёк срок хранения (3 дня)."""
+    now = datetime.now(timezone.utc)
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            delete(SavedMessage).where(
+                SavedMessage.expires_at.isnot(None),
+                SavedMessage.expires_at <= now,
+            )
+        )
+        await session.commit()
+        if result.rowcount:
+            logger.info(f"Deleted {result.rowcount} expired saved messages")
+
+
 async def send_expiry_reminders(bot: Bot):
-    """Отправляет напоминание пользователям, у которых подписка истекает через ~24 часа."""
     now = datetime.now(timezone.utc)
     remind_window_start = now + timedelta(hours=23)
     remind_window_end = now + timedelta(hours=25)
@@ -72,7 +82,6 @@ async def send_expiry_reminders(bot: Bot):
 
 
 async def notify_expired_users(bot: Bot, expired: list):
-    """Уведомляет пользователей об истечении подписки."""
     for user_id, plan in expired:
         try:
             await bot.send_message(
@@ -93,20 +102,18 @@ def _renew_kb():
     return b.as_markup()
 
 
-# ── Основной loop планировщика ────────────────────────────────────────
-
 async def scheduler_loop(bot: Bot):
     logger.info("Scheduler started")
     reminder_tick = 0
 
     while True:
         try:
-            # Каждые 10 минут — деактивация просроченных
             expired = await deactivate_expired_subscriptions()
             if expired:
                 await notify_expired_users(bot, expired)
 
-            # Каждый час (6 тиков × 10 мин) — напоминания
+            await delete_expired_saved_messages()
+
             reminder_tick += 1
             if reminder_tick >= 6:
                 await send_expiry_reminders(bot)
@@ -115,9 +122,8 @@ async def scheduler_loop(bot: Bot):
         except Exception as e:
             logger.error(f"Scheduler error: {e}", exc_info=True)
 
-        await asyncio.sleep(600)  # 10 минут
+        await asyncio.sleep(600)
 
 
 def start_scheduler(bot: Bot):
-    """Запускает планировщик как фоновую asyncio задачу."""
     asyncio.create_task(scheduler_loop(bot))
