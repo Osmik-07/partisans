@@ -2,11 +2,12 @@ from datetime import datetime, timedelta, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy import select, update
+from bot.config import settings
 from db.models import User, Subscription, Payment, SubscriptionPlan, PaymentMethod, PaymentStatus
 
 
 PLAN_DURATIONS = {
-    SubscriptionPlan.TRIAL: timedelta(days=1),
+    SubscriptionPlan.TRIAL: timedelta(days=settings.price_trial_days),
     SubscriptionPlan.WEEK: timedelta(weeks=1),
     SubscriptionPlan.MONTH: timedelta(days=30),
     SubscriptionPlan.YEAR: timedelta(days=365),
@@ -28,19 +29,50 @@ async def get_or_create_user(session: AsyncSession, tg_user) -> User:
     else:
         user.username = tg_user.username
         user.first_name = tg_user.first_name
+        user.language_code = getattr(tg_user, "language_code", user.language_code)
         user.last_seen = datetime.now(timezone.utc)
         await session.commit()
     return user
 
 
-async def get_user(session: AsyncSession, user_id: int) -> User | None:
-    result = await session.execute(
+async def get_user(
+    session: AsyncSession,
+    user_id: int,
+    *,
+    for_update: bool = False,
+) -> User | None:
+    query = (
         select(User)
         .options(selectinload(User.subscriptions))
         .where(User.id == user_id)
-        .with_for_update()
+    )
+    if for_update:
+        query = query.with_for_update()
+
+    result = await session.execute(query)
+    return result.scalar_one_or_none()
+
+
+async def get_active_subscription(
+    session: AsyncSession,
+    user_id: int,
+) -> Subscription | None:
+    now = datetime.now(timezone.utc)
+    result = await session.execute(
+        select(Subscription)
+        .where(
+            Subscription.user_id == user_id,
+            Subscription.is_active == True,
+            Subscription.expires_at > now,
+        )
+        .order_by(Subscription.expires_at.desc())
+        .limit(1)
     )
     return result.scalar_one_or_none()
+
+
+async def user_has_active_subscription(session: AsyncSession, user_id: int) -> bool:
+    return await get_active_subscription(session, user_id) is not None
 
 
 async def activate_subscription(
@@ -66,6 +98,7 @@ async def activate_subscription(
         started_at=now,
         expires_at=expires,
         payment_id=payment.id if payment else None,
+        reminded_24h_at=None,
     )
     session.add(sub)
 
@@ -108,11 +141,51 @@ async def get_payment_by_external_id(session: AsyncSession, external_id: str) ->
     return result.scalar_one_or_none()
 
 
-async def confirm_payment(session: AsyncSession, payment: Payment) -> Subscription:
+async def confirm_payment(session: AsyncSession, payment_id: int) -> tuple[Subscription, bool]:
+    result = await session.execute(
+        select(Payment)
+        .where(Payment.id == payment_id)
+        .with_for_update()
+    )
+    payment = result.scalar_one_or_none()
+    if not payment:
+        raise ValueError(f"Payment {payment_id} not found")
+
+    if payment.status == PaymentStatus.PAID:
+        sub_result = await session.execute(
+            select(Subscription)
+            .where(Subscription.payment_id == payment.id)
+            .order_by(Subscription.expires_at.desc())
+            .limit(1)
+        )
+        existing_sub = sub_result.scalar_one_or_none()
+        if existing_sub:
+            return existing_sub, False
+
+    now = datetime.now(timezone.utc)
     payment.status = PaymentStatus.PAID
-    payment.paid_at = datetime.now(timezone.utc)
+    payment.paid_at = now
+
+    await session.execute(
+        update(Subscription)
+        .where(Subscription.user_id == payment.user_id, Subscription.is_active == True)
+        .values(is_active=False)
+    )
+
+    sub = Subscription(
+        user_id=payment.user_id,
+        plan=payment.plan,
+        is_active=True,
+        started_at=now,
+        expires_at=now + PLAN_DURATIONS[payment.plan],
+        payment_id=payment.id,
+        reminded_24h_at=None,
+    )
+    session.add(sub)
+
     await session.commit()
-    return await activate_subscription(session, payment.user_id, payment.plan, payment)
+    await session.refresh(sub)
+    return sub, True
 
 
 async def get_stats(session: AsyncSession) -> dict:
@@ -159,12 +232,21 @@ async def grant_subscription(
         started_at=now,
         expires_at=expires,
         payment_id=None,
+        reminded_24h_at=None,
     )
     session.add(sub)
 
     await session.commit()
     await session.refresh(sub)
     return sub
+
+
+async def activate_trial_subscription(session: AsyncSession, user_id: int) -> Subscription | None:
+    user = await get_user(session, user_id, for_update=True)
+    if not user or user.trial_used:
+        return None
+
+    return await activate_subscription(session, user_id, SubscriptionPlan.TRIAL)
 
 
 async def get_user_by_username(session: AsyncSession, username: str) -> User | None:

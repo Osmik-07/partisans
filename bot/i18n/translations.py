@@ -190,6 +190,18 @@ _T = {
         "pt": "❌ <b>Assinatura inativa</b>\n\nCompre uma assinatura para começar a rastrear.",
         "id": "❌ <b>Langganan tidak aktif</b>\n\nBeli langganan untuk mulai melacak.",
     },
+    "sub_required_alert": {
+        "ru": "Нужна активная подписка.",
+        "en": "An active subscription is required.",
+        "pt": "É necessária uma assinatura ativa.",
+        "id": "Langganan aktif diperlukan.",
+    },
+    "trial_already_used": {
+        "ru": "Пробный период уже использован.",
+        "en": "Trial period has already been used.",
+        "pt": "O período de teste já foi usado.",
+        "id": "Masa percobaan sudah digunakan.",
+    },
     "connected_yes": {
         "ru": "🟢 подключён",
         "en": "🟢 connected",
@@ -211,30 +223,30 @@ _T = {
         "id": "💎 <b>Pilih paket:</b>",
     },
     "btn_trial": {
-        "ru": "🎁 Пробный день — БЕСПЛАТНО",
-        "en": "🎁 Trial day — FREE",
-        "pt": "🎁 Dia de teste — GRÁTIS",
-        "id": "🎁 Hari percobaan — GRATIS",
+        "ru": "🎁 Пробный период — БЕСПЛАТНО",
+        "en": "🎁 Trial period — FREE",
+        "pt": "🎁 Período de teste — GRÁTIS",
+        "id": "🎁 Periode percobaan — GRATIS",
     },
     "trial_activated": {
         "ru": (
             "🎁 <b>Пробный период активирован!</b>\n\n"
-            "У тебя есть <b>1 день</b> для проверки бота.\n\n"
+            "У тебя есть <b>{days} дня</b> для проверки бота.\n\n"
             "Не забудь подключить бота через Telegram для бизнеса."
         ),
         "en": (
             "🎁 <b>Trial period activated!</b>\n\n"
-            "You have <b>1 day</b> to test the bot.\n\n"
+            "You have <b>{days} days</b> to test the bot.\n\n"
             "Don't forget to connect the bot via Telegram for Business."
         ),
         "pt": (
             "🎁 <b>Período de teste ativado!</b>\n\n"
-            "Você tem <b>1 dia</b> para testar o bot.\n\n"
+            "Você tem <b>{days} dias</b> para testar o bot.\n\n"
             "Não se esqueça de conectar o bot via Telegram para Empresas."
         ),
         "id": (
             "🎁 <b>Periode percobaan diaktifkan!</b>\n\n"
-            "Anda punya <b>1 hari</b> untuk mencoba bot.\n\n"
+            "Anda punya <b>{days} hari</b> untuk mencoba bot.\n\n"
             "Jangan lupa menghubungkan bot melalui Telegram untuk Bisnis."
         ),
     },

@@ -3,10 +3,11 @@ from aiogram.types import CallbackQuery, LabeledPrice, PreCheckoutQuery, Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.config import settings
-from bot.keyboards.main import plans_kb, payment_method_kb, pay_crypto_kb, back_main_kb
+from bot.i18n import t
+from bot.keyboards.main import plans_kb, pay_crypto_kb, back_main_kb
 from bot.services import subscription as sub_svc
 from bot.services import cryptobot as crypto_svc
-from db.models import SubscriptionPlan, PaymentMethod
+from db.models import SubscriptionPlan, PaymentMethod, PaymentStatus
 
 router = Router()
 
@@ -18,11 +19,15 @@ PLAN_MAP = {
 }
 
 PLAN_LABELS = {
-    "trial": "Пробный день",
+    "trial": "Пробный период",
     "week": "7 дней",
     "month": "30 дней",
     "year": "1 год",
 }
+
+
+def _lang(user) -> str:
+    return user.lang if user and user.lang else "en"
 
 
 # ── Показать планы ──────────────────────────────────────────────────
@@ -30,9 +35,10 @@ PLAN_LABELS = {
 async def cb_plans(call: CallbackQuery, session: AsyncSession):
     user = await sub_svc.get_user(session, call.from_user.id)
     trial_ok = not user.trial_used if user else True
+    lang = _lang(user)
     await call.message.edit_text(
-        "💎 <b>Выбери тариф:</b>",
-        reply_markup=plans_kb(trial_ok),
+        t("plans_title", lang),
+        reply_markup=plans_kb(lang, trial_available=trial_ok),
         parse_mode="HTML",
     )
     await call.answer()
@@ -41,17 +47,20 @@ async def cb_plans(call: CallbackQuery, session: AsyncSession):
 # ── Пробный период ──────────────────────────────────────────────────
 @router.callback_query(F.data == "buy:trial")
 async def cb_trial(call: CallbackQuery, session: AsyncSession):
-    user = await sub_svc.get_user(session, call.from_user.id)
+    user = await sub_svc.get_or_create_user(session, call.from_user)
+    lang = _lang(user)
     if user and user.trial_used:
-        await call.answer("Пробный период уже использован.", show_alert=True)
+        await call.answer(t("trial_already_used", lang), show_alert=True)
         return
 
-    await sub_svc.activate_subscription(session, call.from_user.id, SubscriptionPlan.TRIAL)
+    sub = await sub_svc.activate_trial_subscription(session, call.from_user.id)
+    if not sub:
+        await call.answer(t("trial_already_used", lang), show_alert=True)
+        return
+
     await call.message.edit_text(
-        "🎁 <b>Пробный период активирован!</b>\n\n"
-        "У тебя есть <b>1 день</b> для проверки бота.\n\n"
-        "Не забудь подключить бота через Telegram для бизнеса ➜ /start",
-        reply_markup=back_main_kb(),
+        t("trial_activated", lang, days=settings.price_trial_days),
+        reply_markup=back_main_kb(lang),
         parse_mode="HTML",
     )
     await call.answer()
@@ -125,43 +134,67 @@ async def cb_pay_crypto(call: CallbackQuery, session: AsyncSession):
         f"Тариф: <b>{PLAN_LABELS[plan_key]}</b>\n"
         f"Сумма: <b>${amount}</b>\n\n"
         f"Нажми «Оплатить», затем вернись и нажми «Я оплатил».",
-        reply_markup=pay_crypto_kb(invoice["pay_url"]),
+        reply_markup=pay_crypto_kb(invoice["pay_url"], payment.id),
         parse_mode="HTML",
     )
     await call.answer()
 
 
 # ── Проверка оплаты крипто ──────────────────────────────────────────
-@router.callback_query(F.data == "pay:check")
+@router.callback_query(F.data.startswith("pay:check:"))
 async def cb_pay_check(call: CallbackQuery, session: AsyncSession):
     from sqlalchemy import select
-    from db.models import Payment, PaymentStatus
-    # Ищем последний pending платёж пользователя
+    from db.models import Payment
+
+    try:
+        payment_id = int(call.data.split(":")[2])
+    except (IndexError, ValueError):
+        await call.answer("Некорректный платёж.", show_alert=True)
+        return
+
     result = await session.execute(
         select(Payment)
-        .where(Payment.user_id == call.from_user.id, Payment.status == PaymentStatus.PENDING)
-        .order_by(Payment.created_at.desc())
-        .limit(1)
+        .where(Payment.id == payment_id, Payment.user_id == call.from_user.id)
     )
     payment = result.scalar_one_or_none()
     if not payment:
         await call.answer("Платёж не найден.", show_alert=True)
         return
 
+    if payment.status == PaymentStatus.PAID:
+        sub, _ = await sub_svc.confirm_payment(session, payment.id)
+        expires = sub.expires_at.strftime("%d.%m.%Y")
+        await call.message.edit_text(
+            f"✅ <b>Оплата уже подтверждена.</b>\n\n"
+            f"Подписка активна до <b>{expires}</b>.",
+            reply_markup=back_main_kb(),
+            parse_mode="HTML",
+        )
+        await call.answer("Оплата уже подтверждена.")
+        return
+
+    if not payment.external_id:
+        await call.answer("Для этого платежа ещё нет инвойса.", show_alert=True)
+        return
+
     # Проверяем через CryptoBot API
     import aiohttp
-    async with aiohttp.ClientSession() as http:
-        resp = await http.get(
-            f"{crypto_svc.CRYPTOBOT_API}/getInvoices",
-            headers={"Crypto-Pay-API-Token": settings.cryptobot_token},
-            params={"invoice_ids": payment.external_id},
-        )
-        data = await resp.json()
+    try:
+        async with aiohttp.ClientSession() as http:
+            resp = await http.get(
+                f"{crypto_svc.CRYPTOBOT_API}/getInvoices",
+                headers={"Crypto-Pay-API-Token": settings.cryptobot_token},
+                params={"invoice_ids": payment.external_id},
+            )
+            data = await resp.json()
+    except Exception:
+        await call.answer("Не удалось проверить оплату. Попробуй позже.", show_alert=True)
+        return
 
     if data.get("ok"):
         items = data["result"].get("items", [])
         if items and items[0]["status"] == "paid":
-            sub = await sub_svc.confirm_payment(session, payment)
+            sub, _ = await sub_svc.confirm_payment(session, payment.id)
             expires = sub.expires_at.strftime("%d.%m.%Y")
             await call.message.edit_text(
                 f"✅ <b>Оплата подтверждена!</b>\n\n"
@@ -201,7 +234,7 @@ async def cb_pay_stars(call: CallbackQuery, session: AsyncSession):
     )
 
     await call.message.answer_invoice(
-        title=f"NotSpyBot — {PLAN_LABELS[plan_key]}",
+        title=f"Partisans — {PLAN_LABELS[plan_key]}",
         description="Доступ к отслеживанию удалённых сообщений, правок и исчезающих фото",
         payload=str(payment.id),
         currency="XTR",
@@ -223,7 +256,7 @@ async def successful_stars_payment(message: Message, session: AsyncSession):
     result = await session.execute(select(Payment).where(Payment.id == int(payload)))
     payment = result.scalar_one_or_none()
     if payment:
-        sub = await sub_svc.confirm_payment(session, payment)
+        sub, _ = await sub_svc.confirm_payment(session, payment.id)
         expires = sub.expires_at.strftime("%d.%m.%Y")
         await message.answer(
             f"⭐️ <b>Оплата звёздами подтверждена!</b>\n\n"

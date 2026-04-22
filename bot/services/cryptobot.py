@@ -28,7 +28,7 @@ async def create_invoice(
                 "currency_type": "fiat",
                 "fiat": "USD",
                 "amount": str(amount),
-                "description": PLAN_NAMES.get(plan, "Подписка NotSpyBot"),
+                "description": PLAN_NAMES.get(plan, "Подписка Partisans"),
                 "payload": payload,
                 "paid_btn_name": "callback",
                 "paid_btn_url": "https://t.me/notspybot",

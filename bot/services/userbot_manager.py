@@ -12,6 +12,8 @@ from telethon.sessions import StringSession
 from telethon.tl.types import MessageMediaPhoto, MessageMediaDocument
 
 from bot.config import settings
+from bot.i18n import t
+from bot.services.security import decrypt_session_string
 from db.base import AsyncSessionLocal
 
 logger = logging.getLogger(__name__)
@@ -30,8 +32,9 @@ def get_client(user_id: int) -> Optional[TelegramClient]:
 
 
 async def create_client_from_session(user_id: int, session_string: str) -> TelegramClient:
+    decrypted_session_string = decrypt_session_string(session_string)
     client = TelegramClient(
-        StringSession(session_string),
+        StringSession(decrypted_session_string),
         api_id=settings.telegram_api_id,
         api_hash=settings.telegram_api_hash,
     )
@@ -99,15 +102,15 @@ async def _handle_vanishing_media(owner_id: int, event):
     if username:
         sender_name += f" (@{username})"
 
-    caption = (
-        f"📸 <b>Одноразовое медиа</b> от <b>{sender_name}</b>\n\n"
-        f"@partisansfromNJbot"
-    )
-
     try:
         client = get_client(owner_id)
         if not client:
             return
+
+        async with AsyncSessionLocal() as db:
+            from db.models import User
+            owner = await db.get(User, owner_id)
+            lang = owner.lang if owner and owner.lang else "en"
 
         file_bytes = io.BytesIO()
         await client.download_media(msg, file=file_bytes)
@@ -129,7 +132,7 @@ async def _handle_vanishing_media(owner_id: int, event):
         await _bot.send_document(
             owner_id,
             document=tg_file,
-            caption=caption,
+            caption=t("vanishing_header", lang, name=sender_name),
             parse_mode="HTML",
         )
 

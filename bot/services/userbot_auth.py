@@ -18,6 +18,7 @@ from telethon.errors import (
 )
 
 from bot.config import settings
+from bot.services.security import encrypt_session_string
 from db.base import AsyncSessionLocal
 from db.models import UserbotSession
 
@@ -176,6 +177,7 @@ async def sign_in_2fa(user_id: int, password: str) -> dict:
 
 async def _finalize_session(user_id: int, client: TelegramClient) -> dict:
     session_string = client.session.save()
+    encrypted_session_string = encrypt_session_string(session_string)
 
     try:
         await client.disconnect()
@@ -191,14 +193,14 @@ async def _finalize_session(user_id: int, client: TelegramClient) -> dict:
         )
         record = result.scalar_one_or_none()
         if record:
-            record.session_string = session_string
+            record.session_string = encrypted_session_string
             record.is_active = True
             record.auth_data = None
             record.last_active = datetime.now(timezone.utc)
         await session.commit()
 
     from bot.services.userbot_manager import create_client_from_session
-    await create_client_from_session(user_id, session_string)
+    await create_client_from_session(user_id, encrypted_session_string)
 
     return {"ok": True}
 

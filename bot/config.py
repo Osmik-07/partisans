@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     # Pyrogram (MTProto)
     telegram_api_id: int = 0
     telegram_api_hash: str = ""
+    userbot_session_secret: str = ""
 
     # Mini App
     miniapp_domain: str = "traceapp.ru"  # твой домен
@@ -35,7 +36,7 @@ class Settings(BaseSettings):
     webhook_port: int = 8443
 
     # Prices USD
-    price_trial_days: int = 1
+    price_trial_days: int = 3
     price_week_usd: float = 1.50
     price_month_usd: float = 3.00
     price_year_usd: float = 15.00

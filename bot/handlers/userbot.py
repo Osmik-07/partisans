@@ -7,6 +7,7 @@ from bot.config import settings
 from bot.keyboards.main import userbot_kb, back_main_kb
 from bot.i18n import t
 from bot.services.userbot_manager import get_client
+from bot.services.subscription import get_active_subscription
 from db.models import UserbotSession
 
 router = Router()
@@ -21,6 +22,15 @@ async def cb_userbot_menu(call: CallbackQuery, session: AsyncSession):
     from bot.services.subscription import get_user
     user = await get_user(session, call.from_user.id)
     lang = _lang(user)
+    active_sub = await get_active_subscription(session, call.from_user.id)
+    if not active_sub:
+        await call.message.edit_text(
+            t("sub_inactive", lang),
+            reply_markup=back_main_kb(lang),
+            parse_mode="HTML",
+        )
+        await call.answer()
+        return
 
     # Проверяем активна ли сессия
     result = await session.execute(
@@ -32,7 +42,7 @@ async def cb_userbot_menu(call: CallbackQuery, session: AsyncSession):
     client = get_client(call.from_user.id)
     is_active = record is not None and client is not None
 
-    miniapp_url = f"https://{settings.miniapp_domain}/auth?user_id={call.from_user.id}"
+    miniapp_url = f"https://{settings.miniapp_domain}/auth"
 
     if is_active:
         text = t("userbot_active", lang)

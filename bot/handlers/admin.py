@@ -1,7 +1,9 @@
 from aiogram import Router, F
 from aiogram.filters import Command
+from aiogram.exceptions import TelegramRetryAfter
 from aiogram.types import Message, CallbackQuery
 from sqlalchemy.ext.asyncio import AsyncSession
+import asyncio
 
 from bot.config import settings
 from bot.keyboards.main import admin_kb, back_main_kb
@@ -180,7 +182,7 @@ async def cmd_userinfo(message: Message, session: AsyncSession):
         f"Бан: {'да' if user.is_banned else 'нет'}\n"
         f"Подписка: {sub_text}\n"
         f"Бизнес: {'подключён' if user.business_connection_id else 'нет'}\n"
-        f"Зарегистрирован: {user.created_at.strftime('%d.%м.%Y')}"
+        f"Зарегистрирован: {user.created_at.strftime('%d.%m.%Y')}"
     )
 
     await message.answer(text, parse_mode="HTML")
@@ -222,6 +224,14 @@ async def cmd_broadcast(message: Message, session: AsyncSession):
         try:
             await message.bot.send_message(uid, text, parse_mode="HTML")
             sent += 1
+            await asyncio.sleep(0.05)
+        except TelegramRetryAfter as e:
+            await asyncio.sleep(e.retry_after)
+            try:
+                await message.bot.send_message(uid, text, parse_mode="HTML")
+                sent += 1
+            except Exception:
+                failed += 1
         except Exception:
             failed += 1
 

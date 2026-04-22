@@ -35,8 +35,12 @@ async def cryptobot_webhook_handler(request: web.Request) -> web.Response:
         return web.Response(text="ok")
 
     payload_obj = data.get("payload", {})
-    invoice_id = str(payload_obj.get("invoice_id", ""))
-    invoice_payload = payload_obj.get("payload", "")  # наш payment.id
+    if isinstance(payload_obj, dict):
+        invoice_id = str(payload_obj.get("invoice_id") or data.get("invoice_id") or "")
+        invoice_payload = str(payload_obj.get("payload") or payload_obj.get("invoice_payload") or "")
+    else:
+        invoice_id = str(data.get("invoice_id") or "")
+        invoice_payload = str(payload_obj or "")
 
     logger.info(f"CryptoBot paid: invoice_id={invoice_id} payload={invoice_payload}")
 
@@ -60,9 +64,12 @@ async def cryptobot_webhook_handler(request: web.Request) -> web.Response:
             if payment.status == PaymentStatus.PAID:
                 return web.Response(text="ok")  # уже обработан
 
-            sub = await sub_svc.confirm_payment(session, payment)
+            sub, created = await sub_svc.confirm_payment(session, payment.id)
 
         # Уведомляем пользователя
+        if not created:
+            return web.Response(text="ok")
+
         bot = request.app["bot"]
         expires = sub.expires_at.strftime("%d.%m.%Y")
         await bot.send_message(

@@ -6,3 +6,4 @@ alembic==1.13.3
 pydantic-settings==2.5.2
 redis==5.1.1
 telethon==1.36.0
+cryptography==45.0.4

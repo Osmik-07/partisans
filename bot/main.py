@@ -74,6 +74,8 @@ def create_dispatcher() -> Dispatcher:
 async def start_miniapp_server(bot: Bot, dp: Dispatcher) -> web.AppRunner:
     app = web.Application()
     app["bot"] = bot
+    from db.base import AsyncSessionLocal
+    app["db_sessionmaker"] = AsyncSessionLocal
 
     # Mini App routes
     from bot.webhooks.miniapp_api import register_miniapp

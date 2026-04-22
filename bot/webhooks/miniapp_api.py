@@ -3,36 +3,34 @@ REST API для Mini App авторизации.
 Эндпоинты: /api/auth/send_code, /api/auth/sign_in, /api/auth/2fa
 Статические файлы: GET / → miniapp/index.html
 """
-import hashlib
-import hmac
-import json
 import logging
 import os
-from urllib.parse import unquote
 
 from aiohttp import web
 
 from bot.config import settings
+from bot.services.security import get_init_data_user_id
+from bot.services.subscription import user_has_active_subscription
 from bot.services.userbot_auth import send_code, sign_in, sign_in_2fa
 
 logger = logging.getLogger(__name__)
 
 MINIAPP_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "miniapp")
 
+async def _get_authorized_user_id(request: web.Request, data: dict) -> int | None:
+    init_data = data.get("init_data", "")
+    user_id = get_init_data_user_id(init_data)
+    if not user_id:
+        return None
 
-def _verify_init_data(init_data: str) -> bool:
-    """Проверяет подпись Telegram WebApp initData."""
-    if not init_data:
-        return False
-    try:
-        parsed = dict(x.split("=", 1) for x in init_data.split("&"))
-        hash_val = parsed.pop("hash", "")
-        check_string = "\n".join(f"{k}={unquote(v)}" for k, v in sorted(parsed.items()))
-        secret = hmac.new(b"WebAppData", settings.bot_token.encode(), hashlib.sha256).digest()
-        expected = hmac.new(secret, check_string.encode(), hashlib.sha256).hexdigest()
-        return hmac.compare_digest(expected, hash_val)
-    except Exception:
-        return False
+    async with request.app["db_sessionmaker"]() as session:
+        if not await user_has_active_subscription(session, user_id):
+            raise web.HTTPForbidden(
+                text='{"ok": false, "error": "Active subscription required"}',
+                content_type="application/json",
+            )
+
+    return user_id
 
 
 async def serve_index(request: web.Request) -> web.Response:
@@ -49,19 +47,15 @@ async def api_send_code(request: web.Request) -> web.Response:
     except Exception:
         return web.json_response({"ok": False, "error": "Invalid JSON"}, status=400)
 
-    user_id = data.get("user_id")
     phone = data.get("phone", "").strip()
-    init_data = data.get("init_data", "")
+    user_id = await _get_authorized_user_id(request, data)
+    if not user_id:
+        return web.json_response({"ok": False, "error": "Invalid Telegram session"}, status=401)
 
-    # Верифицируем initData от Telegram (или пропускаем в dev)
-    if init_data and not _verify_init_data(init_data):
-        logger.warning(f"Invalid initData from user {user_id}")
-        # Не блокируем — просто логируем
+    if not phone:
+        return web.json_response({"ok": False, "error": "Missing phone"}, status=400)
 
-    if not user_id or not phone:
-        return web.json_response({"ok": False, "error": "Missing user_id or phone"}, status=400)
-
-    result = await send_code(int(user_id), phone)
+    result = await send_code(user_id, phone)
     return web.json_response(result)
 
 
@@ -71,13 +65,15 @@ async def api_sign_in(request: web.Request) -> web.Response:
     except Exception:
         return web.json_response({"ok": False, "error": "Invalid JSON"}, status=400)
 
-    user_id = data.get("user_id")
     code = data.get("code", "").strip().replace(" ", "")
+    user_id = await _get_authorized_user_id(request, data)
+    if not user_id:
+        return web.json_response({"ok": False, "error": "Invalid Telegram session"}, status=401)
 
-    if not user_id or not code:
-        return web.json_response({"ok": False, "error": "Missing fields"}, status=400)
+    if not code:
+        return web.json_response({"ok": False, "error": "Missing code"}, status=400)
 
-    result = await sign_in(int(user_id), code)
+    result = await sign_in(user_id, code)
     return web.json_response(result)
 
 
@@ -87,13 +83,15 @@ async def api_2fa(request: web.Request) -> web.Response:
     except Exception:
         return web.json_response({"ok": False, "error": "Invalid JSON"}, status=400)
 
-    user_id = data.get("user_id")
     password = data.get("password", "")
+    user_id = await _get_authorized_user_id(request, data)
+    if not user_id:
+        return web.json_response({"ok": False, "error": "Invalid Telegram session"}, status=401)
 
-    if not user_id or not password:
-        return web.json_response({"ok": False, "error": "Missing fields"}, status=400)
+    if not password:
+        return web.json_response({"ok": False, "error": "Missing password"}, status=400)
 
-    result = await sign_in_2fa(int(user_id), password)
+    result = await sign_in_2fa(user_id, password)
     return web.json_response(result)
 
 

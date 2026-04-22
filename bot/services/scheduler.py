@@ -57,16 +57,18 @@ async def send_expiry_reminders(bot: Bot):
 
     async with AsyncSessionLocal() as session:
         result = await session.execute(
-            select(Subscription.user_id, Subscription.plan, Subscription.expires_at)
+            select(Subscription.id, Subscription.user_id, Subscription.plan, Subscription.expires_at)
             .where(
                 Subscription.is_active == True,
                 Subscription.expires_at >= remind_window_start,
                 Subscription.expires_at <= remind_window_end,
+                Subscription.reminded_24h_at.is_(None),
             )
         )
         rows = result.all()
 
-    for user_id, plan, expires_at in rows:
+    reminded_ids: list[int] = []
+    for sub_id, user_id, plan, expires_at in rows:
         expires_str = expires_at.strftime("%d.%m.%Y %H:%M UTC")
         try:
             await bot.send_message(
@@ -77,8 +79,18 @@ async def send_expiry_reminders(bot: Bot):
                 reply_markup=_renew_kb(),
                 parse_mode="HTML",
             )
+            reminded_ids.append(sub_id)
         except Exception as e:
             logger.warning(f"Could not remind user {user_id}: {e}")
+
+    if reminded_ids:
+        async with AsyncSessionLocal() as session:
+            await session.execute(
+                update(Subscription)
+                .where(Subscription.id.in_(reminded_ids))
+                .values(reminded_24h_at=now)
+            )
+            await session.commit()
 
 
 async def notify_expired_users(bot: Bot, expired: list):

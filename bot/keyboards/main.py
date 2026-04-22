@@ -36,10 +36,10 @@ def payment_method_kb(plan: str) -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
-def pay_crypto_kb(pay_url: str) -> InlineKeyboardMarkup:
+def pay_crypto_kb(pay_url: str, payment_id: int) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.button(text="💳 Оплатить", url=pay_url)
-    builder.button(text="✅ Я оплатил", callback_data="pay:check")
+    builder.button(text="✅ Я оплатил", callback_data=f"pay:check:{payment_id}")
     builder.button(text="« Отмена", callback_data="sub:plans")
     builder.adjust(1)
     return builder.as_markup()

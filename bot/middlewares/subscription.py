@@ -1,14 +1,14 @@
 from typing import Callable, Awaitable, Any
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject, Message, CallbackQuery
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from db.base import AsyncSessionLocal
-from bot.services.subscription import get_user
+from bot.i18n import t
+from bot.keyboards.main import plans_kb
+from bot.services.subscription import get_active_subscription, get_user
 
 # Команды/колбэки, доступные без подписки
 FREE_COMMANDS = {"/start", "/help", "/userbot"}
-FREE_CALLBACKS = {"sub:", "buy:", "pay:", "back:", "help:"}
+FREE_CALLBACKS = {"sub:", "buy:", "pay:", "back:", "help:", "userbot:disconnect"}
 
 
 
@@ -27,6 +27,9 @@ class SubscriptionMiddleware(BaseMiddleware):
         if not user_id:
             return await handler(event, data)
 
+        if isinstance(event, Message) and getattr(event, "business_connection_id", None):
+            return await handler(event, data)
+
         # Пропускаем свободные команды
         if isinstance(event, Message) and event.text:
             cmd = event.text.split()[0].lower()
@@ -39,12 +42,11 @@ class SubscriptionMiddleware(BaseMiddleware):
                     return await handler(event, data)
 
         # Проверяем подписку
-        async with AsyncSessionLocal() as session:
-            user = await get_user(session, user_id)
-            from bot.config import settings
-            if user_id in settings.admin_ids:
-                return await handler(event, data)
-            
+        session = data.get("session")
+        user = await get_user(session, user_id) if session else None
+        from bot.config import settings
+        if user_id in settings.admin_ids:
+            return await handler(event, data)
 
         if not user:
             return await handler(event, data)
@@ -56,5 +58,20 @@ class SubscriptionMiddleware(BaseMiddleware):
                 await event.answer("⛔️ Ваш аккаунт заблокирован.", show_alert=True)
             return
 
-        # Business-события не требуют проверки (они проверяются внутри хэндлера)
-        return await handler(event, data)
+        active_sub = await get_active_subscription(session, user_id) if session else None
+        if active_sub:
+            return await handler(event, data)
+
+        lang = user.lang if user.lang else "en"
+        if isinstance(event, Message):
+            await event.answer(
+                t("sub_inactive", lang),
+                reply_markup=plans_kb(lang, trial_available=not user.trial_used),
+                parse_mode="HTML",
+            )
+        elif isinstance(event, CallbackQuery):
+            await event.answer(
+                t("sub_required_alert", lang),
+                show_alert=True,
+            )
+        return

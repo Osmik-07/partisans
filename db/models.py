@@ -63,6 +63,17 @@ class User(Base):
         back_populates="user", lazy="noload", uselist=False
     )
 
+    @property
+    def active_subscription(self) -> "Subscription | None":
+        now = utcnow()
+        active = [
+            sub for sub in self.subscriptions
+            if sub.is_active and sub.expires_at > now
+        ]
+        if not active:
+            return None
+        return max(active, key=lambda sub: sub.expires_at)
+
 
 class Subscription(Base):
     __tablename__ = "subscriptions"
@@ -74,6 +85,7 @@ class Subscription(Base):
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     payment_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("payments.id"))
+    reminded_24h_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     user: Mapped["User"] = relationship(back_populates="subscriptions")
     payment: Mapped["Payment | None"] = relationship(foreign_keys=[payment_id])

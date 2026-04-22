@@ -46,6 +46,10 @@ nano .env
 BOT_TOKEN=твой_токен_от_BotFather
 ADMIN_IDS=твой_telegram_id
 
+TELEGRAM_API_ID=твой_api_id
+TELEGRAM_API_HASH=твой_api_hash
+USERBOT_SESSION_SECRET=длинная_случайная_строка
+
 DB_HOST=db
 DB_PORT=5432
 DB_NAME=notspybot
@@ -129,12 +133,12 @@ docker compose ps            # статус контейнеров
 
 | Тариф | Срок | Цена |
 |---|---|---|
-| 🎁 Пробный | 1 день | Бесплатно |
+| 🎁 Пробный | 3 дня | Бесплатно |
 | ⚡️ Неделя | 7 дней | $1.50 |
 | 🔥 Месяц | 30 дней | $3.00 |
 | 👑 Год | 365 дней | $15.00 |
 
-Цены меняются в `.env` — переменные `PRICE_WEEK_USD`, `PRICE_MONTH_USD`, `PRICE_YEAR_USD`.
+Цены и длительность пробного периода меняются в `.env` — переменные `PRICE_TRIAL_DAYS`, `PRICE_WEEK_USD`, `PRICE_MONTH_USD`, `PRICE_YEAR_USD`.
 
 ---
 
