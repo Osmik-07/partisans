@@ -12,6 +12,10 @@ def utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
+def enum_values(enum_cls: type[PyEnum]) -> list[str]:
+    return [item.value for item in enum_cls]
+
+
 class SubscriptionPlan(str, PyEnum):
     TRIAL = "trial"
     WEEK = "week"
@@ -80,7 +84,13 @@ class Subscription(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"))
-    plan: Mapped[SubscriptionPlan] = mapped_column(Enum(SubscriptionPlan))
+    plan: Mapped[SubscriptionPlan] = mapped_column(
+        Enum(
+            SubscriptionPlan,
+            name="subscriptionplan",
+            values_callable=enum_values,
+        )
+    )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
@@ -96,9 +106,28 @@ class Payment(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"))
-    plan: Mapped[SubscriptionPlan] = mapped_column(Enum(SubscriptionPlan))
-    method: Mapped[PaymentMethod] = mapped_column(Enum(PaymentMethod))
-    status: Mapped[PaymentStatus] = mapped_column(Enum(PaymentStatus), default=PaymentStatus.PENDING)
+    plan: Mapped[SubscriptionPlan] = mapped_column(
+        Enum(
+            SubscriptionPlan,
+            name="subscriptionplan",
+            values_callable=enum_values,
+        )
+    )
+    method: Mapped[PaymentMethod] = mapped_column(
+        Enum(
+            PaymentMethod,
+            name="paymentmethod",
+            values_callable=enum_values,
+        )
+    )
+    status: Mapped[PaymentStatus] = mapped_column(
+        Enum(
+            PaymentStatus,
+            name="paymentstatus",
+            values_callable=enum_values,
+        ),
+        default=PaymentStatus.PENDING,
+    )
 
     amount_usd: Mapped[float | None] = mapped_column(Float)
     amount_stars: Mapped[int | None] = mapped_column(Integer)
@@ -123,7 +152,13 @@ class SavedMessage(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     owner_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"))
-    message_type: Mapped[MessageType] = mapped_column(Enum(MessageType))
+    message_type: Mapped[MessageType] = mapped_column(
+        Enum(
+            MessageType,
+            name="messagetype",
+            values_callable=enum_values,
+        )
+    )
 
     from_user_id: Mapped[int | None] = mapped_column(BigInteger)
     from_username: Mapped[str | None] = mapped_column(String(64))
