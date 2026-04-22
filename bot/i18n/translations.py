@@ -1,5 +1,5 @@
 """
-Переводы для TraceBot.
+Переводы для Partisans.
 Языки: ru, en, pt, id
 """
 
@@ -14,7 +14,7 @@ _T = {
     # ── Приветствие ──────────────────────────────────────────────────────
     "welcome": {
         "ru": (
-            "🫆 <b>TraceBot</b> — знай всё, что скрывают\n\n"
+            "🫆 <b>Partisans</b> — знай всё, что скрывают\n\n"
             "Бот перехватывает:\n"
             "• 🗑 <b>Удалённые сообщения</b> — читай то, что удалили\n"
             "• ✏️ <b>Правки сообщений</b> — сравни оригинал и изменённый текст\n"
@@ -24,7 +24,7 @@ _T = {
             "Выбери действие:"
         ),
         "en": (
-            "🫆 <b>TraceBot</b> — know everything they hide\n\n"
+            "🫆 <b>Partisans</b> — know everything they hide\n\n"
             "The bot intercepts:\n"
             "• 🗑 <b>Deleted messages</b> — read what was deleted\n"
             "• ✏️ <b>Edited messages</b> — compare original and edited text\n"
@@ -34,7 +34,7 @@ _T = {
             "Choose an action:"
         ),
         "pt": (
-            "🫆 <b>TraceBot</b> — saiba tudo que escondem\n\n"
+            "🫆 <b>Partisans</b> — saiba tudo que escondem\n\n"
             "O bot intercepta:\n"
             "• 🗑 <b>Mensagens apagadas</b> — leia o que foi apagado\n"
             "• ✏️ <b>Mensagens editadas</b> — compare o original e o editado\n"
@@ -44,7 +44,7 @@ _T = {
             "Escolha uma ação:"
         ),
         "id": (
-            "🫆 <b>TraceBot</b> — ketahui semua yang disembunyikan\n\n"
+            "🫆 <b>Partisans</b> — ketahui semua yang disembunyikan\n\n"
             "Bot ini menangkap:\n"
             "• 🗑 <b>Pesan yang dihapus</b> — baca apa yang dihapus\n"
             "• ✏️ <b>Pesan yang diedit</b> — bandingkan asli dan yang diedit\n"
@@ -341,10 +341,10 @@ _T = {
         "id": "(tidak tersimpan)",
     },
     "vanishing_header": {
-        "ru": "📸 <b>Одноразовое медиа</b> от <b>{name}</b>",
-        "en": "📸 <b>One-time media</b> from <b>{name}</b>",
-        "pt": "📸 <b>Mídia temporária</b> de <b>{name}</b>",
-        "id": "📸 <b>Media sekali-pakai</b> dari <b>{name}</b>",
+        "ru": "📸 <b>Одноразовое медиа</b> от <b>{name}</b>\n\n@partisansfromNJbot",
+        "en": "📸 <b>One-time media</b> from <b>{name}</b>\n\n@partisansfromNJbot",
+        "pt": "📸 <b>Mídia temporária</b> de <b>{name}</b>\n\n@partisansfromNJbot",
+        "id": "📸 <b>Media sekali-pakai</b> dari <b>{name}</b>\n\n@partisansfromNJbot",
     },
 }
 

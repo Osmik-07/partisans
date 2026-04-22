@@ -11,6 +11,7 @@ from db.models import User, Subscription, SavedMessage, MessageType
 
 router = Router()
 logger = logging.getLogger(__name__)
+BOT_PROMO = "@partisansfromNJbot"
 
 
 def _escape(text: str) -> str:
@@ -19,6 +20,10 @@ def _escape(text: str) -> str:
         .replace("<", "&lt;")
         .replace(">", "&gt;")
     )
+
+
+def _with_promo(text: str) -> str:
+    return f"{text}\n\n{BOT_PROMO}"
 
 
 # 🔥 ВАЖНО: расширили поддержку медиа
@@ -70,7 +75,7 @@ def _format_deleted_from_cache(snapshot: SavedMessage) -> str:
     else:
         lines.append("<i>[Медиа без текста]</i>")
 
-    return "\n".join(lines)
+    return _with_promo("\n".join(lines))
 
 
 async def _get_owner_if_active(business_connection_id: str) -> User | None:
@@ -238,7 +243,7 @@ async def on_edited_message(message: Message, bot: Bot):
         snapshot = await _get_snapshot(session, owner.id, message.message_id)
         old_text = snapshot.original_text if snapshot else None
 
-    notify = (
+    notify = _with_promo(
         f"✏️ <b>{_escape(sender.first_name)} изменил(а) сообщение</b>\n\n"
         f"Было:\n{_escape(old_text or 'не сохранено')}\n\n"
         f"Стало:\n{_escape(new_text)}"
