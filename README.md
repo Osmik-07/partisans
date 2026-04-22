@@ -66,21 +66,31 @@ WEBHOOK_HOST=
 
 `WEBHOOK_HOST` оставь пустым — бот запустится в polling-режиме, домен не нужен.
 
-### 6. Собрать и запустить
+### 6. Собрать образы
 
 ```bash
-docker compose up -d --build
+docker compose build --no-cache
 ```
 
-После этой команды поднимутся 3 контейнера: `bot`, `db`, `redis`.
-
-### 7. Применить миграции БД
+### 7. Поднять БД и Redis
 
 ```bash
-docker compose exec bot alembic upgrade head
+docker compose up -d db redis
 ```
 
-### 8. Проверить что всё работает
+### 8. Применить миграции БД
+
+```bash
+docker compose run --rm bot alembic upgrade head
+```
+
+### 9. Запустить бота
+
+```bash
+docker compose up -d bot
+```
+
+### 10. Проверить что всё работает
 
 ```bash
 docker compose logs -f bot   # логи в реальном времени
@@ -146,7 +156,8 @@ docker compose ps            # статус контейнеров
 
 ```bash
 # Перезапустить после изменений
-docker compose up -d --build
+docker compose build --no-cache
+docker compose up -d
 
 # Остановить
 docker compose down
