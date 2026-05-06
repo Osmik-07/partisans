@@ -37,14 +37,14 @@ class Settings(BaseSettings):
 
     # Prices USD
     price_trial_days: int = 3
-    price_week_usd: float = 1.50
-    price_month_usd: float = 3.00
-    price_year_usd: float = 15.00
+    price_week_usd: float = 1.00
+    price_month_usd: float = 2.00
+    price_year_usd: float = 10.00
 
     # Prices Stars
-    price_week_stars: int = 75
-    price_month_stars: int = 150
-    price_year_stars: int = 750
+    price_week_stars: int = 50
+    price_month_stars: int = 100
+    price_year_stars: int = 500
 
     @property
     def db_url(self) -> str:

@@ -68,7 +68,7 @@ async def cb_userbot_disconnect(call: CallbackQuery, session: AsyncSession):
     await disconnect_session(call.from_user.id)
 
     await call.message.edit_text(
-        "🔴 " + {
+        {
             "ru": "Перехват отключён.",
             "en": "Interception disabled.",
             "pt": "Interceptação desativada.",

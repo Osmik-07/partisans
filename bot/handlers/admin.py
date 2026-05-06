@@ -23,7 +23,7 @@ def is_admin(user_id: int) -> bool:
 async def cmd_admin(message: Message):
     if not is_admin(message.from_user.id):
         return
-    await message.answer("🛠 <b>Админ-панель</b>", reply_markup=admin_kb(), parse_mode="HTML")
+    await message.answer("<b>Админ-панель</b>", reply_markup=admin_kb(), parse_mode="HTML")
 
 
 # ── СТАТИСТИКА ───────────────────────────────────────────────
@@ -36,15 +36,15 @@ async def cb_admin_stats(call: CallbackQuery, session: AsyncSession):
 
     stats = await get_stats(session)
     text = (
-        "📊 <b>Статистика бота</b>\n\n"
-        f"👥 Всего пользователей: <b>{stats['total_users']}</b>\n"
-        f"💎 Активных подписок: <b>{stats['active_subs']}</b>\n"
-        f"💵 Доход (USD): <b>${stats['total_revenue_usd']}</b>\n"
+        "<b>Статистика бота</b>\n\n"
+        f"Всего пользователей: <b>{stats['total_users']}</b>\n"
+        f"Активных подписок: <b>{stats['active_subs']}</b>\n"
+        f"Доход (USD): <b>${stats['total_revenue_usd']}</b>\n"
     )
 
     from aiogram.utils.keyboard import InlineKeyboardBuilder
     b = InlineKeyboardBuilder()
-    b.button(text="🔄 Обновить", callback_data="admin:stats")
+    b.button(text="Обновить", callback_data="admin:stats")
     b.button(text="« Назад", callback_data="admin:menu")
     b.adjust(1)
 
@@ -59,7 +59,7 @@ async def cb_admin_menu(call: CallbackQuery):
         return
 
     await call.message.edit_text(
-        "🛠 <b>Админ-панель</b>",
+        "<b>Админ-панель</b>",
         reply_markup=admin_kb(),
         parse_mode="HTML"
     )
@@ -74,7 +74,7 @@ async def cb_admin_users(call: CallbackQuery):
         return
 
     await call.message.edit_text(
-        "👥 <b>Управление пользователями</b>\n\n"
+        "<b>Управление пользователями</b>\n\n"
         "Команды:\n"
         "/ban <code>user_id</code>\n"
         "/unban <code>user_id</code>\n"
@@ -109,7 +109,7 @@ async def cmd_ban(message: Message, session: AsyncSession):
     user.is_banned = True
     await session.commit()
 
-    await message.answer(f"🔨 Пользователь {uid} заблокирован")
+    await message.answer(f"Пользователь {uid} заблокирован")
 
 
 @router.message(Command("unban"))
@@ -136,7 +136,7 @@ async def cmd_unban(message: Message, session: AsyncSession):
     user.is_banned = False
     await session.commit()
 
-    await message.answer(f"✅ Пользователь {uid} разблокирован")
+    await message.answer(f"Пользователь {uid} разблокирован")
 
 
 @router.message(Command("userinfo"))
@@ -176,7 +176,7 @@ async def cmd_userinfo(message: Message, session: AsyncSession):
         sub_text = f"{sub.plan.value} до {expires}"
 
     text = (
-        f"👤 <b>Пользователь {uid}</b>\n"
+        f"<b>Пользователь {uid}</b>\n"
         f"Имя: {user.first_name or '—'}\n"
         f"Username: @{user.username or '—'}\n"
         f"Бан: {'да' if user.is_banned else 'нет'}\n"
@@ -196,7 +196,7 @@ async def cb_broadcast_start(call: CallbackQuery):
         return
 
     await call.message.edit_text(
-        "📢 <b>Рассылка</b>\n\n"
+        "<b>Рассылка</b>\n\n"
         "Отправь:\n<code>/broadcast текст</code>",
         reply_markup=back_main_kb(),
         parse_mode="HTML",
@@ -236,13 +236,13 @@ async def cmd_broadcast(message: Message, session: AsyncSession):
             failed += 1
 
     await message.answer(
-        f"📢 Рассылка завершена\n"
-        f"✅ Отправлено: {sent}\n"
-        f"❌ Ошибок: {failed}"
+        f"Рассылка завершена\n"
+        f"Отправлено: {sent}\n"
+        f"Ошибок: {failed}"
     )
 
 
-# ── 🎁 ПОДАРОК ПОДПИСКИ ─────────────────────────────────────
+# ── ПОДАРОК ПОДПИСКИ ─────────────────────────────────────
 
 @router.callback_query(F.data == "admin:gift")
 async def cb_admin_gift(call: CallbackQuery):
@@ -251,7 +251,7 @@ async def cb_admin_gift(call: CallbackQuery):
         return
 
     await call.message.edit_text(
-        "🎁 <b>Подарить подписку</b>\n\n"
+        "<b>Подарить подписку</b>\n\n"
         "Используй:\n"
         "<code>/gift 123456789 30</code>\n"
         "<code>/gift @username 30</code>",
@@ -298,9 +298,9 @@ async def cmd_gift(message: Message, session: AsyncSession):
     sub = await grant_subscription(session, user.id, days)
 
     await message.answer(
-        f"✅ Подписка выдана\n\n"
-        f"👤 Пользователь: <code>{user.id}</code>\n"
-        f"⏳ Срок: {days} дней\n"
-        f"📅 До: {sub.expires_at.strftime('%d.%m.%Y %H:%M')}",
+        f"Подписка выдана\n\n"
+        f"Пользователь: <code>{user.id}</code>\n"
+        f"Срок: {days} дней\n"
+        f"До: {sub.expires_at.strftime('%d.%m.%Y %H:%M')}",
         parse_mode="HTML",
     )

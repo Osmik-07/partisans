@@ -51,8 +51,10 @@ async def cryptobot_webhook_handler(request: web.Request) -> web.Response:
         if payment.status == PaymentStatus.PAID:
             return web.Response(status=200, text="already processed")
 
-        sub = await confirm_payment(session, payment)
+        sub, created = await confirm_payment(session, payment.id)
         logger.info(f"Payment {payment.id} confirmed, sub until {sub.expires_at}")
+        if not created:
+            return web.Response(status=200, text="already processed")
 
         # Уведомляем пользователя
         try:
@@ -66,7 +68,7 @@ async def cryptobot_webhook_handler(request: web.Request) -> web.Response:
             expires = sub.expires_at.strftime("%d.%m.%Y")
             await bot.send_message(
                 payment.user_id,
-                f"✅ <b>Оплата подтверждена!</b>\n\n"
+                f"<b>Оплата подтверждена.</b>\n\n"
                 f"Подписка активна до <b>{expires}</b>.\n\n"
                 f"Подключи бота: Настройки → Telegram для бизнеса → Чат-боты",
             )

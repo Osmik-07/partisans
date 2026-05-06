@@ -19,9 +19,9 @@ def plans_kb(lang: str = "en", trial_available: bool = False) -> InlineKeyboardM
     b = InlineKeyboardBuilder()
     if trial_available:
         b.button(text=t("btn_trial", lang), callback_data="buy:trial")
-    b.button(text=f"⚡️ 7 {_days(lang)} — ${settings.price_week_usd}",  callback_data="buy:week")
-    b.button(text=f"🔥 30 {_days(lang)} — ${settings.price_month_usd}", callback_data="buy:month")
-    b.button(text=f"👑 1 {_year(lang)} — ${settings.price_year_usd}",   callback_data="buy:year")
+    b.button(text=f"7 {_days(lang)} — ${settings.price_week_usd:.2f}",  callback_data="buy:week")
+    b.button(text=f"30 {_days(lang)} — ${settings.price_month_usd:.2f}", callback_data="buy:month")
+    b.button(text=f"1 {_year(lang)} — ${settings.price_year_usd:.2f}",   callback_data="buy:year")
     b.button(text=t("btn_back", lang), callback_data="back:main")
     b.adjust(1)
     return b.as_markup()
@@ -29,8 +29,8 @@ def plans_kb(lang: str = "en", trial_available: bool = False) -> InlineKeyboardM
 
 def payment_method_kb(plan: str) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
-    builder.button(text="💎 Крипта (CryptoBot)", callback_data=f"pay:crypto:{plan}")
-    builder.button(text="⭐️ Telegram Stars", callback_data=f"pay:stars:{plan}")
+    builder.button(text="CryptoBot", callback_data=f"pay:crypto:{plan}")
+    builder.button(text="Telegram Stars", callback_data=f"pay:stars:{plan}")
     builder.button(text="« Назад", callback_data="sub:plans")
     builder.adjust(1)
     return builder.as_markup()
@@ -38,8 +38,8 @@ def payment_method_kb(plan: str) -> InlineKeyboardMarkup:
 
 def pay_crypto_kb(pay_url: str, payment_id: int) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
-    builder.button(text="💳 Оплатить", url=pay_url)
-    builder.button(text="✅ Я оплатил", callback_data=f"pay:check:{payment_id}")
+    builder.button(text="Оплатить", url=pay_url)
+    builder.button(text="Я оплатил", callback_data=f"pay:check:{payment_id}")
     builder.button(text="« Отмена", callback_data="sub:plans")
     builder.adjust(1)
     return builder.as_markup()
@@ -75,11 +75,11 @@ def userbot_kb(lang: str, is_active: bool, miniapp_url: str) -> InlineKeyboardMa
 
 def admin_kb() -> InlineKeyboardMarkup:
     b = InlineKeyboardBuilder()
-    b.button(text="📊 Статистика",      callback_data="admin:stats")
-    b.button(text="👥 Пользователи",    callback_data="admin:users")
-    b.button(text="📢 Рассылка",        callback_data="admin:broadcast")
-    b.button(text="🔨 Бан / разбан",    callback_data="admin:ban")
-    b.button(text="🎁 Подарить подписку", callback_data="admin:gift")
+    b.button(text="Статистика", callback_data="admin:stats")
+    b.button(text="Пользователи", callback_data="admin:users")
+    b.button(text="Рассылка", callback_data="admin:broadcast")
+    b.button(text="Бан / разбан", callback_data="admin:ban")
+    b.button(text="Подарить подписку", callback_data="admin:gift")
     b.adjust(2)
     return b.as_markup()
 

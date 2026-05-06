@@ -73,9 +73,9 @@ async def send_expiry_reminders(bot: Bot):
         try:
             await bot.send_message(
                 user_id,
-                f"⏰ <b>Подписка истекает через 24 часа</b>\n\n"
+                f"<b>Подписка истекает через 24 часа</b>\n\n"
                 f"Срок действия: до <b>{expires_str}</b>\n\n"
-                f"Продли сейчас, чтобы не потерять доступ 👇",
+                "Продли сейчас, чтобы не потерять доступ.",
                 reply_markup=_renew_kb(),
                 parse_mode="HTML",
             )
@@ -98,7 +98,7 @@ async def notify_expired_users(bot: Bot, expired: list):
         try:
             await bot.send_message(
                 user_id,
-                "😔 <b>Ваша подписка истекла</b>\n\n"
+                "<b>Ваша подписка истекла</b>\n\n"
                 "Для продолжения отслеживания сообщений продлите подписку.",
                 reply_markup=_renew_kb(),
                 parse_mode="HTML",
@@ -110,7 +110,7 @@ async def notify_expired_users(bot: Bot, expired: list):
 def _renew_kb():
     from aiogram.utils.keyboard import InlineKeyboardBuilder
     b = InlineKeyboardBuilder()
-    b.button(text="💎 Продлить подписку", callback_data="sub:plans")
+    b.button(text="Продлить подписку", callback_data="sub:plans")
     return b.as_markup()
 
 

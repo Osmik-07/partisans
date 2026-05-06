@@ -4,10 +4,10 @@
 """
 
 LANGUAGES = {
-    "ru": "🇷🇺 Русский",
-    "en": "🇬🇧 English",
-    "pt": "🇧🇷 Português",
-    "id": "🇮🇩 Indonesia",
+    "ru": "Русский",
+    "en": "English",
+    "pt": "Português",
+    "id": "Indonesia",
 }
 
 _T = {
@@ -15,41 +15,45 @@ _T = {
     "welcome": {
         "ru": (
             "🫆 <b>Partisans</b> — знай всё, что скрывают\n\n"
+            "<b>Единственный бот, который работает в фоне.</b>\n\n"
             "Бот перехватывает:\n"
-            "• 🗑 <b>Удалённые сообщения</b> — читай то, что удалили\n"
-            "• ✏️ <b>Правки сообщений</b> — сравни оригинал и изменённый текст\n"
-            "• 📸 <b>Исчезающие фото/видео</b> — сохраняются навсегда\n\n"
-            "⚠️ Для работы нужен <b>Telegram Premium</b> и подключение через "
+            "• <b>Удалённые сообщения</b> — читай то, что удалили\n"
+            "• <b>Правки сообщений</b> — сравни оригинал и изменённый текст\n"
+            "• <b>Исчезающие фото/видео</b> — сохраняются навсегда\n\n"
+            "Для работы нужен <b>Telegram Premium</b> и подключение через "
             "<b>Настройки → Telegram для бизнеса → Чат-боты</b>.\n\n"
             "Выбери действие:"
         ),
         "en": (
             "🫆 <b>Partisans</b> — know everything they hide\n\n"
+            "<b>The only bot that works in the background.</b>\n\n"
             "The bot intercepts:\n"
-            "• 🗑 <b>Deleted messages</b> — read what was deleted\n"
-            "• ✏️ <b>Edited messages</b> — compare original and edited text\n"
-            "• 📸 <b>Disappearing photos/videos</b> — saved forever\n\n"
-            "⚠️ Requires <b>Telegram Premium</b> and connection via "
+            "• <b>Deleted messages</b> — read what was deleted\n"
+            "• <b>Edited messages</b> — compare original and edited text\n"
+            "• <b>Disappearing photos/videos</b> — saved forever\n\n"
+            "Requires <b>Telegram Premium</b> and connection via "
             "<b>Settings → Telegram for Business → Chat Bots</b>.\n\n"
             "Choose an action:"
         ),
         "pt": (
             "🫆 <b>Partisans</b> — saiba tudo que escondem\n\n"
+            "<b>O único bot que funciona em segundo plano.</b>\n\n"
             "O bot intercepta:\n"
-            "• 🗑 <b>Mensagens apagadas</b> — leia o que foi apagado\n"
-            "• ✏️ <b>Mensagens editadas</b> — compare o original e o editado\n"
-            "• 📸 <b>Fotos/vídeos temporários</b> — salvos para sempre\n\n"
-            "⚠️ Requer <b>Telegram Premium</b> e conexão via "
+            "• <b>Mensagens apagadas</b> — leia o que foi apagado\n"
+            "• <b>Mensagens editadas</b> — compare o original e o editado\n"
+            "• <b>Fotos/vídeos temporários</b> — salvos para sempre\n\n"
+            "Requer <b>Telegram Premium</b> e conexão via "
             "<b>Configurações → Telegram para Empresas → Chatbots</b>.\n\n"
             "Escolha uma ação:"
         ),
         "id": (
             "🫆 <b>Partisans</b> — ketahui semua yang disembunyikan\n\n"
+            "<b>Satu-satunya bot yang bekerja di latar belakang.</b>\n\n"
             "Bot ini menangkap:\n"
-            "• 🗑 <b>Pesan yang dihapus</b> — baca apa yang dihapus\n"
-            "• ✏️ <b>Pesan yang diedit</b> — bandingkan asli dan yang diedit\n"
-            "• 📸 <b>Foto/video sementara</b> — tersimpan selamanya\n\n"
-            "⚠️ Membutuhkan <b>Telegram Premium</b> dan koneksi melalui "
+            "• <b>Pesan yang dihapus</b> — baca apa yang dihapus\n"
+            "• <b>Pesan yang diedit</b> — bandingkan asli dan yang diedit\n"
+            "• <b>Foto/video sementara</b> — tersimpan selamanya\n\n"
+            "Membutuhkan <b>Telegram Premium</b> dan koneksi melalui "
             "<b>Pengaturan → Telegram untuk Bisnis → Bot Chat</b>.\n\n"
             "Pilih tindakan:"
         ),
@@ -57,48 +61,48 @@ _T = {
 
     # ── Выбор языка ──────────────────────────────────────────────────────
     "choose_language": {
-        "ru": "🌍 Выбери язык:",
-        "en": "🌍 Choose language:",
-        "pt": "🌍 Escolha o idioma:",
-        "id": "🌍 Pilih bahasa:",
+        "ru": "Выбери язык:",
+        "en": "Choose language:",
+        "pt": "Escolha o idioma:",
+        "id": "Pilih bahasa:",
     },
     "language_set": {
-        "ru": "✅ Язык установлен: Русский",
-        "en": "✅ Language set: English",
-        "pt": "✅ Idioma definido: Português",
-        "id": "✅ Bahasa dipilih: Indonesia",
+        "ru": "Язык установлен: Русский",
+        "en": "Language set: English",
+        "pt": "Idioma definido: Português",
+        "id": "Bahasa dipilih: Indonesia",
     },
 
     # ── Меню ─────────────────────────────────────────────────────────────
     "btn_buy": {
-        "ru": "💎 Купить подписку",
-        "en": "💎 Buy subscription",
-        "pt": "💎 Comprar assinatura",
-        "id": "💎 Beli langganan",
+        "ru": "Купить подписку",
+        "en": "Buy subscription",
+        "pt": "Comprar assinatura",
+        "id": "Beli langganan",
     },
     "btn_status": {
-        "ru": "📊 Мой статус",
-        "en": "📊 My status",
-        "pt": "📊 Meu status",
-        "id": "📊 Status saya",
+        "ru": "Мой статус",
+        "en": "My status",
+        "pt": "Meu status",
+        "id": "Status saya",
     },
     "btn_connect": {
-        "ru": "❓ Как подключить",
-        "en": "❓ How to connect",
-        "pt": "❓ Como conectar",
-        "id": "❓ Cara menghubungkan",
+        "ru": "Как подключить",
+        "en": "How to connect",
+        "pt": "Como conectar",
+        "id": "Cara menghubungkan",
     },
     "btn_language": {
-        "ru": "🌍 Язык",
-        "en": "🌍 Language",
-        "pt": "🌍 Idioma",
-        "id": "🌍 Bahasa",
+        "ru": "Язык",
+        "en": "Language",
+        "pt": "Idioma",
+        "id": "Bahasa",
     },
     "btn_userbot": {
-        "ru": "📸 Подключить перехват фото",
-        "en": "📸 Connect photo intercept",
-        "pt": "📸 Conectar interceptação de fotos",
-        "id": "📸 Hubungkan intersepsi foto",
+        "ru": "Подключить перехват фото",
+        "en": "Connect photo intercept",
+        "pt": "Conectar interceptação de fotos",
+        "id": "Hubungkan intersepsi foto",
     },
     "btn_back": {
         "ru": "« Назад",
@@ -116,7 +120,7 @@ _T = {
     # ── Подключение ───────────────────────────────────────────────────────
     "how_to_connect": {
         "ru": (
-            "📌 <b>Как подключить бота:</b>\n\n"
+            "<b>Как подключить бота:</b>\n\n"
             "1. Убедись, что у тебя активен <b>Telegram Premium</b>\n"
             "2. Открой <b>Настройки</b> в Telegram\n"
             "3. Перейди в <b>Telegram для бизнеса</b>\n"
@@ -126,7 +130,7 @@ _T = {
             "После подключения бот начнёт отслеживать сообщения в реальном времени."
         ),
         "en": (
-            "📌 <b>How to connect the bot:</b>\n\n"
+            "<b>How to connect the bot:</b>\n\n"
             "1. Make sure you have active <b>Telegram Premium</b>\n"
             "2. Open <b>Settings</b> in Telegram\n"
             "3. Go to <b>Telegram for Business</b>\n"
@@ -136,7 +140,7 @@ _T = {
             "After connecting, the bot will start tracking messages in real time."
         ),
         "pt": (
-            "📌 <b>Como conectar o bot:</b>\n\n"
+            "<b>Como conectar o bot:</b>\n\n"
             "1. Certifique-se de ter o <b>Telegram Premium</b> ativo\n"
             "2. Abra as <b>Configurações</b> no Telegram\n"
             "3. Vá em <b>Telegram para Empresas</b>\n"
@@ -146,7 +150,7 @@ _T = {
             "Após conectar, o bot começará a rastrear mensagens em tempo real."
         ),
         "id": (
-            "📌 <b>Cara menghubungkan bot:</b>\n\n"
+            "<b>Cara menghubungkan bot:</b>\n\n"
             "1. Pastikan Anda memiliki <b>Telegram Premium</b> aktif\n"
             "2. Buka <b>Pengaturan</b> di Telegram\n"
             "3. Pergi ke <b>Telegram untuk Bisnis</b>\n"
@@ -160,35 +164,35 @@ _T = {
     # ── Статус подписки ───────────────────────────────────────────────────
     "sub_active": {
         "ru": (
-            "✅ <b>Подписка активна</b>\n\n"
+            "<b>Подписка активна</b>\n\n"
             "Тариф: <b>{plan}</b>\n"
             "Действует до: <b>{expires} UTC</b>\n\n"
             "Бизнес-бот: {connected}"
         ),
         "en": (
-            "✅ <b>Subscription active</b>\n\n"
+            "<b>Subscription active</b>\n\n"
             "Plan: <b>{plan}</b>\n"
             "Valid until: <b>{expires} UTC</b>\n\n"
             "Business bot: {connected}"
         ),
         "pt": (
-            "✅ <b>Assinatura ativa</b>\n\n"
+            "<b>Assinatura ativa</b>\n\n"
             "Plano: <b>{plan}</b>\n"
             "Válido até: <b>{expires} UTC</b>\n\n"
             "Bot de negócios: {connected}"
         ),
         "id": (
-            "✅ <b>Langganan aktif</b>\n\n"
+            "<b>Langganan aktif</b>\n\n"
             "Paket: <b>{plan}</b>\n"
             "Berlaku hingga: <b>{expires} UTC</b>\n\n"
             "Bot bisnis: {connected}"
         ),
     },
     "sub_inactive": {
-        "ru": "❌ <b>Подписка не активна</b>\n\nКупи подписку, чтобы начать отслеживание.",
-        "en": "❌ <b>Subscription inactive</b>\n\nBuy a subscription to start tracking.",
-        "pt": "❌ <b>Assinatura inativa</b>\n\nCompre uma assinatura para começar a rastrear.",
-        "id": "❌ <b>Langganan tidak aktif</b>\n\nBeli langganan untuk mulai melacak.",
+        "ru": "<b>Подписка не активна</b>\n\nКупи подписку, чтобы начать отслеживание.",
+        "en": "<b>Subscription inactive</b>\n\nBuy a subscription to start tracking.",
+        "pt": "<b>Assinatura inativa</b>\n\nCompre uma assinatura para começar a rastrear.",
+        "id": "<b>Langganan tidak aktif</b>\n\nBeli langganan untuk mulai melacak.",
     },
     "sub_required_alert": {
         "ru": "Нужна активная подписка.",
@@ -203,49 +207,49 @@ _T = {
         "id": "Masa percobaan sudah digunakan.",
     },
     "connected_yes": {
-        "ru": "🟢 подключён",
-        "en": "🟢 connected",
-        "pt": "🟢 conectado",
-        "id": "🟢 terhubung",
+        "ru": "подключён",
+        "en": "connected",
+        "pt": "conectado",
+        "id": "terhubung",
     },
     "connected_no": {
-        "ru": "🔴 не подключён",
-        "en": "🔴 not connected",
-        "pt": "🔴 não conectado",
-        "id": "🔴 tidak terhubung",
+        "ru": "не подключён",
+        "en": "not connected",
+        "pt": "não conectado",
+        "id": "tidak terhubung",
     },
 
     # ── Планы ─────────────────────────────────────────────────────────────
     "plans_title": {
-        "ru": "💎 <b>Выбери тариф:</b>",
-        "en": "💎 <b>Choose a plan:</b>",
-        "pt": "💎 <b>Escolha um plano:</b>",
-        "id": "💎 <b>Pilih paket:</b>",
+        "ru": "<b>Выбери тариф:</b>",
+        "en": "<b>Choose a plan:</b>",
+        "pt": "<b>Escolha um plano:</b>",
+        "id": "<b>Pilih paket:</b>",
     },
     "btn_trial": {
-        "ru": "🎁 Пробный период — БЕСПЛАТНО",
-        "en": "🎁 Trial period — FREE",
-        "pt": "🎁 Período de teste — GRÁTIS",
-        "id": "🎁 Periode percobaan — GRATIS",
+        "ru": "Пробный период — бесплатно",
+        "en": "Trial period — free",
+        "pt": "Período de teste — grátis",
+        "id": "Periode percobaan — gratis",
     },
     "trial_activated": {
         "ru": (
-            "🎁 <b>Пробный период активирован!</b>\n\n"
+            "<b>Пробный период активирован.</b>\n\n"
             "У тебя есть <b>{days} дня</b> для проверки бота.\n\n"
             "Не забудь подключить бота через Telegram для бизнеса."
         ),
         "en": (
-            "🎁 <b>Trial period activated!</b>\n\n"
+            "<b>Trial period activated.</b>\n\n"
             "You have <b>{days} days</b> to test the bot.\n\n"
             "Don't forget to connect the bot via Telegram for Business."
         ),
         "pt": (
-            "🎁 <b>Período de teste ativado!</b>\n\n"
+            "<b>Período de teste ativado.</b>\n\n"
             "Você tem <b>{days} dias</b> para testar o bot.\n\n"
             "Não se esqueça de conectar o bot via Telegram para Empresas."
         ),
         "id": (
-            "🎁 <b>Periode percobaan diaktifkan!</b>\n\n"
+            "<b>Periode percobaan diaktifkan.</b>\n\n"
             "Anda punya <b>{days} hari</b> untuk mencoba bot.\n\n"
             "Jangan lupa menghubungkan bot melalui Telegram untuk Bisnis."
         ),
@@ -254,73 +258,85 @@ _T = {
     # ── Userbot ────────────────────────────────────────────────────────────
     "userbot_title": {
         "ru": (
-            "📸 <b>Перехват исчезающих фото и видео</b>\n\n"
+            "<b>Перехват исчезающих фото и видео</b>\n\n"
             "Для перехвата одноразовых медиа нужно авторизовать "
             "твой аккаунт Telegram.\n\n"
             "Нажми кнопку ниже — откроется безопасная форма авторизации."
         ),
         "en": (
-            "📸 <b>Intercept disappearing photos and videos</b>\n\n"
+            "<b>Intercept disappearing photos and videos</b>\n\n"
             "To intercept one-time media, you need to authorize "
             "your Telegram account.\n\n"
             "Click the button below — a secure authorization form will open."
         ),
         "pt": (
-            "📸 <b>Interceptar fotos e vídeos temporários</b>\n\n"
+            "<b>Interceptar fotos e vídeos temporários</b>\n\n"
             "Para interceptar mídia de uso único, você precisa autorizar "
             "sua conta do Telegram.\n\n"
             "Clique no botão abaixo — um formulário de autorização seguro será aberto."
         ),
         "id": (
-            "📸 <b>Intersepsi foto dan video sementara</b>\n\n"
+            "<b>Intersepsi foto dan video sementara</b>\n\n"
             "Untuk menangkap media sekali-pakai, Anda perlu mengotorisasi "
             "akun Telegram Anda.\n\n"
             "Klik tombol di bawah — formulir otorisasi yang aman akan terbuka."
         ),
     },
     "btn_open_miniapp": {
-        "ru": "📱 Авторизоваться",
-        "en": "📱 Authorize",
-        "pt": "📱 Autorizar",
-        "id": "📱 Otorisasi",
+        "ru": "Авторизоваться",
+        "en": "Authorize",
+        "pt": "Autorizar",
+        "id": "Otorisasi",
     },
     "userbot_active": {
         "ru": (
-            "✅ <b>Перехват активен</b>\n\n"
+            "<b>Перехват активен</b>\n\n"
             "Одноразовые фото и видео будут приходить тебе как файлы."
         ),
         "en": (
-            "✅ <b>Interception active</b>\n\n"
+            "<b>Interception active</b>\n\n"
             "One-time photos and videos will be sent to you as files."
         ),
         "pt": (
-            "✅ <b>Interceptação ativa</b>\n\n"
+            "<b>Interceptação ativa</b>\n\n"
             "Fotos e vídeos temporários serão enviados a você como arquivos."
         ),
         "id": (
-            "✅ <b>Intersepsi aktif</b>\n\n"
+            "<b>Intersepsi aktif</b>\n\n"
             "Foto dan video sekali-pakai akan dikirim kepada Anda sebagai file."
         ),
     },
     "btn_disconnect_userbot": {
-        "ru": "🔴 Отключить перехват",
-        "en": "🔴 Disconnect interception",
-        "pt": "🔴 Desconectar interceptação",
-        "id": "🔴 Putuskan intersepsi",
+        "ru": "Отключить перехват",
+        "en": "Disconnect interception",
+        "pt": "Desconectar interceptação",
+        "id": "Putuskan intersepsi",
     },
 
     # ── Бизнес-события ────────────────────────────────────────────────────
-    "deleted_header": {
-        "ru": "🗑 <b>{name} удалил(а) сообщение</b>",
-        "en": "🗑 <b>{name} deleted a message</b>",
-        "pt": "🗑 <b>{name} apagou uma mensagem</b>",
-        "id": "🗑 <b>{name} menghapus pesan</b>",
+    "deleted_title": {
+        "ru": "Удалённое сообщение",
+        "en": "Deleted message",
+        "pt": "Mensagem apagada",
+        "id": "Pesan dihapus",
     },
-    "edited_header": {
-        "ru": "✏️ <b>{name} изменил(а) сообщение</b>",
-        "en": "✏️ <b>{name} edited a message</b>",
-        "pt": "✏️ <b>{name} editou uma mensagem</b>",
-        "id": "✏️ <b>{name} mengedit pesan</b>",
+    "edited_title": {
+        "ru": "Изменённое сообщение",
+        "en": "Edited message",
+        "pt": "Mensagem editada",
+        "id": "Pesan diedit",
+    },
+    "vanishing_title": {
+        "ru": "Одноразовое медиа",
+        "en": "One-time media",
+        "pt": "Mídia temporária",
+        "id": "Media sekali-pakai",
+    },
+    "sender_label": {
+        "ru": "Отправитель",
+        "en": "Sender",
+        "pt": "Remetente",
+        "id": "Pengirim",
     },
     "was": {
         "ru": "Было:",
@@ -340,11 +356,71 @@ _T = {
         "pt": "(não salvo)",
         "id": "(tidak tersimpan)",
     },
-    "vanishing_header": {
-        "ru": "📸 <b>Одноразовое медиа</b> от <b>{name}</b>\n\n@partisansfromNJbot",
-        "en": "📸 <b>One-time media</b> from <b>{name}</b>\n\n@partisansfromNJbot",
-        "pt": "📸 <b>Mídia temporária</b> de <b>{name}</b>\n\n@partisansfromNJbot",
-        "id": "📸 <b>Media sekali-pakai</b> dari <b>{name}</b>\n\n@partisansfromNJbot",
+    "media_photo": {
+        "ru": "[Фото]",
+        "en": "[Photo]",
+        "pt": "[Foto]",
+        "id": "[Foto]",
+    },
+    "media_video": {
+        "ru": "[Видео]",
+        "en": "[Video]",
+        "pt": "[Vídeo]",
+        "id": "[Video]",
+    },
+    "media_animation": {
+        "ru": "[GIF]",
+        "en": "[GIF]",
+        "pt": "[GIF]",
+        "id": "[GIF]",
+    },
+    "media_audio": {
+        "ru": "[Аудио]",
+        "en": "[Audio]",
+        "pt": "[Áudio]",
+        "id": "[Audio]",
+    },
+    "media_voice": {
+        "ru": "[Голосовое]",
+        "en": "[Voice message]",
+        "pt": "[Mensagem de voz]",
+        "id": "[Pesan suara]",
+    },
+    "media_video_note": {
+        "ru": "[Видеосообщение]",
+        "en": "[Video note]",
+        "pt": "[Vídeo circular]",
+        "id": "[Pesan video]",
+    },
+    "media_sticker": {
+        "ru": "[Стикер]",
+        "en": "[Sticker]",
+        "pt": "[Sticker]",
+        "id": "[Stiker]",
+    },
+    "media_document": {
+        "ru": "[Документ]",
+        "en": "[Document]",
+        "pt": "[Documento]",
+        "id": "[Dokumen]",
+    },
+    "media_unknown": {
+        "ru": "[Медиа без текста]",
+        "en": "[Media without text]",
+        "pt": "[Mídia sem texto]",
+        "id": "[Media tanpa teks]",
+    },
+    "command_start_desc": {
+        "ru": "Главное меню",
+        "en": "Open main menu",
+        "pt": "Abrir menu principal",
+        "id": "Buka menu utama",
+    },
+    "command_premium_desc": {
+        "ru": "Купить подписку",
+        "en": "Buy subscription",
+        "pt": "Comprar assinatura",
+        "id": "Beli langganan",
     },
 }
 

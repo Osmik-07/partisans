@@ -6,12 +6,13 @@ from aiogram.types import BusinessMessagesDeleted, Message, BusinessConnection
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
+from bot.i18n import t
 from db.base import AsyncSessionLocal
 from db.models import User, Subscription, SavedMessage, MessageType
 
 router = Router()
 logger = logging.getLogger(__name__)
-BOT_PROMO = "@partisansfromNJbot"
+BOT_PROMO = "<code>@partisansfromNJbot</code>"
 
 
 def _escape(text: str) -> str:
@@ -26,7 +27,17 @@ def _with_promo(text: str) -> str:
     return f"{text}\n\n{BOT_PROMO}"
 
 
-# 🔥 ВАЖНО: расширили поддержку медиа
+def _format_notice(title: str, sender_name: str, body: list[str], lang: str) -> str:
+    lines = [
+        f"<b>{title}</b>",
+        f"{t('sender_label', lang)}:",
+        f"<blockquote>{_escape(sender_name)}</blockquote>",
+    ]
+    lines.extend(body)
+    return _with_promo("\n\n".join(lines))
+
+
+# Расширенная поддержка медиа
 def _extract_media(message: Message):
     if message.photo:
         return message.photo[-1].file_id, "photo"
@@ -47,35 +58,33 @@ def _extract_media(message: Message):
     return None, None
 
 
-def _format_deleted_from_cache(snapshot: SavedMessage) -> str:
+def _format_deleted_from_cache(snapshot: SavedMessage, lang: str) -> str:
     sender_name = snapshot.from_first_name or "Неизвестный"
     if snapshot.from_username:
         sender_name = f"{sender_name} (@{snapshot.from_username})"
 
-    lines = [f"🗑 <b>{_escape(sender_name)} удалил(а) сообщение</b>\n"]
-
     if snapshot.original_text:
-        lines.append(f"<blockquote>{_escape(snapshot.original_text)}</blockquote>")
+        body = [f"<blockquote>{_escape(snapshot.original_text)}</blockquote>"]
     elif snapshot.media_type == "photo":
-        lines.append("📷 <i>[Фото]</i>")
+        body = [f"<blockquote>{t('media_photo', lang)}</blockquote>"]
     elif snapshot.media_type == "video":
-        lines.append("🎥 <i>[Видео]</i>")
+        body = [f"<blockquote>{t('media_video', lang)}</blockquote>"]
     elif snapshot.media_type == "animation":
-        lines.append("🎞 <i>[GIF]</i>")
+        body = [f"<blockquote>{t('media_animation', lang)}</blockquote>"]
     elif snapshot.media_type == "audio":
-        lines.append("🎧 <i>[Аудио]</i>")
+        body = [f"<blockquote>{t('media_audio', lang)}</blockquote>"]
     elif snapshot.media_type == "voice":
-        lines.append("🎤 <i>[Голосовое]</i>")
+        body = [f"<blockquote>{t('media_voice', lang)}</blockquote>"]
     elif snapshot.media_type == "video_note":
-        lines.append("⭕️ <i>[Видеосообщение]</i>")
+        body = [f"<blockquote>{t('media_video_note', lang)}</blockquote>"]
     elif snapshot.media_type == "sticker":
-        lines.append("🎭 <i>[Стикер]</i>")
+        body = [f"<blockquote>{t('media_sticker', lang)}</blockquote>"]
     elif snapshot.media_type == "document":
-        lines.append("📎 <i>[Документ]</i>")
+        body = [f"<blockquote>{t('media_document', lang)}</blockquote>"]
     else:
-        lines.append("<i>[Медиа без текста]</i>")
+        body = [f"<blockquote>{t('media_unknown', lang)}</blockquote>"]
 
-    return _with_promo("\n".join(lines))
+    return _format_notice(t("deleted_title", lang), sender_name, body, lang)
 
 
 async def _get_owner_if_active(business_connection_id: str) -> User | None:
@@ -165,7 +174,7 @@ async def on_business_message(message: Message):
     sender = message.from_user
     text = message.text or message.caption or ""
 
-    # 🔥 DEBUG (очень важно сейчас)
+    # DEBUG: входящие бизнес-сообщения
     logger.info(
         "MSG id=%s photo=%s video=%s animation=%s audio=%s doc=%s voice=%s video_note=%s spoiler=%s",
         message.message_id,
@@ -206,6 +215,7 @@ async def on_deleted_messages(event: BusinessMessagesDeleted, bot: Bot):
     owner = await _get_owner_if_active(event.business_connection_id)
     if not owner:
         return
+    lang = owner.lang if owner.lang else "en"
 
     async with AsyncSessionLocal() as session:
         for message_id in event.message_ids:
@@ -213,7 +223,7 @@ async def on_deleted_messages(event: BusinessMessagesDeleted, bot: Bot):
             if not snapshot:
                 continue
 
-            text = _format_deleted_from_cache(snapshot)
+            text = _format_deleted_from_cache(snapshot, lang)
 
             if snapshot.media_file_id:
                 await _send_media(
@@ -235,18 +245,26 @@ async def on_edited_message(message: Message, bot: Bot):
     owner = await _get_owner_if_active(message.business_connection_id)
     if not owner:
         return
+    lang = owner.lang if owner.lang else "en"
 
     new_text = message.text or message.caption or ""
     sender = message.from_user
+    sender_name = sender.first_name if sender and sender.first_name else "Unknown"
+    if sender and sender.username:
+        sender_name = f"{sender_name} (@{sender.username})"
 
     async with AsyncSessionLocal() as session:
         snapshot = await _get_snapshot(session, owner.id, message.message_id)
         old_text = snapshot.original_text if snapshot else None
 
-    notify = _with_promo(
-        f"✏️ <b>{_escape(sender.first_name)} изменил(а) сообщение</b>\n\n"
-        f"Было:\n{_escape(old_text or 'не сохранено')}\n\n"
-        f"Стало:\n{_escape(new_text)}"
+    notify = _format_notice(
+        t("edited_title", lang),
+        sender_name,
+        [
+            f"{t('was', lang)}\n<blockquote>{_escape(old_text or t('not_saved', lang))}</blockquote>",
+            f"{t('became', lang)}\n<blockquote>{_escape(new_text)}</blockquote>",
+        ],
+        lang,
     )
 
     await bot.send_message(owner.id, notify, parse_mode="HTML")

@@ -27,7 +27,7 @@ class ThrottlingMiddleware(BaseMiddleware):
         key = f"throttle:{user_id}"
         result = await self.redis.set(key, "1", ex=RATE_LIMIT, nx=True)
         if not result:
-            await event.answer("⏳ Не так быстро! Подожди секунду.")
+            await event.answer("Не так быстро. Подожди секунду.")
             return
 
         return await handler(event, data)

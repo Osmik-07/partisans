@@ -7,7 +7,7 @@ from bot.keyboards.main import plans_kb
 from bot.services.subscription import get_active_subscription, get_user
 
 # Команды/колбэки, доступные без подписки
-FREE_COMMANDS = {"/start", "/help", "/userbot"}
+FREE_COMMANDS = {"/start", "/help", "/userbot", "/premium"}
 FREE_CALLBACKS = {"sub:", "buy:", "pay:", "back:", "help:", "userbot:disconnect"}
 
 
@@ -53,9 +53,9 @@ class SubscriptionMiddleware(BaseMiddleware):
 
         if user.is_banned:
             if isinstance(event, Message):
-                await event.answer("⛔️ Ваш аккаунт заблокирован.")
+                await event.answer("Ваш аккаунт заблокирован.")
             elif isinstance(event, CallbackQuery):
-                await event.answer("⛔️ Ваш аккаунт заблокирован.", show_alert=True)
+                await event.answer("Ваш аккаунт заблокирован.", show_alert=True)
             return
 
         active_sub = await get_active_subscription(session, user_id) if session else None

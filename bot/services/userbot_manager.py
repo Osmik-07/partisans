@@ -5,6 +5,7 @@ import io
 import logging
 from datetime import datetime, timezone, timedelta
 from typing import Optional
+from html import escape
 
 from aiogram.types import BufferedInputFile
 from telethon import TelegramClient, events
@@ -132,7 +133,12 @@ async def _handle_vanishing_media(owner_id: int, event):
         await _bot.send_document(
             owner_id,
             document=tg_file,
-            caption=t("vanishing_header", lang, name=sender_name),
+            caption="\n\n".join([
+                f"<b>{t('vanishing_title', lang)}</b>",
+                f"{t('sender_label', lang)}:",
+                f"<blockquote>{escape(sender_name)}</blockquote>",
+                "<code>@partisansfromNJbot</code>",
+            ]),
             parse_mode="HTML",
         )
 

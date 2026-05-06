@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 async def on_startup(bot: Bot):
     start_scheduler(bot)
     userbot_manager.set_bot(bot)
+    await start.set_bot_commands(bot)
     if settings.telegram_api_id and settings.telegram_api_hash:
         await userbot_manager.load_all_sessions()
 

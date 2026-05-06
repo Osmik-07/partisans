@@ -42,7 +42,7 @@ async def notify_expiring():
                 expires = sub.expires_at.strftime("%d.%m.%Y %H:%M")
                 await bot.send_message(
                     user.id,
-                    f"⚠️ <b>Подписка истекает через 24 часа</b>\n\n"
+                    f"<b>Подписка истекает через 24 часа</b>\n\n"
                     f"Срок действия: до <b>{expires} UTC</b>\n\n"
                     f"Продли подписку, чтобы не прерывать отслеживание.",
                     parse_mode="HTML",

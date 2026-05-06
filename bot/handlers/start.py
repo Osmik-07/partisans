@@ -1,20 +1,59 @@
+from pathlib import Path
+
 from aiogram import Router, F
 from aiogram.filters import CommandStart
-from aiogram.types import Message, CallbackQuery
-from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.types import Message, CallbackQuery, FSInputFile, BotCommand
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.services.subscription import get_or_create_user, get_user
-from bot.keyboards.main import main_menu_kb, plans_kb, back_main_kb, language_kb
+from bot.keyboards.main import main_menu_kb, back_main_kb, language_kb
 from bot.i18n import t, get_lang, LANGUAGES
 
 router = Router()
+START_VIDEO_PATH = Path(__file__).resolve().parents[2] / "media" / "start.mp4"
 
 
 def _get_user_lang(user_db) -> str:
     if user_db and user_db.lang:
         return user_db.lang
     return "en"
+
+
+async def set_bot_commands(bot) -> None:
+    command_locales = {
+        "ru": [
+            BotCommand(command="start", description=t("command_start_desc", "ru")),
+            BotCommand(command="premium", description=t("command_premium_desc", "ru")),
+        ],
+        "en": [
+            BotCommand(command="start", description=t("command_start_desc", "en")),
+            BotCommand(command="premium", description=t("command_premium_desc", "en")),
+        ],
+        "pt": [
+            BotCommand(command="start", description=t("command_start_desc", "pt")),
+            BotCommand(command="premium", description=t("command_premium_desc", "pt")),
+        ],
+        "id": [
+            BotCommand(command="start", description=t("command_start_desc", "id")),
+            BotCommand(command="premium", description=t("command_premium_desc", "id")),
+        ],
+    }
+
+    for lang_code, commands in command_locales.items():
+        await bot.set_my_commands(commands, language_code=lang_code)
+
+    await bot.set_my_commands(command_locales["en"])
+
+
+async def send_welcome(message: Message, lang: str) -> None:
+    if START_VIDEO_PATH.exists():
+        await message.answer_video(FSInputFile(START_VIDEO_PATH))
+
+    await message.answer(
+        t("welcome", lang),
+        reply_markup=main_menu_kb(lang),
+        parse_mode="HTML",
+    )
 
 
 @router.message(CommandStart())
@@ -29,11 +68,7 @@ async def cmd_start(message: Message, session: AsyncSession):
             await session.commit()
 
     lang = _get_user_lang(user)
-    await message.answer(
-        t("welcome", lang),
-        reply_markup=main_menu_kb(lang),
-        parse_mode="HTML",
-    )
+    await send_welcome(message, lang)
 
 
 @router.callback_query(F.data == "back:main")

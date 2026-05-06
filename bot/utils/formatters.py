@@ -14,23 +14,23 @@ def format_deleted_notify(msg: Message, sender: User | None) -> str:
     sender_link = format_user_link(sender)
     text = msg.text or msg.caption or ""
 
-    lines = [f"🗑 <b>{sender_link} удалил(а) сообщение</b>\n"]
+    lines = [f"<b>{sender_link} удалил(а) сообщение</b>\n"]
 
     if text:
         lines.append(f"<blockquote>{_escape(text)}</blockquote>")
     elif msg.photo:
-        lines.append("📷 <i>[Фото]</i>")
+        lines.append("<i>[Фото]</i>")
     elif msg.video:
-        lines.append("🎥 <i>[Видео]</i>")
+        lines.append("<i>[Видео]</i>")
     elif msg.voice:
-        lines.append("🎤 <i>[Голосовое]</i>")
+        lines.append("<i>[Голосовое]</i>")
     elif msg.video_note:
-        lines.append("⭕️ <i>[Видеосообщение]</i>")
+        lines.append("<i>[Видеосообщение]</i>")
     elif msg.sticker:
-        lines.append(f"🎭 <i>[Стикер: {msg.sticker.emoji or ''}]</i>")
+        lines.append(f"<i>[Стикер: {msg.sticker.emoji or ''}]</i>")
     elif msg.document:
         name = msg.document.file_name or "файл"
-        lines.append(f"📎 <i>[Документ: {name}]</i>")
+        lines.append(f"<i>[Документ: {name}]</i>")
     else:
         lines.append("<i>[Медиа без текста]</i>")
 
@@ -44,7 +44,7 @@ def format_edited_notify(
     new_text: str,
 ) -> str:
     sender_link = format_user_link(sender)
-    lines = [f"✏️ <b>{sender_link} отредактировал(а) сообщение</b>\n"]
+    lines = [f"<b>{sender_link} отредактировал(а) сообщение</b>\n"]
 
     if old_text:
         lines.append(f"<b>Было:</b>\n<blockquote>{_escape(old_text)}</blockquote>")

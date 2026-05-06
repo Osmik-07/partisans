@@ -1,10 +1,11 @@
 from aiogram import Router, F
+from aiogram.filters import Command
 from aiogram.types import CallbackQuery, LabeledPrice, PreCheckoutQuery, Message
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.config import settings
 from bot.i18n import t
-from bot.keyboards.main import plans_kb, pay_crypto_kb, back_main_kb
+from bot.keyboards.main import plans_kb, pay_crypto_kb, back_main_kb, payment_method_kb
 from bot.services import subscription as sub_svc
 from bot.services import cryptobot as crypto_svc
 from db.models import SubscriptionPlan, PaymentMethod, PaymentStatus
@@ -28,6 +29,22 @@ PLAN_LABELS = {
 
 def _lang(user) -> str:
     return user.lang if user and user.lang else "en"
+
+
+async def _send_plans_message(message: Message, session: AsyncSession):
+    user = await sub_svc.get_user(session, message.from_user.id)
+    trial_ok = not user.trial_used if user else True
+    lang = _lang(user)
+    await message.answer(
+        t("plans_title", lang),
+        reply_markup=plans_kb(lang, trial_available=trial_ok),
+        parse_mode="HTML",
+    )
+
+
+@router.message(Command("premium"))
+async def cmd_premium(message: Message, session: AsyncSession):
+    await _send_plans_message(message, session)
 
 
 # ── Показать планы ──────────────────────────────────────────────────
@@ -75,17 +92,9 @@ async def cb_buy_plan(call: CallbackQuery):
 
     label = PLAN_LABELS.get(plan_key, plan_key)
 
-    from aiogram.utils.keyboard import InlineKeyboardBuilder
-
-    kb = InlineKeyboardBuilder()
-    kb.button(text="💎 Крипта (CryptoBot)", callback_data=f"pay:crypto:{plan_key}")
-    kb.button(text="⭐️ Telegram Stars", callback_data=f"pay:stars:{plan_key}")
-    kb.button(text="« Назад", callback_data="sub:plans")
-    kb.adjust(1)
-
     await call.message.edit_text(
-        f"💳 <b>Оплата тарифа «{label}»</b>\n\nВыбери способ оплаты:",
-        reply_markup=kb.as_markup(),
+        f"<b>Оплата тарифа «{label}»</b>\n\nВыбери способ оплаты:",
+        reply_markup=payment_method_kb(plan_key),
         parse_mode="HTML",
     )
     await call.answer()
@@ -130,7 +139,7 @@ async def cb_pay_crypto(call: CallbackQuery, session: AsyncSession):
     await session.commit()
 
     await call.message.edit_text(
-        f"💎 <b>Оплата через CryptoBot</b>\n\n"
+        f"<b>Оплата через CryptoBot</b>\n\n"
         f"Тариф: <b>{PLAN_LABELS[plan_key]}</b>\n"
         f"Сумма: <b>${amount}</b>\n\n"
         f"Нажми «Оплатить», затем вернись и нажми «Я оплатил».",
@@ -165,7 +174,7 @@ async def cb_pay_check(call: CallbackQuery, session: AsyncSession):
         sub, _ = await sub_svc.confirm_payment(session, payment.id)
         expires = sub.expires_at.strftime("%d.%m.%Y")
         await call.message.edit_text(
-            f"✅ <b>Оплата уже подтверждена.</b>\n\n"
+            f"<b>Оплата уже подтверждена.</b>\n\n"
             f"Подписка активна до <b>{expires}</b>.",
             reply_markup=back_main_kb(),
             parse_mode="HTML",
@@ -197,13 +206,13 @@ async def cb_pay_check(call: CallbackQuery, session: AsyncSession):
             sub, _ = await sub_svc.confirm_payment(session, payment.id)
             expires = sub.expires_at.strftime("%d.%m.%Y")
             await call.message.edit_text(
-                f"✅ <b>Оплата подтверждена!</b>\n\n"
+                f"<b>Оплата подтверждена.</b>\n\n"
                 f"Подписка активна до <b>{expires}</b>.\n\n"
                 f"Подключи бота: Настройки → Telegram для бизнеса → Чат-боты",
                 reply_markup=back_main_kb(),
                 parse_mode="HTML",
             )
-            await call.answer("Оплата подтверждена! ✅")
+            await call.answer("Оплата подтверждена.")
             return
 
     await call.answer("Платёж ещё не найден. Попробуй через минуту.", show_alert=True)
@@ -259,7 +268,7 @@ async def successful_stars_payment(message: Message, session: AsyncSession):
         sub, _ = await sub_svc.confirm_payment(session, payment.id)
         expires = sub.expires_at.strftime("%d.%m.%Y")
         await message.answer(
-            f"⭐️ <b>Оплата звёздами подтверждена!</b>\n\n"
+            f"<b>Оплата звёздами подтверждена.</b>\n\n"
             f"Подписка активна до <b>{expires}</b>.\n\n"
             f"Подключи бота: Настройки → Telegram для бизнеса → Чат-боты",
             reply_markup=back_main_kb(),
