@@ -1,6 +1,7 @@
 """
 Менеджер Telethon клиентов.
 """
+import asyncio
 import io
 import logging
 from datetime import datetime, timezone, timedelta
@@ -21,6 +22,8 @@ logger = logging.getLogger(__name__)
 
 _clients: dict[int, TelegramClient] = {}
 _bot = None
+_watchdog_task: asyncio.Task | None = None
+WATCHDOG_INTERVAL = 300
 
 
 def set_bot(bot):
@@ -33,6 +36,13 @@ def get_client(user_id: int) -> Optional[TelegramClient]:
 
 
 async def create_client_from_session(user_id: int, session_string: str) -> TelegramClient:
+    existing = _clients.get(user_id)
+    if existing:
+        try:
+            await existing.disconnect()
+        except Exception:
+            pass
+
     decrypted_session_string = decrypt_session_string(session_string)
     client = TelegramClient(
         StringSession(decrypted_session_string),
@@ -40,6 +50,10 @@ async def create_client_from_session(user_id: int, session_string: str) -> Teleg
         api_hash=settings.telegram_api_hash,
     )
     await client.connect()
+    if not await client.is_user_authorized():
+        await client.disconnect()
+        raise RuntimeError("Userbot session is not authorized anymore")
+
     _register_handlers(client, user_id)
     _clients[user_id] = client
     logger.info(f"Userbot started for user {user_id}")
@@ -75,6 +89,50 @@ async def load_all_sessions():
             logger.error(f"Failed to load session for user {s.user_id}: {e}")
 
     logger.info(f"Loaded {len(sessions)} userbot sessions")
+
+
+async def ensure_clients_alive():
+    async with AsyncSessionLocal() as session:
+        from sqlalchemy import select
+        from db.models import UserbotSession
+
+        result = await session.execute(
+            select(UserbotSession).where(
+                UserbotSession.is_active == True,
+                UserbotSession.session_string.isnot(None),
+            )
+        )
+        sessions = result.scalars().all()
+
+    for record in sessions:
+        client = _clients.get(record.user_id)
+        if client and client.is_connected():
+            continue
+
+        logger.warning(
+            "Userbot client for user %s is missing or disconnected. Recreating session.",
+            record.user_id,
+        )
+        try:
+            await create_client_from_session(record.user_id, record.session_string)
+        except Exception as e:
+            logger.error(f"Failed to restore session for user {record.user_id}: {e}")
+
+
+async def _watchdog_loop():
+    while True:
+        try:
+            await ensure_clients_alive()
+        except Exception as e:
+            logger.error(f"Userbot watchdog error: {e}", exc_info=True)
+        await asyncio.sleep(WATCHDOG_INTERVAL)
+
+
+def start_watchdog():
+    global _watchdog_task
+    if _watchdog_task and not _watchdog_task.done():
+        return
+    _watchdog_task = asyncio.create_task(_watchdog_loop())
 
 
 def _register_handlers(client: TelegramClient, owner_id: int):

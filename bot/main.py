@@ -29,6 +29,7 @@ async def on_startup(bot: Bot):
     await start.set_bot_commands(bot)
     if settings.telegram_api_id and settings.telegram_api_hash:
         await userbot_manager.load_all_sessions()
+        userbot_manager.start_watchdog()
 
     if settings.use_webhook:
         await bot.set_webhook(
