@@ -6,7 +6,7 @@ from aiogram.types import Message, CallbackQuery, FSInputFile, BotCommand
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.services.subscription import get_or_create_user, get_user
-from bot.keyboards.main import main_menu_kb, back_main_kb, language_kb
+from bot.keyboards.main import main_menu_kb, plans_kb, back_main_kb, language_kb
 from bot.i18n import t, get_lang, LANGUAGES
 
 router = Router()
