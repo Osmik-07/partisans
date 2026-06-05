@@ -17,6 +17,7 @@ def enum_values(enum_cls: type[PyEnum]) -> list[str]:
 
 
 class SubscriptionPlan(str, PyEnum):
+    BONUS = "bonus"
     TRIAL = "trial"
     WEEK = "week"
     MONTH = "month"
@@ -52,6 +53,7 @@ class User(Base):
 
     business_connection_id: Mapped[str | None] = mapped_column(String(256))
     business_connected_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    referred_by_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("users.id"))
 
     subscriptions: Mapped[list["Subscription"]] = relationship(
         back_populates="user", lazy="selectin",
@@ -65,6 +67,12 @@ class User(Base):
     # Сессия userbot — одна на пользователя
     userbot_session: Mapped["UserbotSession | None"] = relationship(
         back_populates="user", lazy="noload", uselist=False
+    )
+    referred_by: Mapped["User | None"] = relationship(
+        remote_side="User.id", lazy="joined"
+    )
+    referral_events: Mapped[list["ReferralEvent"]] = relationship(
+        back_populates="referrer", lazy="noload", foreign_keys="ReferralEvent.referrer_id"
     )
 
     @property
@@ -199,3 +207,18 @@ class UserbotSession(Base):
     auth_data: Mapped[dict | None] = mapped_column(JSON)
 
     user: Mapped["User"] = relationship(back_populates="userbot_session")
+
+
+class ReferralEvent(Base):
+    __tablename__ = "referral_events"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    referrer_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"), nullable=False)
+    invited_user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"), nullable=False, unique=True)
+    bonus_days: Mapped[int] = mapped_column(Integer, default=1)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    referrer: Mapped["User"] = relationship(
+        back_populates="referral_events",
+        foreign_keys=[referrer_id],
+    )

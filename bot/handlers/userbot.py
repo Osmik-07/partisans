@@ -1,5 +1,7 @@
+from pathlib import Path
+
 from aiogram import Router, F
-from aiogram.types import CallbackQuery
+from aiogram.types import CallbackQuery, FSInputFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -11,6 +13,7 @@ from bot.services.subscription import get_active_subscription
 from db.models import UserbotSession
 
 router = Router()
+USERBOT_VIDEO_PATH = Path(__file__).resolve().parents[2] / "media" / "userbot.mp4"
 
 
 def _lang(user_db) -> str:
@@ -49,7 +52,10 @@ async def cb_userbot_menu(call: CallbackQuery, session: AsyncSession):
     else:
         text = t("userbot_title", lang)
 
-    await call.message.edit_text(
+    if USERBOT_VIDEO_PATH.exists():
+        await call.message.answer_video(FSInputFile(USERBOT_VIDEO_PATH))
+
+    await call.message.answer(
         text,
         reply_markup=userbot_kb(lang, is_active, miniapp_url),
         parse_mode="HTML",

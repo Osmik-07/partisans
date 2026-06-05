@@ -1,12 +1,21 @@
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from sqlalchemy import select, update
+from sqlalchemy import select, update, func
 from bot.config import settings
-from db.models import User, Subscription, Payment, SubscriptionPlan, PaymentMethod, PaymentStatus
+from db.models import (
+    User,
+    Subscription,
+    Payment,
+    SubscriptionPlan,
+    PaymentMethod,
+    PaymentStatus,
+    ReferralEvent,
+)
 
 
 PLAN_DURATIONS = {
+    SubscriptionPlan.BONUS: timedelta(days=0),
     SubscriptionPlan.TRIAL: timedelta(days=settings.price_trial_days),
     SubscriptionPlan.WEEK: timedelta(weeks=1),
     SubscriptionPlan.MONTH: timedelta(days=30),
@@ -14,7 +23,12 @@ PLAN_DURATIONS = {
 }
 
 
-async def get_or_create_user(session: AsyncSession, tg_user) -> User:
+async def get_or_create_user(
+    session: AsyncSession,
+    tg_user,
+    *,
+    referred_by_id: int | None = None,
+) -> User:
     user = await session.get(User, tg_user.id)
     if not user:
         user = User(
@@ -22,10 +36,13 @@ async def get_or_create_user(session: AsyncSession, tg_user) -> User:
             username=tg_user.username,
             first_name=tg_user.first_name,
             language_code=getattr(tg_user, "language_code", None),
+            referred_by_id=referred_by_id if referred_by_id != tg_user.id else None,
         )
         session.add(user)
         await session.commit()
         await session.refresh(user)
+        if user.referred_by_id:
+            await apply_referral_bonus(session, user.referred_by_id, user.id)
     else:
         user.username = tg_user.username
         user.first_name = tg_user.first_name
@@ -256,3 +273,63 @@ async def get_user_by_username(session: AsyncSession, username: str) -> User | N
         select(User).where(User.username.ilike(username))
     )
     return result.scalar_one_or_none()
+
+
+async def apply_referral_bonus(
+    session: AsyncSession,
+    referrer_id: int,
+    invited_user_id: int,
+) -> bool:
+    if referrer_id == invited_user_id:
+        return False
+
+    referrer = await session.get(User, referrer_id)
+    if not referrer:
+        return False
+
+    existing_event = await session.execute(
+        select(ReferralEvent).where(ReferralEvent.invited_user_id == invited_user_id)
+    )
+    if existing_event.scalar_one_or_none():
+        return False
+
+    bonus_delta = timedelta(days=settings.referral_bonus_days)
+    now = datetime.now(timezone.utc)
+    active_sub = await get_active_subscription(session, referrer_id)
+
+    if active_sub:
+        base_expiry = active_sub.expires_at if active_sub.expires_at > now else now
+        active_sub.expires_at = base_expiry + bonus_delta
+    else:
+        bonus_sub = Subscription(
+            user_id=referrer_id,
+            plan=SubscriptionPlan.BONUS,
+            is_active=True,
+            started_at=now,
+            expires_at=now + bonus_delta,
+            payment_id=None,
+            reminded_24h_at=None,
+        )
+        session.add(bonus_sub)
+
+    session.add(
+        ReferralEvent(
+            referrer_id=referrer_id,
+            invited_user_id=invited_user_id,
+            bonus_days=settings.referral_bonus_days,
+        )
+    )
+    await session.commit()
+    return True
+
+
+async def get_referral_summary(session: AsyncSession, user_id: int) -> dict[str, int]:
+    count_result = await session.execute(
+        select(func.count(ReferralEvent.id), func.coalesce(func.sum(ReferralEvent.bonus_days), 0))
+        .where(ReferralEvent.referrer_id == user_id)
+    )
+    invites_count, total_bonus_days = count_result.one()
+    return {
+        "invites_count": int(invites_count or 0),
+        "total_bonus_days": int(total_bonus_days or 0),
+    }

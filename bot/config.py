@@ -46,6 +46,10 @@ class Settings(BaseSettings):
     price_month_stars: int = 100
     price_year_stars: int = 500
 
+    # Referral program
+    referral_bonus_days: int = 1
+    referral_stars_percent: int = 25
+
     @property
     def db_url(self) -> str:
         return (

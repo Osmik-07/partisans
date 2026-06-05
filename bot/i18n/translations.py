@@ -86,6 +86,12 @@ _T = {
         "pt": "Meu status",
         "id": "Status saya",
     },
+    "btn_referral": {
+        "ru": "Реферальная программа",
+        "en": "Referral program",
+        "pt": "Programa de indicação",
+        "id": "Program referral",
+    },
     "btn_connect": {
         "ru": "Как подключить",
         "en": "How to connect",
@@ -115,6 +121,12 @@ _T = {
         "en": "« Main menu",
         "pt": "« Menu principal",
         "id": "« Menu utama",
+    },
+    "btn_share_referral": {
+        "ru": "Поделиться ссылкой",
+        "en": "Share link",
+        "pt": "Compartilhar link",
+        "id": "Bagikan tautan",
     },
 
     # ── Подключение ───────────────────────────────────────────────────────
@@ -159,6 +171,79 @@ _T = {
             "6. Izinkan akses ke <b>semua obrolan</b>\n\n"
             "Setelah terhubung, bot akan mulai melacak pesan secara real time."
         ),
+    },
+    "referral_program": {
+        "ru": (
+            "<b>Реферальная программа</b>\n\n"
+            "Здесь работают <b>2 разные реферальные программы</b>:\n\n"
+            "<b>1. Бонус в Telegram Stars</b>\n"
+            "Официальная программа Telegram. Ссылка для неё берётся в профиле бота.\n"
+            "Смотри скриншот выше: он показывает, где именно открыть эту ссылку.\n"
+            "Награда: <b>до {stars_percent}% в Stars</b> от оплаты приглашённого пользователя.\n\n"
+            "<b>2. Бонусные дни в Partisans</b>\n"
+            "Используй свою личную ссылку ниже.\n"
+            "За каждого нового пользователя, который запустит бота по ней, ты получаешь "
+            "<b>{bonus_days}</b> бесплатный день.\n"
+            "Если подписка уже активна, день просто прибавляется к оставшемуся сроку.\n\n"
+            "Всего приглашено: <b>{invites_count}</b>\n"
+            "Всего начислено бонусных дней: <b>{total_bonus_days}</b>\n\n"
+            "<b>Твоя ссылка на бонусные дни:</b>\n"
+            "<code>{referral_url}</code>"
+        ),
+        "en": (
+            "<b>Referral program</b>\n\n"
+            "There are <b>2 different referral programs</b> here:\n\n"
+            "<b>1. Telegram Stars bonus</b>\n"
+            "This is the official Telegram program. Its link is taken from the bot profile.\n"
+            "See the screenshot above to find where to open it.\n"
+            "Reward: <b>up to {stars_percent}% in Stars</b> from an invited user's payment.\n\n"
+            "<b>2. Bonus days in Partisans</b>\n"
+            "Use your personal link below.\n"
+            "For every new user who starts the bot from it, you get <b>{bonus_days}</b> free day.\n"
+            "If your subscription is already active, the day is added to the remaining time.\n\n"
+            "Total invited: <b>{invites_count}</b>\n"
+            "Total bonus days earned: <b>{total_bonus_days}</b>\n\n"
+            "<b>Your bonus-days link:</b>\n"
+            "<code>{referral_url}</code>"
+        ),
+        "pt": (
+            "<b>Programa de indicação</b>\n\n"
+            "Aqui existem <b>2 programas de indicação diferentes</b>:\n\n"
+            "<b>1. Bônus em Telegram Stars</b>\n"
+            "Este é o programa oficial do Telegram. O link dele é obtido no perfil do bot.\n"
+            "Veja a captura de tela acima para encontrar onde abri-lo.\n"
+            "Recompensa: <b>até {stars_percent}% em Stars</b> do pagamento do usuário convidado.\n\n"
+            "<b>2. Dias bônus no Partisans</b>\n"
+            "Use seu link pessoal abaixo.\n"
+            "Para cada novo usuário que iniciar o bot por ele, você recebe <b>{bonus_days}</b> dia grátis.\n"
+            "Se sua assinatura já estiver ativa, o dia é somado ao tempo restante.\n\n"
+            "Total de convidados: <b>{invites_count}</b>\n"
+            "Total de dias bônus: <b>{total_bonus_days}</b>\n\n"
+            "<b>Seu link de dias bônus:</b>\n"
+            "<code>{referral_url}</code>"
+        ),
+        "id": (
+            "<b>Program referral</b>\n\n"
+            "Di sini ada <b>2 program referral yang berbeda</b>:\n\n"
+            "<b>1. Bonus Telegram Stars</b>\n"
+            "Ini adalah program resmi Telegram. Tautannya diambil dari profil bot.\n"
+            "Lihat screenshot di atas untuk mengetahui di mana membukanya.\n"
+            "Hadiah: <b>hingga {stars_percent}% dalam Stars</b> dari pembayaran pengguna yang diundang.\n\n"
+            "<b>2. Hari bonus di Partisans</b>\n"
+            "Gunakan tautan pribadi Anda di bawah ini.\n"
+            "Untuk setiap pengguna baru yang menjalankan bot dari tautan itu, Anda mendapat <b>{bonus_days}</b> hari gratis.\n"
+            "Jika langganan Anda sudah aktif, hari tersebut akan ditambahkan ke sisa waktu.\n\n"
+            "Total undangan: <b>{invites_count}</b>\n"
+            "Total hari bonus: <b>{total_bonus_days}</b>\n\n"
+            "<b>Tautan hari bonus Anda:</b>\n"
+            "<code>{referral_url}</code>"
+        ),
+    },
+    "referral_share_text": {
+        "ru": "Запусти Partisans по моей ссылке",
+        "en": "Start Partisans with my referral link",
+        "pt": "Inicie o Partisans pelo meu link de indicação",
+        "id": "Mulai Partisans lewat tautan referral saya",
     },
 
     # ── Статус подписки ───────────────────────────────────────────────────

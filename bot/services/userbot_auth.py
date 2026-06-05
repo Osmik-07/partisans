@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from dataclasses import dataclass
 from datetime import datetime, timezone, timedelta
 
@@ -36,17 +37,34 @@ class PendingAuth:
 
 
 _pending_auth: dict[int, PendingAuth] = {}
+PHONE_RE = re.compile(r"^\+[1-9]\d{6,14}$")
 
 
 def _is_pending_alive(pending: PendingAuth) -> bool:
     return datetime.now(timezone.utc) - pending.created_at <= AUTH_TTL
 
 
+def normalize_phone(phone: str) -> str | None:
+    digits = re.sub(r"[^\d+]", "", phone.strip())
+    if digits.startswith("00"):
+        digits = f"+{digits[2:]}"
+    if not digits.startswith("+"):
+        digits = f"+{digits.lstrip('+')}"
+    digits = "+" + re.sub(r"\D", "", digits)
+    if not PHONE_RE.fullmatch(digits):
+        return None
+    return digits
+
+
 async def send_code(user_id: int, phone: str) -> dict:
+    normalized_phone = normalize_phone(phone)
+    if not normalized_phone:
+        return {"ok": False, "error": "Invalid phone number"}
+
     now = datetime.now(timezone.utc)
 
     existing = _pending_auth.get(user_id)
-    if existing and _is_pending_alive(existing) and existing.phone == phone:
+    if existing and _is_pending_alive(existing) and existing.phone == normalized_phone:
         return {"ok": True, "already_sent": True}
 
     if existing:
@@ -64,7 +82,7 @@ async def send_code(user_id: int, phone: str) -> dict:
 
     try:
         await client.connect()
-        result = await client.send_code_request(phone)
+        result = await client.send_code_request(normalized_phone)
 
         async with AsyncSessionLocal() as session:
             from sqlalchemy import select
@@ -73,10 +91,10 @@ async def send_code(user_id: int, phone: str) -> dict:
             )
             record = res.scalar_one_or_none()
             if not record:
-                record = UserbotSession(user_id=user_id, phone=phone)
+                record = UserbotSession(user_id=user_id, phone=normalized_phone)
                 session.add(record)
             else:
-                record.phone = phone
+                record.phone = normalized_phone
             record.auth_data = {
                 "phone_code_hash": result.phone_code_hash,
                 "created_at": now.isoformat(),
@@ -85,7 +103,7 @@ async def send_code(user_id: int, phone: str) -> dict:
 
         _pending_auth[user_id] = PendingAuth(
             client=client,
-            phone=phone,
+            phone=normalized_phone,
             phone_code_hash=result.phone_code_hash,
             created_at=now,
         )

@@ -1,5 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, WebAppInfo
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from urllib.parse import quote
 from bot.config import settings
 from bot.i18n import t, LANGUAGES
 
@@ -8,6 +9,7 @@ def main_menu_kb(lang: str = "en") -> InlineKeyboardMarkup:
     b = InlineKeyboardBuilder()
     b.button(text=t("btn_buy", lang),     callback_data="sub:plans")
     b.button(text=t("btn_status", lang),  callback_data="sub:status")
+    b.button(text=t("btn_referral", lang), callback_data="ref:menu")
     b.button(text=t("btn_connect", lang), callback_data="help:connect")
     b.button(text=t("btn_userbot", lang), callback_data="userbot:menu")
     b.button(text=t("btn_language", lang),callback_data="lang:menu")
@@ -48,6 +50,18 @@ def pay_crypto_kb(pay_url: str, payment_id: int) -> InlineKeyboardMarkup:
 def back_main_kb(lang: str = "en") -> InlineKeyboardMarkup:
     b = InlineKeyboardBuilder()
     b.button(text=t("btn_back_main", lang), callback_data="back:main")
+    return b.as_markup()
+
+
+def referral_kb(lang: str, referral_url: str, share_text: str) -> InlineKeyboardMarkup:
+    b = InlineKeyboardBuilder()
+    share_url = f"https://t.me/share/url?url={quote(referral_url, safe='')}&text={quote(share_text, safe='')}"
+    b.button(
+        text=t("btn_share_referral", lang),
+        url=share_url,
+    )
+    b.button(text=t("btn_back_main", lang), callback_data="back:main")
+    b.adjust(1)
     return b.as_markup()
 
 

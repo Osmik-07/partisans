@@ -11,7 +11,7 @@ from aiohttp import web
 from bot.config import settings
 from bot.services.security import get_init_data_user_id
 from bot.services.subscription import user_has_active_subscription
-from bot.services.userbot_auth import send_code, sign_in, sign_in_2fa
+from bot.services.userbot_auth import send_code, sign_in, sign_in_2fa, normalize_phone
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +54,8 @@ async def api_send_code(request: web.Request) -> web.Response:
 
     if not phone:
         return web.json_response({"ok": False, "error": "Missing phone"}, status=400)
+    if not normalize_phone(phone):
+        return web.json_response({"ok": False, "error": "Invalid phone number"}, status=400)
 
     result = await send_code(user_id, phone)
     return web.json_response(result)
@@ -72,6 +74,8 @@ async def api_sign_in(request: web.Request) -> web.Response:
 
     if not code:
         return web.json_response({"ok": False, "error": "Missing code"}, status=400)
+    if not code.isdigit() or not 4 <= len(code) <= 10:
+        return web.json_response({"ok": False, "error": "Invalid code"}, status=400)
 
     result = await sign_in(user_id, code)
     return web.json_response(result)
@@ -90,6 +94,8 @@ async def api_2fa(request: web.Request) -> web.Response:
 
     if not password:
         return web.json_response({"ok": False, "error": "Missing password"}, status=400)
+    if len(password) > 256:
+        return web.json_response({"ok": False, "error": "Password is too long"}, status=400)
 
     result = await sign_in_2fa(user_id, password)
     return web.json_response(result)
