@@ -1,5 +1,5 @@
 """
-Переводы для Partisans.
+Переводы для BlackJaguar.
 Языки: ru, en, pt, id
 """
 
@@ -14,47 +14,51 @@ _T = {
     # ── Приветствие ──────────────────────────────────────────────────────
     "welcome": {
         "ru": (
-            "🫆 <b>Partisans</b> — знай всё, что скрывают\n\n"
+            "🐾 <b>BlackJaguar</b> — знай всё, что скрывают\n\n"
             "<b>Единственный бот, который работает в фоне.</b>\n\n"
             "Бот перехватывает:\n"
             "• <b>Удалённые сообщения</b> — читай то, что удалили\n"
             "• <b>Правки сообщений</b> — сравни оригинал и изменённый текст\n"
             "• <b>Исчезающие фото/видео</b> — сохраняются навсегда\n\n"
-            "Для работы нужен <b>Telegram Premium</b> и подключение через "
-            "<b>Настройки → Telegram для бизнеса → Чат-боты</b>.\n\n"
+            "Удалённые и изменённые сообщения работают <b>бесплатно</b> после подключения через "
+            "<b>Настройки → Автоматизация чатов</b>.\n"
+            "Одноразовые фото/видео доступны по подписке.\n\n"
             "Выбери действие:"
         ),
         "en": (
-            "🫆 <b>Partisans</b> — know everything they hide\n\n"
+            "🐾 <b>BlackJaguar</b> — know everything they hide\n\n"
             "<b>The only bot that works in the background.</b>\n\n"
             "The bot intercepts:\n"
             "• <b>Deleted messages</b> — read what was deleted\n"
             "• <b>Edited messages</b> — compare original and edited text\n"
             "• <b>Disappearing photos/videos</b> — saved forever\n\n"
-            "Requires <b>Telegram Premium</b> and connection via "
-            "<b>Settings → Telegram for Business → Chat Bots</b>.\n\n"
+            "Deleted and edited messages work <b>for free</b> after connecting via "
+            "<b>Settings → Chat Automation</b>.\n"
+            "One-time photos/videos are available with a subscription.\n\n"
             "Choose an action:"
         ),
         "pt": (
-            "🫆 <b>Partisans</b> — saiba tudo que escondem\n\n"
+            "🐾 <b>BlackJaguar</b> — saiba tudo que escondem\n\n"
             "<b>O único bot que funciona em segundo plano.</b>\n\n"
             "O bot intercepta:\n"
             "• <b>Mensagens apagadas</b> — leia o que foi apagado\n"
             "• <b>Mensagens editadas</b> — compare o original e o editado\n"
             "• <b>Fotos/vídeos temporários</b> — salvos para sempre\n\n"
-            "Requer <b>Telegram Premium</b> e conexão via "
-            "<b>Configurações → Telegram para Empresas → Chatbots</b>.\n\n"
+            "Mensagens apagadas e editadas funcionam <b>grátis</b> após conectar via "
+            "<b>Configurações → Automação de chats</b>.\n"
+            "Fotos/vídeos temporários estão disponíveis com assinatura.\n\n"
             "Escolha uma ação:"
         ),
         "id": (
-            "🫆 <b>Partisans</b> — ketahui semua yang disembunyikan\n\n"
+            "🐾 <b>BlackJaguar</b> — ketahui semua yang disembunyikan\n\n"
             "<b>Satu-satunya bot yang bekerja di latar belakang.</b>\n\n"
             "Bot ini menangkap:\n"
             "• <b>Pesan yang dihapus</b> — baca apa yang dihapus\n"
             "• <b>Pesan yang diedit</b> — bandingkan asli dan yang diedit\n"
             "• <b>Foto/video sementara</b> — tersimpan selamanya\n\n"
-            "Membutuhkan <b>Telegram Premium</b> dan koneksi melalui "
-            "<b>Pengaturan → Telegram untuk Bisnis → Bot Chat</b>.\n\n"
+            "Pesan yang dihapus dan diedit berfungsi <b>gratis</b> setelah menghubungkan melalui "
+            "<b>Pengaturan → Otomatisasi Chat</b>.\n"
+            "Foto/video sekali-pakai tersedia dengan langganan.\n\n"
             "Pilih tindakan:"
         ),
     },
@@ -133,42 +137,46 @@ _T = {
     "how_to_connect": {
         "ru": (
             "<b>Как подключить бота:</b>\n\n"
-            "1. Убедись, что у тебя активен <b>Telegram Premium</b>\n"
-            "2. Открой <b>Настройки</b> в Telegram\n"
-            "3. Перейди в <b>Telegram для бизнеса</b>\n"
-            "4. Выбери <b>Чат-боты</b>\n"
-            "5. Найди <b>@{bot_username}</b> и подключи\n"
-            "6. Разреши доступ ко <b>всем чатам</b>\n\n"
+            "1. Открой <b>Настройки</b> в Telegram\n"
+            "2. Перейди в <b>Автоматизация чатов</b>\n"
+            "3. Выбери раздел <b>Чат-боты</b>\n"
+            "4. Найди <b>@{bot_username}</b> и подключи его\n"
+            "5. Разреши доступ ко <b>всем нужным чатам</b>\n\n"
+            "Если у тебя старая версия Telegram, этот пункт может называться "
+            "<b>Telegram для бизнеса → Чат-боты</b>.\n\n"
             "После подключения бот начнёт отслеживать сообщения в реальном времени."
         ),
         "en": (
             "<b>How to connect the bot:</b>\n\n"
-            "1. Make sure you have active <b>Telegram Premium</b>\n"
-            "2. Open <b>Settings</b> in Telegram\n"
-            "3. Go to <b>Telegram for Business</b>\n"
-            "4. Select <b>Chat Bots</b>\n"
-            "5. Find <b>@{bot_username}</b> and connect\n"
-            "6. Allow access to <b>all chats</b>\n\n"
+            "1. Open <b>Settings</b> in Telegram\n"
+            "2. Go to <b>Chat Automation</b>\n"
+            "3. Open <b>Chat Bots</b>\n"
+            "4. Find <b>@{bot_username}</b> and connect it\n"
+            "5. Allow access to <b>all needed chats</b>\n\n"
+            "On older Telegram versions, this section may be called "
+            "<b>Telegram for Business → Chat Bots</b>.\n\n"
             "After connecting, the bot will start tracking messages in real time."
         ),
         "pt": (
             "<b>Como conectar o bot:</b>\n\n"
-            "1. Certifique-se de ter o <b>Telegram Premium</b> ativo\n"
-            "2. Abra as <b>Configurações</b> no Telegram\n"
-            "3. Vá em <b>Telegram para Empresas</b>\n"
-            "4. Selecione <b>Chatbots</b>\n"
-            "5. Encontre <b>@{bot_username}</b> e conecte\n"
-            "6. Permita acesso a <b>todos os chats</b>\n\n"
+            "1. Abra as <b>Configurações</b> no Telegram\n"
+            "2. Vá em <b>Automação de chats</b>\n"
+            "3. Abra <b>Chatbots</b>\n"
+            "4. Encontre <b>@{bot_username}</b> e conecte\n"
+            "5. Permita acesso a <b>todos os chats necessários</b>\n\n"
+            "Em versões antigas do Telegram, esta seção pode se chamar "
+            "<b>Telegram para Empresas → Chatbots</b>.\n\n"
             "Após conectar, o bot começará a rastrear mensagens em tempo real."
         ),
         "id": (
             "<b>Cara menghubungkan bot:</b>\n\n"
-            "1. Pastikan Anda memiliki <b>Telegram Premium</b> aktif\n"
-            "2. Buka <b>Pengaturan</b> di Telegram\n"
-            "3. Pergi ke <b>Telegram untuk Bisnis</b>\n"
-            "4. Pilih <b>Bot Chat</b>\n"
-            "5. Temukan <b>@{bot_username}</b> dan hubungkan\n"
-            "6. Izinkan akses ke <b>semua obrolan</b>\n\n"
+            "1. Buka <b>Pengaturan</b> di Telegram\n"
+            "2. Masuk ke <b>Otomatisasi Chat</b>\n"
+            "3. Buka <b>Bot Chat</b>\n"
+            "4. Temukan <b>@{bot_username}</b> dan hubungkan\n"
+            "5. Izinkan akses ke <b>semua chat yang diperlukan</b>\n\n"
+            "Pada versi Telegram lama, bagian ini mungkin bernama "
+            "<b>Telegram untuk Bisnis → Bot Chat</b>.\n\n"
             "Setelah terhubung, bot akan mulai melacak pesan secara real time."
         ),
     },
@@ -180,7 +188,7 @@ _T = {
             "Официальная программа Telegram. Ссылка для неё берётся в профиле бота.\n"
             "Смотри скриншот выше: он показывает, где именно открыть эту ссылку.\n"
             "Награда: <b>до {stars_percent}% в Stars</b> от оплаты приглашённого пользователя.\n\n"
-            "<b>2. Бонусные дни в Partisans</b>\n"
+            "<b>2. Бонусные дни в BlackJaguar</b>\n"
             "Используй свою личную ссылку ниже.\n"
             "За каждого нового пользователя, который запустит бота по ней, ты получаешь "
             "<b>{bonus_days}</b> бесплатный день.\n"
@@ -197,7 +205,7 @@ _T = {
             "This is the official Telegram program. Its link is taken from the bot profile.\n"
             "See the screenshot above to find where to open it.\n"
             "Reward: <b>up to {stars_percent}% in Stars</b> from an invited user's payment.\n\n"
-            "<b>2. Bonus days in Partisans</b>\n"
+            "<b>2. Bonus days in BlackJaguar</b>\n"
             "Use your personal link below.\n"
             "For every new user who starts the bot from it, you get <b>{bonus_days}</b> free day.\n"
             "If your subscription is already active, the day is added to the remaining time.\n\n"
@@ -213,7 +221,7 @@ _T = {
             "Este é o programa oficial do Telegram. O link dele é obtido no perfil do bot.\n"
             "Veja a captura de tela acima para encontrar onde abri-lo.\n"
             "Recompensa: <b>até {stars_percent}% em Stars</b> do pagamento do usuário convidado.\n\n"
-            "<b>2. Dias bônus no Partisans</b>\n"
+            "<b>2. Dias bônus no BlackJaguar</b>\n"
             "Use seu link pessoal abaixo.\n"
             "Para cada novo usuário que iniciar o bot por ele, você recebe <b>{bonus_days}</b> dia grátis.\n"
             "Se sua assinatura já estiver ativa, o dia é somado ao tempo restante.\n\n"
@@ -229,7 +237,7 @@ _T = {
             "Ini adalah program resmi Telegram. Tautannya diambil dari profil bot.\n"
             "Lihat screenshot di atas untuk mengetahui di mana membukanya.\n"
             "Hadiah: <b>hingga {stars_percent}% dalam Stars</b> dari pembayaran pengguna yang diundang.\n\n"
-            "<b>2. Hari bonus di Partisans</b>\n"
+            "<b>2. Hari bonus di BlackJaguar</b>\n"
             "Gunakan tautan pribadi Anda di bawah ini.\n"
             "Untuk setiap pengguna baru yang menjalankan bot dari tautan itu, Anda mendapat <b>{bonus_days}</b> hari gratis.\n"
             "Jika langganan Anda sudah aktif, hari tersebut akan ditambahkan ke sisa waktu.\n\n"
@@ -240,10 +248,10 @@ _T = {
         ),
     },
     "referral_share_text": {
-        "ru": "Запусти Partisans по моей ссылке",
-        "en": "Start Partisans with my referral link",
-        "pt": "Inicie o Partisans pelo meu link de indicação",
-        "id": "Mulai Partisans lewat tautan referral saya",
+        "ru": "Запусти BlackJaguar по моей ссылке",
+        "en": "Start BlackJaguar with my referral link",
+        "pt": "Inicie o BlackJaguar pelo meu link de indicação",
+        "id": "Mulai BlackJaguar lewat tautan referral saya",
     },
 
     # ── Статус подписки ───────────────────────────────────────────────────
@@ -252,38 +260,58 @@ _T = {
             "<b>Подписка активна</b>\n\n"
             "Тариф: <b>{plan}</b>\n"
             "Действует до: <b>{expires} UTC</b>\n\n"
-            "Бизнес-бот: {connected}"
+            "Автоматизация чатов: {connected}"
         ),
         "en": (
             "<b>Subscription active</b>\n\n"
             "Plan: <b>{plan}</b>\n"
             "Valid until: <b>{expires} UTC</b>\n\n"
-            "Business bot: {connected}"
+            "Chat Automation: {connected}"
         ),
         "pt": (
             "<b>Assinatura ativa</b>\n\n"
             "Plano: <b>{plan}</b>\n"
             "Válido até: <b>{expires} UTC</b>\n\n"
-            "Bot de negócios: {connected}"
+            "Automação de chats: {connected}"
         ),
         "id": (
             "<b>Langganan aktif</b>\n\n"
             "Paket: <b>{plan}</b>\n"
             "Berlaku hingga: <b>{expires} UTC</b>\n\n"
-            "Bot bisnis: {connected}"
+            "Otomatisasi Chat: {connected}"
         ),
     },
     "sub_inactive": {
-        "ru": "<b>Подписка не активна</b>\n\nКупи подписку, чтобы начать отслеживание.",
-        "en": "<b>Subscription inactive</b>\n\nBuy a subscription to start tracking.",
-        "pt": "<b>Assinatura inativa</b>\n\nCompre uma assinatura para começar a rastrear.",
-        "id": "<b>Langganan tidak aktif</b>\n\nBeli langganan untuk mulai melacak.",
+        "ru": (
+            "<b>Подписка не активна</b>\n\n"
+            "Удалённые и изменённые сообщения доступны бесплатно после подключения через "
+            "<b>Автоматизацию чатов</b>.\n\n"
+            "Подписка нужна для перехвата одноразовых фото и видео."
+        ),
+        "en": (
+            "<b>Subscription inactive</b>\n\n"
+            "Deleted and edited messages are free after connecting via "
+            "<b>Chat Automation</b>.\n\n"
+            "A subscription is required for one-time photos and videos."
+        ),
+        "pt": (
+            "<b>Assinatura inativa</b>\n\n"
+            "Mensagens apagadas e editadas são grátis após conectar via "
+            "<b>Automação de chats</b>.\n\n"
+            "A assinatura é necessária para fotos e vídeos temporários."
+        ),
+        "id": (
+            "<b>Langganan tidak aktif</b>\n\n"
+            "Pesan yang dihapus dan diedit gratis setelah terhubung melalui "
+            "<b>Otomatisasi Chat</b>.\n\n"
+            "Langganan diperlukan untuk foto dan video sekali-pakai."
+        ),
     },
     "sub_required_alert": {
-        "ru": "Нужна активная подписка.",
-        "en": "An active subscription is required.",
-        "pt": "É necessária uma assinatura ativa.",
-        "id": "Langganan aktif diperlukan.",
+        "ru": "Подписка нужна только для одноразовых медиа.",
+        "en": "A subscription is required only for one-time media.",
+        "pt": "A assinatura é necessária apenas para mídia temporária.",
+        "id": "Langganan hanya diperlukan untuk media sekali-pakai.",
     },
     "trial_already_used": {
         "ru": "Пробный период уже использован.",
@@ -321,22 +349,22 @@ _T = {
         "ru": (
             "<b>Пробный период активирован.</b>\n\n"
             "У тебя есть <b>{days} дня</b> для проверки бота.\n\n"
-            "Не забудь подключить бота через Telegram для бизнеса."
+            "Не забудь подключить бота через Автоматизацию чатов."
         ),
         "en": (
             "<b>Trial period activated.</b>\n\n"
             "You have <b>{days} days</b> to test the bot.\n\n"
-            "Don't forget to connect the bot via Telegram for Business."
+            "Don't forget to connect the bot via Chat Automation."
         ),
         "pt": (
             "<b>Período de teste ativado.</b>\n\n"
             "Você tem <b>{days} dias</b> para testar o bot.\n\n"
-            "Não se esqueça de conectar o bot via Telegram para Empresas."
+            "Não se esqueça de conectar o bot via Automação de chats."
         ),
         "id": (
             "<b>Periode percobaan diaktifkan.</b>\n\n"
             "Anda punya <b>{days} hari</b> untuk mencoba bot.\n\n"
-            "Jangan lupa menghubungkan bot melalui Telegram untuk Bisnis."
+            "Jangan lupa menghubungkan bot melalui Otomatisasi Chat."
         ),
     },
 
@@ -502,10 +530,10 @@ _T = {
         "id": "Buka menu utama",
     },
     "command_premium_desc": {
-        "ru": "Купить подписку",
-        "en": "Buy subscription",
-        "pt": "Comprar assinatura",
-        "id": "Beli langganan",
+        "ru": "Подписка на одноразовые медиа",
+        "en": "One-time media subscription",
+        "pt": "Assinatura de mídia temporária",
+        "id": "Langganan media sekali-pakai",
     },
 }
 

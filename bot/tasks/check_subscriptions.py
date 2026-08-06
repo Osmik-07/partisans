@@ -67,6 +67,11 @@ async def deactivate_expired():
         await session.commit()
         logger.info(f"Deactivated subscriptions for {len(expired_users)} users")
 
+    if expired_users:
+        from bot.services.userbot_manager import deactivate_userbot_session
+        for user_id in expired_users:
+            await deactivate_userbot_session(user_id, "subscription expired")
+
 
 async def main():
     logging.basicConfig(level=logging.INFO)

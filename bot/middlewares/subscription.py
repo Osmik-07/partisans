@@ -8,7 +8,17 @@ from bot.services.subscription import get_active_subscription, get_user
 
 # Команды/колбэки, доступные без подписки
 FREE_COMMANDS = {"/start", "/help", "/userbot", "/premium"}
-FREE_CALLBACKS = {"sub:", "buy:", "pay:", "back:", "help:", "ref:", "userbot:disconnect"}
+FREE_CALLBACKS = {
+    "sub:",
+    "buy:",
+    "pay:",
+    "back:",
+    "help:",
+    "ref:",
+    "lang:",
+    "userbot:menu",
+    "userbot:disconnect",
+}
 
 
 

@@ -31,6 +31,9 @@ async def deactivate_expired_subscriptions():
 
     if expired:
         logger.info(f"Deactivated {len(expired)} expired subscriptions")
+        from bot.services.userbot_manager import deactivate_userbot_session
+        for user_id, _plan in expired:
+            await deactivate_userbot_session(user_id, "subscription expired")
 
     return expired
 

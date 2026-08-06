@@ -208,7 +208,7 @@ async def cb_pay_check(call: CallbackQuery, session: AsyncSession):
             await call.message.edit_text(
                 f"<b>Оплата подтверждена.</b>\n\n"
                 f"Подписка активна до <b>{expires}</b>.\n\n"
-                f"Подключи бота: Настройки → Telegram для бизнеса → Чат-боты",
+                f"Подключи бота: Настройки → Автоматизация чатов → Чат-боты",
                 reply_markup=back_main_kb(),
                 parse_mode="HTML",
             )
@@ -243,8 +243,8 @@ async def cb_pay_stars(call: CallbackQuery, session: AsyncSession):
     )
 
     await call.message.answer_invoice(
-        title=f"Partisans — {PLAN_LABELS[plan_key]}",
-        description="Доступ к отслеживанию удалённых сообщений, правок и исчезающих фото",
+        title=f"BlackJaguar — {PLAN_LABELS[plan_key]}",
+        description="Доступ к перехвату одноразовых фото и видео",
         payload=str(payment.id),
         currency="XTR",
         prices=[LabeledPrice(label="Stars", amount=stars)],
@@ -270,7 +270,7 @@ async def successful_stars_payment(message: Message, session: AsyncSession):
         await message.answer(
             f"<b>Оплата звёздами подтверждена.</b>\n\n"
             f"Подписка активна до <b>{expires}</b>.\n\n"
-            f"Подключи бота: Настройки → Telegram для бизнеса → Чат-боты",
+            f"Подключи бота: Настройки → Автоматизация чатов → Чат-боты",
             reply_markup=back_main_kb(),
             parse_mode="HTML",
         )

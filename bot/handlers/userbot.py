@@ -8,7 +8,7 @@ from sqlalchemy import select
 from bot.config import settings
 from bot.keyboards.main import userbot_kb, back_main_kb
 from bot.i18n import t
-from bot.services.userbot_manager import get_client
+from bot.services.userbot_manager import get_client, create_client_from_session
 from bot.services.subscription import get_active_subscription
 from db.models import UserbotSession
 
@@ -38,12 +38,20 @@ async def cb_userbot_menu(call: CallbackQuery, session: AsyncSession):
     # Проверяем активна ли сессия
     result = await session.execute(
         select(UserbotSession)
-        .where(UserbotSession.user_id == call.from_user.id,
-               UserbotSession.is_active == True)
+        .where(UserbotSession.user_id == call.from_user.id)
     )
     record = result.scalar_one_or_none()
     client = get_client(call.from_user.id)
-    is_active = record is not None and client is not None
+    if record and record.session_string and not client:
+        try:
+            client = await create_client_from_session(call.from_user.id, record.session_string)
+            record.is_active = True
+            await session.commit()
+        except Exception:
+            record.is_active = False
+            await session.commit()
+
+    is_active = record is not None and record.is_active and client is not None
 
     miniapp_url = f"https://{settings.miniapp_domain}/auth"
 

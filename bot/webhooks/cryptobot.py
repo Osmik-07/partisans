@@ -76,7 +76,7 @@ async def cryptobot_webhook_handler(request: web.Request) -> web.Response:
             payment.user_id,
             f"<b>Оплата подтверждена.</b>\n\n"
             f"Подписка активна до <b>{expires}</b>.\n\n"
-            f"Подключи бота: Настройки → Telegram для бизнеса → Чат-боты",
+            f"Подключи бота: Настройки → Автоматизация чатов → Чат-боты",
             parse_mode="HTML",
         )
     except Exception as e:

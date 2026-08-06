@@ -17,6 +17,7 @@ from bot.config import settings
 from bot.i18n import t
 from bot.services.security import decrypt_session_string
 from db.base import AsyncSessionLocal
+from db.models import Subscription, UserbotSession
 
 logger = logging.getLogger(__name__)
 
@@ -70,14 +71,51 @@ async def stop_client(user_id: int):
         logger.info(f"Userbot stopped for user {user_id}")
 
 
+async def _has_one_time_media_access(user_id: int) -> bool:
+    from sqlalchemy import select
+
+    now = datetime.now(timezone.utc)
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(Subscription.id)
+            .where(
+                Subscription.user_id == user_id,
+                Subscription.is_active == True,
+                Subscription.expires_at > now,
+            )
+            .limit(1)
+        )
+        return result.scalar_one_or_none() is not None
+
+
+async def deactivate_userbot_session(user_id: int, reason: str = ""):
+    from sqlalchemy import update
+
+    await stop_client(user_id)
+    async with AsyncSessionLocal() as session:
+        await session.execute(
+            update(UserbotSession)
+            .where(UserbotSession.user_id == user_id)
+            .values(is_active=False)
+        )
+        await session.commit()
+
+    suffix = f": {reason}" if reason else ""
+    logger.info(f"Userbot session disabled for user {user_id}{suffix}")
+
+
 async def load_all_sessions():
     async with AsyncSessionLocal() as session:
         from sqlalchemy import select
-        from db.models import UserbotSession
+        now = datetime.now(timezone.utc)
         result = await session.execute(
-            select(UserbotSession).where(
+            select(UserbotSession)
+            .join(Subscription, Subscription.user_id == UserbotSession.user_id)
+            .where(
                 UserbotSession.is_active == True,
                 UserbotSession.session_string.isnot(None),
+                Subscription.is_active == True,
+                Subscription.expires_at > now,
             )
         )
         sessions = result.scalars().all()
@@ -94,12 +132,16 @@ async def load_all_sessions():
 async def ensure_clients_alive():
     async with AsyncSessionLocal() as session:
         from sqlalchemy import select
-        from db.models import UserbotSession
+        now = datetime.now(timezone.utc)
 
         result = await session.execute(
-            select(UserbotSession).where(
+            select(UserbotSession)
+            .join(Subscription, Subscription.user_id == UserbotSession.user_id)
+            .where(
                 UserbotSession.is_active == True,
                 UserbotSession.session_string.isnot(None),
+                Subscription.is_active == True,
+                Subscription.expires_at > now,
             )
         )
         sessions = result.scalars().all()
@@ -154,6 +196,10 @@ async def _handle_vanishing_media(owner_id: int, event):
     if not _bot:
         return
 
+    if not await _has_one_time_media_access(owner_id):
+        await deactivate_userbot_session(owner_id, "subscription expired")
+        return
+
     msg = event.message
     sender = await event.get_sender()
     sender_name = getattr(sender, "first_name", "Неизвестный") or "Неизвестный"
@@ -195,7 +241,7 @@ async def _handle_vanishing_media(owner_id: int, event):
                 f"<b>{t('vanishing_title', lang)}</b>",
                 f"{t('sender_label', lang)}:",
                 f"<blockquote>{escape(sender_name)}</blockquote>",
-                "<code>@partisansfromNJbot</code>",
+                await _bot_promo(),
             ]),
             parse_mode="HTML",
         )
@@ -219,3 +265,10 @@ async def _handle_vanishing_media(owner_id: int, event):
 
     except Exception as e:
         logger.error(f"[userbot:{owner_id}] Failed to handle vanishing media: {e}")
+
+
+async def _bot_promo() -> str:
+    if not _bot:
+        return "<code>BlackJaguar</code>"
+    me = await _bot.get_me()
+    return f"<code>@{me.username}</code>" if me.username else "<code>BlackJaguar</code>"

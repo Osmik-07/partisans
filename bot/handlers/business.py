@@ -1,18 +1,17 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import logging
 
 from aiogram import Router, Bot
 from aiogram.types import BusinessMessagesDeleted, Message, BusinessConnection
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 
 from bot.i18n import t
 from db.base import AsyncSessionLocal
-from db.models import User, Subscription, SavedMessage, MessageType
+from db.models import User, SavedMessage, MessageType
 
 router = Router()
 logger = logging.getLogger(__name__)
-BOT_PROMO = "<code>@partisansfromNJbot</code>"
+_bot_promo_cache: str | None = None
 
 
 def _escape(text: str) -> str:
@@ -23,18 +22,23 @@ def _escape(text: str) -> str:
     )
 
 
-def _with_promo(text: str) -> str:
-    return f"{text}\n\n{BOT_PROMO}"
+async def _bot_promo(bot: Bot) -> str:
+    global _bot_promo_cache
+    if not _bot_promo_cache:
+        me = await bot.get_me()
+        _bot_promo_cache = f"<code>@{me.username}</code>" if me.username else "<code>BlackJaguar</code>"
+    return _bot_promo_cache
 
 
-def _format_notice(title: str, sender_name: str, body: list[str], lang: str) -> str:
+async def _format_notice(bot: Bot, title: str, sender_name: str, body: list[str], lang: str) -> str:
     lines = [
         f"<b>{title}</b>",
         f"{t('sender_label', lang)}:",
         f"<blockquote>{_escape(sender_name)}</blockquote>",
     ]
     lines.extend(body)
-    return _with_promo("\n\n".join(lines))
+    joined = "\n\n".join(lines)
+    return f"{joined}\n\n{await _bot_promo(bot)}"
 
 
 # Расширенная поддержка медиа
@@ -58,7 +62,7 @@ def _extract_media(message: Message):
     return None, None
 
 
-def _format_deleted_from_cache(snapshot: SavedMessage, lang: str) -> str:
+async def _format_deleted_from_cache(bot: Bot, snapshot: SavedMessage, lang: str) -> str:
     sender_name = snapshot.from_first_name or "Неизвестный"
     if snapshot.from_username:
         sender_name = f"{sender_name} (@{snapshot.from_username})"
@@ -84,21 +88,19 @@ def _format_deleted_from_cache(snapshot: SavedMessage, lang: str) -> str:
     else:
         body = [f"<blockquote>{t('media_unknown', lang)}</blockquote>"]
 
-    return _format_notice(t("deleted_title", lang), sender_name, body, lang)
+    return await _format_notice(bot, t("deleted_title", lang), sender_name, body, lang)
 
 
-async def _get_owner_if_active(business_connection_id: str) -> User | None:
-    now = datetime.now(timezone.utc)
+async def _get_business_owner(business_connection_id: str) -> User | None:
     async with AsyncSessionLocal() as session:
         result = await session.execute(
             select(User)
-            .options(selectinload(User.subscriptions))
-            .join(Subscription, Subscription.user_id == User.id)
             .where(
                 User.business_connection_id == business_connection_id,
-                Subscription.is_active == True,
-                Subscription.expires_at > now,
+                User.is_banned == False,
             )
+            .order_by(User.business_connected_at.desc())
+            .limit(1)
         )
         return result.scalar_one_or_none()
 
@@ -167,7 +169,7 @@ async def on_business_message(message: Message):
     if not message.business_connection_id:
         return
 
-    owner = await _get_owner_if_active(message.business_connection_id)
+    owner = await _get_business_owner(message.business_connection_id)
     if not owner:
         return
 
@@ -204,6 +206,7 @@ async def on_business_message(message: Message):
             media_file_id=media_file_id,
             media_type=media_type,
             extra_data={"snapshot": True},
+            expires_at=datetime.now(timezone.utc) + timedelta(days=3),
         )
         session.add(snapshot)
         await session.commit()
@@ -212,7 +215,7 @@ async def on_business_message(message: Message):
 # ── Удалённые ─────────────────────────
 @router.deleted_business_messages()
 async def on_deleted_messages(event: BusinessMessagesDeleted, bot: Bot):
-    owner = await _get_owner_if_active(event.business_connection_id)
+    owner = await _get_business_owner(event.business_connection_id)
     if not owner:
         return
     lang = owner.lang if owner.lang else "en"
@@ -223,7 +226,7 @@ async def on_deleted_messages(event: BusinessMessagesDeleted, bot: Bot):
             if not snapshot:
                 continue
 
-            text = _format_deleted_from_cache(snapshot, lang)
+            text = await _format_deleted_from_cache(bot, snapshot, lang)
 
             if snapshot.media_file_id:
                 await _send_media(
@@ -242,7 +245,7 @@ async def on_deleted_messages(event: BusinessMessagesDeleted, bot: Bot):
 # ── Редактирование ─────────────────────────
 @router.edited_business_message()
 async def on_edited_message(message: Message, bot: Bot):
-    owner = await _get_owner_if_active(message.business_connection_id)
+    owner = await _get_business_owner(message.business_connection_id)
     if not owner:
         return
     lang = owner.lang if owner.lang else "en"
@@ -257,7 +260,8 @@ async def on_edited_message(message: Message, bot: Bot):
         snapshot = await _get_snapshot(session, owner.id, message.message_id)
         old_text = snapshot.original_text if snapshot else None
 
-    notify = _format_notice(
+    notify = await _format_notice(
+        bot,
         t("edited_title", lang),
         sender_name,
         [
