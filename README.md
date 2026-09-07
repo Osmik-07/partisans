@@ -1,4 +1,4 @@
-# 👁 NotSpyBot
+# 🐾 Partisans
 
 Telegram Business Bot для перехвата удалённых сообщений, правок и исчезающих фото.  
 Монетизация через **CryptoBot** (крипта) и **Telegram Stars**.

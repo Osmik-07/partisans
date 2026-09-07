@@ -114,13 +114,17 @@ class Payment(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"))
-    plan: Mapped[SubscriptionPlan] = mapped_column(
+    # Для подписок — тариф; для разовых продуктов (защита) плана нет.
+    plan: Mapped[SubscriptionPlan | None] = mapped_column(
         Enum(
             SubscriptionPlan,
             name="subscriptionplan",
             values_callable=enum_values,
-        )
+        ),
+        nullable=True,
     )
+    # Что оплачивается: "subscription" | "protection"
+    product: Mapped[str] = mapped_column(String(32), default="subscription")
     method: Mapped[PaymentMethod] = mapped_column(
         Enum(
             PaymentMethod,
@@ -206,6 +210,11 @@ class UserbotSession(Base):
     # Временные данные для процесса авторизации (phone_code_hash)
     auth_data: Mapped[dict | None] = mapped_column(JSON)
 
+    # Фиксация явного согласия с Политикой конфиденциальности и Условиями
+    # использования перед привязкой MTProto-сессии. Не сбрасывается при
+    # переподключении — это запись о согласии, а не служебные данные логина.
+    terms_accepted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
     user: Mapped["User"] = relationship(back_populates="userbot_session")
 
 
@@ -222,3 +231,26 @@ class ReferralEvent(Base):
         back_populates="referral_events",
         foreign_keys=[referrer_id],
     )
+
+
+class ProtectedUser(Base):
+    """Пользователь, купивший защиту.
+
+    Бот полностью игнорирует его как отправителя: не перехватывает одноразовые
+    медиа и не сохраняет удалённые/изменённые сообщения. Разовая покупка, без срока.
+    """
+    __tablename__ = "protected_users"
+
+    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"), primary_key=True)
+    payment_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("payments.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class InterceptionAttempt(Base):
+    """Лог заблокированных попыток перехвата защищённого пользователя."""
+    __tablename__ = "interception_attempts"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    protected_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"), index=True)
+    from_id: Mapped[int | None] = mapped_column(BigInteger)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

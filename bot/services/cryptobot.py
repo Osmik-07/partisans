@@ -15,9 +15,11 @@ PLAN_NAMES = {
 
 
 async def create_invoice(
-    plan: SubscriptionPlan,
+    plan: SubscriptionPlan | None,
     amount: float,
     payload: str,
+    bot_username: str | None = None,
+    description: str | None = None,
 ) -> dict:
     """Создаёт инвойс в CryptoBot и возвращает {invoice_id, pay_url}."""
     async with aiohttp.ClientSession() as session:
@@ -28,10 +30,10 @@ async def create_invoice(
                 "currency_type": "fiat",
                 "fiat": "USD",
                 "amount": str(amount),
-                "description": PLAN_NAMES.get(plan, "Подписка BlackJaguar"),
+                "description": description or PLAN_NAMES.get(plan, "Подписка Partisans"),
                 "payload": payload,
                 "paid_btn_name": "callback",
-                "paid_btn_url": "https://t.me/notspybot",
+                "paid_btn_url": f"https://t.me/{bot_username}" if bot_username else "https://t.me/",
                 "expires_in": 3600,  # 1 час
             },
         )

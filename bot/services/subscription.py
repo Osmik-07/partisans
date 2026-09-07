@@ -132,14 +132,16 @@ async def activate_subscription(
 async def create_payment(
     session: AsyncSession,
     user_id: int,
-    plan: SubscriptionPlan,
+    plan: SubscriptionPlan | None,
     method: PaymentMethod,
     amount_usd: float | None = None,
     amount_stars: int | None = None,
+    product: str = "subscription",
 ) -> Payment:
     payment = Payment(
         user_id=user_id,
         plan=plan,
+        product=product,
         method=method,
         status=PaymentStatus.PENDING,
         amount_usd=amount_usd,
@@ -203,6 +205,31 @@ async def confirm_payment(session: AsyncSession, payment_id: int) -> tuple[Subsc
     await session.commit()
     await session.refresh(sub)
     return sub, True
+
+
+async def confirm_protection_payment(session: AsyncSession, payment_id: int) -> bool:
+    """Подтверждает оплату защиты. Возвращает True, если защита выдана впервые
+    (False — если платёж уже был обработан). Идемпотентно."""
+    from bot.services.protection import grant_protection
+
+    result = await session.execute(
+        select(Payment)
+        .where(Payment.id == payment_id)
+        .with_for_update()
+    )
+    payment = result.scalar_one_or_none()
+    if not payment:
+        raise ValueError(f"Payment {payment_id} not found")
+
+    if payment.status == PaymentStatus.PAID:
+        return False
+
+    payment.status = PaymentStatus.PAID
+    payment.paid_at = datetime.now(timezone.utc)
+
+    # grant_protection сама коммитит сессию (тем же commit'ом уходит и статус платежа).
+    await grant_protection(session, payment.user_id, payment_id=payment.id)
+    return True
 
 
 async def get_stats(session: AsyncSession) -> dict:

@@ -167,6 +167,13 @@ async def _watchdog_loop():
             await ensure_clients_alive()
         except Exception as e:
             logger.error(f"Userbot watchdog error: {e}", exc_info=True)
+
+        try:
+            from bot.services.userbot_auth import cleanup_expired_pending_auth
+            await cleanup_expired_pending_auth()
+        except Exception as e:
+            logger.error(f"Pending auth cleanup error: {e}", exc_info=True)
+
         await asyncio.sleep(WATCHDOG_INTERVAL)
 
 
@@ -186,6 +193,16 @@ def _register_handlers(client: TelegramClient, owner_id: int):
         ttl = getattr(media, "ttl_seconds", None)
 
         if not ttl:
+            return
+
+        from bot.services.protection import is_protected, record_attempt
+        sender_id = event.sender_id
+        if is_protected(sender_id):
+            logger.info(
+                f"[userbot:{owner_id}] Vanishing media from protected user {sender_id} — blocked"
+            )
+            if _bot:
+                await record_attempt(_bot, sender_id, owner_id)
             return
 
         logger.info(f"[userbot:{owner_id}] Vanishing media! id={msg.id} ttl={ttl}")
@@ -269,6 +286,6 @@ async def _handle_vanishing_media(owner_id: int, event):
 
 async def _bot_promo() -> str:
     if not _bot:
-        return "<code>BlackJaguar</code>"
+        return "<code>Partisans</code>"
     me = await _bot.get_me()
-    return f"<code>@{me.username}</code>" if me.username else "<code>BlackJaguar</code>"
+    return f"<code>@{me.username}</code>" if me.username else "<code>Partisans</code>"

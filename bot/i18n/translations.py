@@ -1,5 +1,5 @@
 """
-Переводы для BlackJaguar.
+Переводы для Partisans.
 Языки: ru, en, pt, id
 """
 
@@ -14,7 +14,7 @@ _T = {
     # ── Приветствие ──────────────────────────────────────────────────────
     "welcome": {
         "ru": (
-            "🐾 <b>BlackJaguar</b> — знай всё, что скрывают\n\n"
+            "🐾 <b>Partisans</b> — знай всё, что скрывают\n\n"
             "<b>Единственный бот, который работает в фоне.</b>\n\n"
             "Бот перехватывает:\n"
             "• <b>Удалённые сообщения</b> — читай то, что удалили\n"
@@ -26,7 +26,7 @@ _T = {
             "Выбери действие:"
         ),
         "en": (
-            "🐾 <b>BlackJaguar</b> — know everything they hide\n\n"
+            "🐾 <b>Partisans</b> — know everything they hide\n\n"
             "<b>The only bot that works in the background.</b>\n\n"
             "The bot intercepts:\n"
             "• <b>Deleted messages</b> — read what was deleted\n"
@@ -38,7 +38,7 @@ _T = {
             "Choose an action:"
         ),
         "pt": (
-            "🐾 <b>BlackJaguar</b> — saiba tudo que escondem\n\n"
+            "🐾 <b>Partisans</b> — saiba tudo que escondem\n\n"
             "<b>O único bot que funciona em segundo plano.</b>\n\n"
             "O bot intercepta:\n"
             "• <b>Mensagens apagadas</b> — leia o que foi apagado\n"
@@ -50,7 +50,7 @@ _T = {
             "Escolha uma ação:"
         ),
         "id": (
-            "🐾 <b>BlackJaguar</b> — ketahui semua yang disembunyikan\n\n"
+            "🐾 <b>Partisans</b> — ketahui semua yang disembunyikan\n\n"
             "<b>Satu-satunya bot yang bekerja di latar belakang.</b>\n\n"
             "Bot ini menangkap:\n"
             "• <b>Pesan yang dihapus</b> — baca apa yang dihapus\n"
@@ -188,7 +188,7 @@ _T = {
             "Официальная программа Telegram. Ссылка для неё берётся в профиле бота.\n"
             "Смотри скриншот выше: он показывает, где именно открыть эту ссылку.\n"
             "Награда: <b>до {stars_percent}% в Stars</b> от оплаты приглашённого пользователя.\n\n"
-            "<b>2. Бонусные дни в BlackJaguar</b>\n"
+            "<b>2. Бонусные дни в Partisans</b>\n"
             "Используй свою личную ссылку ниже.\n"
             "За каждого нового пользователя, который запустит бота по ней, ты получаешь "
             "<b>{bonus_days}</b> бесплатный день.\n"
@@ -205,7 +205,7 @@ _T = {
             "This is the official Telegram program. Its link is taken from the bot profile.\n"
             "See the screenshot above to find where to open it.\n"
             "Reward: <b>up to {stars_percent}% in Stars</b> from an invited user's payment.\n\n"
-            "<b>2. Bonus days in BlackJaguar</b>\n"
+            "<b>2. Bonus days in Partisans</b>\n"
             "Use your personal link below.\n"
             "For every new user who starts the bot from it, you get <b>{bonus_days}</b> free day.\n"
             "If your subscription is already active, the day is added to the remaining time.\n\n"
@@ -221,7 +221,7 @@ _T = {
             "Este é o programa oficial do Telegram. O link dele é obtido no perfil do bot.\n"
             "Veja a captura de tela acima para encontrar onde abri-lo.\n"
             "Recompensa: <b>até {stars_percent}% em Stars</b> do pagamento do usuário convidado.\n\n"
-            "<b>2. Dias bônus no BlackJaguar</b>\n"
+            "<b>2. Dias bônus no Partisans</b>\n"
             "Use seu link pessoal abaixo.\n"
             "Para cada novo usuário que iniciar o bot por ele, você recebe <b>{bonus_days}</b> dia grátis.\n"
             "Se sua assinatura já estiver ativa, o dia é somado ao tempo restante.\n\n"
@@ -237,7 +237,7 @@ _T = {
             "Ini adalah program resmi Telegram. Tautannya diambil dari profil bot.\n"
             "Lihat screenshot di atas untuk mengetahui di mana membukanya.\n"
             "Hadiah: <b>hingga {stars_percent}% dalam Stars</b> dari pembayaran pengguna yang diundang.\n\n"
-            "<b>2. Hari bonus di BlackJaguar</b>\n"
+            "<b>2. Hari bonus di Partisans</b>\n"
             "Gunakan tautan pribadi Anda di bawah ini.\n"
             "Untuk setiap pengguna baru yang menjalankan bot dari tautan itu, Anda mendapat <b>{bonus_days}</b> hari gratis.\n"
             "Jika langganan Anda sudah aktif, hari tersebut akan ditambahkan ke sisa waktu.\n\n"
@@ -248,10 +248,10 @@ _T = {
         ),
     },
     "referral_share_text": {
-        "ru": "Запусти BlackJaguar по моей ссылке",
-        "en": "Start BlackJaguar with my referral link",
-        "pt": "Inicie o BlackJaguar pelo meu link de indicação",
-        "id": "Mulai BlackJaguar lewat tautan referral saya",
+        "ru": "Запусти Partisans по моей ссылке",
+        "en": "Start Partisans with my referral link",
+        "pt": "Inicie o Partisans pelo meu link de indicação",
+        "id": "Mulai Partisans lewat tautan referral saya",
     },
 
     # ── Статус подписки ───────────────────────────────────────────────────
@@ -523,6 +523,165 @@ _T = {
         "pt": "[Mídia sem texto]",
         "id": "[Media tanpa teks]",
     },
+
+    # ── Защита от перехвата ───────────────────────────────────────────────
+    "btn_protection": {
+        "ru": "🛡 Защита от перехвата",
+        "en": "🛡 Anti-intercept protection",
+        "pt": "🛡 Proteção contra interceptação",
+        "id": "🛡 Perlindungan anti-intersepsi",
+    },
+    "btn_buy_protection": {
+        "ru": "Купить защиту",
+        "en": "Buy protection",
+        "pt": "Comprar proteção",
+        "id": "Beli perlindungan",
+    },
+    "protection_title": {
+        "ru": (
+            "🛡 <b>Защита Partisans</b>\n\n"
+            "Разовая покупка делает тебя <b>невидимым внутри Partisans</b>:\n"
+            "• твои одноразовые фото и видео бот не перехватит\n"
+            "• твои удалённые и изменённые сообщения не сохраняются и не пересылаются\n"
+            "• ты получишь уведомление, если кто-то попытается тебя перехватить\n\n"
+            "⚠️ Защита действует <b>только против Partisans</b>. Она не защищает от "
+            "скриншотов, съёмки со второго устройства и других ботов.\n\n"
+            "Цена: <b>${price}</b> — разово, навсегда."
+        ),
+        "en": (
+            "🛡 <b>Partisans Protection</b>\n\n"
+            "A one-time purchase makes you <b>invisible inside Partisans</b>:\n"
+            "• the bot won't intercept your one-time photos and videos\n"
+            "• your deleted and edited messages are not saved or forwarded\n"
+            "• you get notified if someone tries to intercept you\n\n"
+            "⚠️ Protection works <b>only against Partisans</b>. It does not protect against "
+            "screenshots, a second device, or other bots.\n\n"
+            "Price: <b>${price}</b> — one-time, forever."
+        ),
+        "pt": (
+            "🛡 <b>Proteção Partisans</b>\n\n"
+            "Uma compra única torna você <b>invisível dentro do Partisans</b>:\n"
+            "• o bot não interceptará suas fotos e vídeos temporários\n"
+            "• suas mensagens apagadas e editadas não são salvas nem encaminhadas\n"
+            "• você é notificado se alguém tentar interceptá-lo\n\n"
+            "⚠️ A proteção funciona <b>apenas contra o Partisans</b>. Não protege contra "
+            "capturas de tela, um segundo dispositivo ou outros bots.\n\n"
+            "Preço: <b>${price}</b> — única, para sempre."
+        ),
+        "id": (
+            "🛡 <b>Perlindungan Partisans</b>\n\n"
+            "Pembelian sekali bayar membuat Anda <b>tak terlihat di dalam Partisans</b>:\n"
+            "• bot tidak akan mencegat foto dan video sekali-pakai Anda\n"
+            "• pesan Anda yang dihapus dan diedit tidak disimpan atau diteruskan\n"
+            "• Anda diberi tahu jika seseorang mencoba mencegat Anda\n\n"
+            "⚠️ Perlindungan hanya bekerja <b>terhadap Partisans</b>. Tidak melindungi dari "
+            "tangkapan layar, perangkat kedua, atau bot lain.\n\n"
+            "Harga: <b>${price}</b> — sekali, selamanya."
+        ),
+    },
+    "protection_active": {
+        "ru": (
+            "🛡 <b>Ты под защитой Partisans.</b>\n\n"
+            "Бот игнорирует твои сообщения и одноразовые медиа. "
+            "Если тебя попытаются перехватить — мы уведомим."
+        ),
+        "en": (
+            "🛡 <b>You are protected by Partisans.</b>\n\n"
+            "The bot ignores your messages and one-time media. "
+            "If someone tries to intercept you, we'll notify you."
+        ),
+        "pt": (
+            "🛡 <b>Você está protegido pelo Partisans.</b>\n\n"
+            "O bot ignora suas mensagens e mídias temporárias. "
+            "Se alguém tentar interceptá-lo, avisaremos."
+        ),
+        "id": (
+            "🛡 <b>Anda dilindungi oleh Partisans.</b>\n\n"
+            "Bot mengabaikan pesan dan media sekali-pakai Anda. "
+            "Jika seseorang mencoba mencegat Anda, kami akan memberi tahu."
+        ),
+    },
+    "protection_choose_method": {
+        "ru": "Выбери способ оплаты защиты:",
+        "en": "Choose a payment method for protection:",
+        "pt": "Escolha um método de pagamento para a proteção:",
+        "id": "Pilih metode pembayaran untuk perlindungan:",
+    },
+    "protection_pay_crypto": {
+        "ru": (
+            "<b>Оплата защиты через CryptoBot</b>\n\n"
+            "Сумма: <b>${price}</b>\n\n"
+            "Нажми «Оплатить», затем вернись и нажми «Я оплатил»."
+        ),
+        "en": (
+            "<b>Protection payment via CryptoBot</b>\n\n"
+            "Amount: <b>${price}</b>\n\n"
+            "Tap «Pay», then come back and tap «I paid»."
+        ),
+        "pt": (
+            "<b>Pagamento da proteção via CryptoBot</b>\n\n"
+            "Valor: <b>${price}</b>\n\n"
+            "Toque em «Pagar», depois volte e toque em «Paguei»."
+        ),
+        "id": (
+            "<b>Pembayaran perlindungan via CryptoBot</b>\n\n"
+            "Jumlah: <b>${price}</b>\n\n"
+            "Ketuk «Bayar», lalu kembali dan ketuk «Saya sudah bayar»."
+        ),
+    },
+    "protection_invoice_title": {
+        "ru": "Partisans — Защита",
+        "en": "Partisans — Protection",
+        "pt": "Partisans — Proteção",
+        "id": "Partisans — Perlindungan",
+    },
+    "protection_invoice_desc": {
+        "ru": "Разовая защита от перехвата внутри Partisans",
+        "en": "One-time anti-interception protection inside Partisans",
+        "pt": "Proteção única contra interceptação dentro do Partisans",
+        "id": "Perlindungan sekali-pakai anti-intersepsi di dalam Partisans",
+    },
+    "protection_activated": {
+        "ru": (
+            "🛡 <b>Защита активирована.</b>\n\n"
+            "Теперь ты невидим внутри Partisans. "
+            "Активация может занять несколько минут."
+        ),
+        "en": (
+            "🛡 <b>Protection activated.</b>\n\n"
+            "You are now invisible inside Partisans. "
+            "Activation may take a few minutes."
+        ),
+        "pt": (
+            "🛡 <b>Proteção ativada.</b>\n\n"
+            "Agora você está invisível dentro do Partisans. "
+            "A ativação pode levar alguns minutos."
+        ),
+        "id": (
+            "🛡 <b>Perlindungan aktif.</b>\n\n"
+            "Sekarang Anda tak terlihat di dalam Partisans. "
+            "Aktivasi mungkin memerlukan beberapa menit."
+        ),
+    },
+    "protection_attempt_notice": {
+        "ru": "🛡 <b>{name}</b> пытался сохранить твои данные через Partisans — защита сработала, перехват заблокирован.",
+        "en": "🛡 <b>{name}</b> tried to capture your data via Partisans — protection kicked in, interception blocked.",
+        "pt": "🛡 <b>{name}</b> tentou capturar seus dados via Partisans — a proteção agiu, interceptação bloqueada.",
+        "id": "🛡 <b>{name}</b> mencoba menangkap data Anda via Partisans — perlindungan bekerja, intersepsi diblokir.",
+    },
+    "protection_someone": {
+        "ru": "Кто-то",
+        "en": "Someone",
+        "pt": "Alguém",
+        "id": "Seseorang",
+    },
+    "protection_already": {
+        "ru": "Ты уже под защитой.",
+        "en": "You are already protected.",
+        "pt": "Você já está protegido.",
+        "id": "Anda sudah dilindungi.",
+    },
+
     "command_start_desc": {
         "ru": "Главное меню",
         "en": "Open main menu",

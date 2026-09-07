@@ -12,6 +12,7 @@ def main_menu_kb(lang: str = "en") -> InlineKeyboardMarkup:
     b.button(text=t("btn_referral", lang), callback_data="ref:menu")
     b.button(text=t("btn_connect", lang), callback_data="help:connect")
     b.button(text=t("btn_userbot", lang), callback_data="userbot:menu")
+    b.button(text=t("btn_protection", lang), callback_data="protect:menu")
     b.button(text=t("btn_language", lang),callback_data="lang:menu")
     b.adjust(1)
     return b.as_markup()
@@ -87,6 +88,27 @@ def userbot_kb(lang: str, is_active: bool, miniapp_url: str) -> InlineKeyboardMa
     return b.as_markup()
 
 
+def protection_kb(lang: str, already_protected: bool) -> InlineKeyboardMarkup:
+    b = InlineKeyboardBuilder()
+    if not already_protected:
+        b.button(
+            text=f"{t('btn_buy_protection', lang)} — ${settings.price_protection_usd:.0f}",
+            callback_data="protect:pay",
+        )
+    b.button(text=t("btn_back_main", lang), callback_data="back:main")
+    b.adjust(1)
+    return b.as_markup()
+
+
+def protection_method_kb(lang: str) -> InlineKeyboardMarkup:
+    b = InlineKeyboardBuilder()
+    b.button(text="CryptoBot", callback_data="protect:crypto")
+    b.button(text="Telegram Stars", callback_data="protect:stars")
+    b.button(text=t("btn_back", lang), callback_data="protect:menu")
+    b.adjust(1)
+    return b.as_markup()
+
+
 def admin_kb() -> InlineKeyboardMarkup:
     b = InlineKeyboardBuilder()
     b.button(text="Статистика", callback_data="admin:stats")
@@ -94,6 +116,7 @@ def admin_kb() -> InlineKeyboardMarkup:
     b.button(text="Рассылка", callback_data="admin:broadcast")
     b.button(text="Бан / разбан", callback_data="admin:ban")
     b.button(text="Подарить подписку", callback_data="admin:gift")
+    b.button(text="Подарить защиту", callback_data="admin:gift_protection")
     b.adjust(2)
     return b.as_markup()
 

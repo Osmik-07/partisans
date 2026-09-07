@@ -64,21 +64,40 @@ async def cryptobot_webhook_handler(request: web.Request) -> web.Response:
             if payment.status == PaymentStatus.PAID:
                 return web.Response(text="ok")  # уже обработан
 
-            sub, created = await sub_svc.confirm_payment(session, payment.id)
+            is_protection = payment.product == "protection"
+            user_id = payment.user_id
+
+            if is_protection:
+                created = await sub_svc.confirm_protection_payment(session, payment.id)
+            else:
+                sub, created = await sub_svc.confirm_payment(session, payment.id)
+                expires = sub.expires_at.strftime("%d.%m.%Y") if sub else None
+
+            async with AsyncSessionLocal() as lang_session:
+                from db.models import User
+                owner = await lang_session.get(User, user_id)
+                lang = owner.lang if owner and owner.lang else "en"
 
         # Уведомляем пользователя
         if not created:
             return web.Response(text="ok")
 
         bot = request.app["bot"]
-        expires = sub.expires_at.strftime("%d.%m.%Y")
-        await bot.send_message(
-            payment.user_id,
-            f"<b>Оплата подтверждена.</b>\n\n"
-            f"Подписка активна до <b>{expires}</b>.\n\n"
-            f"Подключи бота: Настройки → Автоматизация чатов → Чат-боты",
-            parse_mode="HTML",
-        )
+        if is_protection:
+            from bot.i18n import t
+            await bot.send_message(
+                user_id,
+                t("protection_activated", lang),
+                parse_mode="HTML",
+            )
+        else:
+            await bot.send_message(
+                user_id,
+                f"<b>Оплата подтверждена.</b>\n\n"
+                f"Подписка активна до <b>{expires}</b>.\n\n"
+                f"Подключи бота: Настройки → Автоматизация чатов → Чат-боты",
+                parse_mode="HTML",
+            )
     except Exception as e:
         logger.exception(f"CryptoBot webhook error: {e}")
 

@@ -17,6 +17,16 @@ def is_admin(user_id: int) -> bool:
     return user_id in settings.admin_ids
 
 
+async def _resolve_target_user(session: AsyncSession, target: str) -> User | None:
+    """Находит пользователя по user_id или @username для админ-команд."""
+    if target.startswith("@"):
+        return await get_user_by_username(session, target)
+    try:
+        return await session.get(User, int(target))
+    except ValueError:
+        return None
+
+
 # ── АДМИН ПАНЕЛЬ ─────────────────────────────────────────────
 
 @router.message(Command("admin"))
@@ -279,18 +289,7 @@ async def cmd_gift(message: Message, session: AsyncSession):
         await message.answer("Неверное число дней")
         return
 
-    user = None
-
-    if target.startswith("@"):
-        user = await get_user_by_username(session, target)
-    else:
-        try:
-            user_id = int(target)
-            user = await session.get(User, user_id)
-        except ValueError:
-            await message.answer("Неверный user_id")
-            return
-
+    user = await _resolve_target_user(session, target)
     if not user:
         await message.answer("Пользователь не найден")
         return
@@ -302,5 +301,57 @@ async def cmd_gift(message: Message, session: AsyncSession):
         f"Пользователь: <code>{user.id}</code>\n"
         f"Срок: {days} дней\n"
         f"До: {sub.expires_at.strftime('%d.%m.%Y %H:%M')}",
+        parse_mode="HTML",
+    )
+
+
+# ── ПОДАРОК ЗАЩИТЫ ────────────────────────────────────────
+
+@router.callback_query(F.data == "admin:gift_protection")
+async def cb_admin_gift_protection(call: CallbackQuery):
+    if not is_admin(call.from_user.id):
+        await call.answer("Нет доступа", show_alert=True)
+        return
+
+    await call.message.edit_text(
+        "<b>Подарить защиту</b>\n\n"
+        "Разово и навсегда делает пользователя невидимым внутри бота "
+        "(одноразовые медиа + удалённые/изменённые сообщения).\n\n"
+        "Используй:\n"
+        "<code>/protect 123456789</code>\n"
+        "<code>/protect @username</code>",
+        reply_markup=back_main_kb(),
+        parse_mode="HTML",
+    )
+    await call.answer()
+
+
+@router.message(Command("protect"))
+async def cmd_protect(message: Message, session: AsyncSession):
+    if not is_admin(message.from_user.id):
+        return
+
+    from bot.services.protection import grant_protection, is_protected
+
+    parts = message.text.split()
+    if len(parts) < 2:
+        await message.answer("Использование: /protect <user_id|@username>")
+        return
+
+    user = await _resolve_target_user(session, parts[1])
+    if not user:
+        await message.answer("Пользователь не найден")
+        return
+
+    if is_protected(user.id):
+        await message.answer(f"Пользователь <code>{user.id}</code> уже под защитой", parse_mode="HTML")
+        return
+
+    await grant_protection(session, user.id)
+
+    await message.answer(
+        f"Защита выдана\n\n"
+        f"Пользователь: <code>{user.id}</code>\n"
+        f"Разово, без срока действия.",
         parse_mode="HTML",
     )

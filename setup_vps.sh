@@ -35,5 +35,6 @@ echo "  sudo systemctl start notspybot"
 echo "  sudo systemctl status notspybot"
 
 echo ""
-echo "📅 Добавь cron для проверки подписок:"
-echo "  0 * * * * cd /home/ubuntu/notspybot && venv/bin/python -m bot.tasks.check_subscriptions"
+echo "ℹ️  Проверка и деактивация истёкших подписок, а также напоминания за 24ч"
+echo "   выполняются автоматически внутри самого бота (bot/services/scheduler.py)."
+echo "   Отдельный cron для этого не нужен."

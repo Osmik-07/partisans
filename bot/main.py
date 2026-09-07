@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import logging
 
 from aiogram import Bot, Dispatcher
@@ -27,6 +28,10 @@ async def on_startup(bot: Bot):
     start_scheduler(bot)
     userbot_manager.set_bot(bot)
     await start.set_bot_commands(bot)
+
+    from bot.services.protection import load_protected_ids
+    await load_protected_ids()
+
     if settings.telegram_api_id and settings.telegram_api_hash:
         await userbot_manager.load_all_sessions()
         userbot_manager.start_watchdog()
@@ -132,8 +137,6 @@ async def main_webhook():
 
 
 if __name__ == "__main__":
-    import contextlib
-
     if settings.use_webhook:
         asyncio.run(main_webhook())
     else:

@@ -5,7 +5,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.config import settings
 from bot.i18n import t
-from bot.keyboards.main import plans_kb, pay_crypto_kb, back_main_kb, payment_method_kb
+from bot.keyboards.main import (
+    plans_kb,
+    pay_crypto_kb,
+    back_main_kb,
+    payment_method_kb,
+    protection_kb,
+    protection_method_kb,
+)
 from bot.services import subscription as sub_svc
 from bot.services import cryptobot as crypto_svc
 from db.models import SubscriptionPlan, PaymentMethod, PaymentStatus
@@ -125,10 +132,12 @@ async def cb_pay_crypto(call: CallbackQuery, session: AsyncSession):
     )
 
     try:
+        me = await call.bot.get_me()
         invoice = await crypto_svc.create_invoice(
             plan=plan,
             amount=amount,
             payload=str(payment.id),
+            bot_username=me.username,
         )
     except Exception as e:
         await call.answer(f"Ошибка создания инвойса: {e}", show_alert=True)
@@ -171,6 +180,18 @@ async def cb_pay_check(call: CallbackQuery, session: AsyncSession):
         return
 
     if payment.status == PaymentStatus.PAID:
+        if payment.product == "protection":
+            from bot.services.protection import mark_protected
+            mark_protected(payment.user_id)
+            user = await sub_svc.get_user(session, call.from_user.id)
+            lang = _lang(user)
+            await call.message.edit_text(
+                t("protection_active", lang),
+                reply_markup=back_main_kb(lang),
+                parse_mode="HTML",
+            )
+            await call.answer()
+            return
         sub, _ = await sub_svc.confirm_payment(session, payment.id)
         expires = sub.expires_at.strftime("%d.%m.%Y")
         await call.message.edit_text(
@@ -203,6 +224,17 @@ async def cb_pay_check(call: CallbackQuery, session: AsyncSession):
     if data.get("ok"):
         items = data["result"].get("items", [])
         if items and items[0]["status"] == "paid":
+            if payment.product == "protection":
+                await sub_svc.confirm_protection_payment(session, payment.id)
+                user = await sub_svc.get_user(session, call.from_user.id)
+                lang = _lang(user)
+                await call.message.edit_text(
+                    t("protection_activated", lang),
+                    reply_markup=back_main_kb(lang),
+                    parse_mode="HTML",
+                )
+                await call.answer()
+                return
             sub, _ = await sub_svc.confirm_payment(session, payment.id)
             expires = sub.expires_at.strftime("%d.%m.%Y")
             await call.message.edit_text(
@@ -243,8 +275,118 @@ async def cb_pay_stars(call: CallbackQuery, session: AsyncSession):
     )
 
     await call.message.answer_invoice(
-        title=f"BlackJaguar — {PLAN_LABELS[plan_key]}",
+        title=f"Partisans — {PLAN_LABELS[plan_key]}",
         description="Доступ к перехвату одноразовых фото и видео",
+        payload=str(payment.id),
+        currency="XTR",
+        prices=[LabeledPrice(label="Stars", amount=stars)],
+    )
+    await call.answer()
+
+
+# ── Защита от перехвата (разовый продукт) ───────────────────────────
+@router.callback_query(F.data == "protect:menu")
+async def cb_protect_menu(call: CallbackQuery, session: AsyncSession):
+    from bot.services.protection import is_protected
+    user = await sub_svc.get_user(session, call.from_user.id)
+    lang = _lang(user)
+    if is_protected(call.from_user.id):
+        await call.message.edit_text(
+            t("protection_active", lang),
+            reply_markup=back_main_kb(lang),
+            parse_mode="HTML",
+        )
+    else:
+        await call.message.edit_text(
+            t("protection_title", lang, price=f"{settings.price_protection_usd:.0f}"),
+            reply_markup=protection_kb(lang, already_protected=False),
+            parse_mode="HTML",
+        )
+    await call.answer()
+
+
+@router.callback_query(F.data == "protect:pay")
+async def cb_protect_pay(call: CallbackQuery, session: AsyncSession):
+    from bot.services.protection import is_protected
+    user = await sub_svc.get_user(session, call.from_user.id)
+    lang = _lang(user)
+    if is_protected(call.from_user.id):
+        await call.answer(t("protection_already", lang), show_alert=True)
+        return
+    await call.message.edit_text(
+        t("protection_choose_method", lang),
+        reply_markup=protection_method_kb(lang),
+        parse_mode="HTML",
+    )
+    await call.answer()
+
+
+@router.callback_query(F.data == "protect:crypto")
+async def cb_protect_crypto(call: CallbackQuery, session: AsyncSession):
+    from bot.services.protection import is_protected
+    user = await sub_svc.get_or_create_user(session, call.from_user)
+    lang = _lang(user)
+    if is_protected(call.from_user.id):
+        await call.answer(t("protection_already", lang), show_alert=True)
+        return
+
+    amount = settings.price_protection_usd
+    payment = await sub_svc.create_payment(
+        session,
+        user_id=call.from_user.id,
+        plan=None,
+        method=PaymentMethod.CRYPTOBOT,
+        amount_usd=amount,
+        product="protection",
+    )
+
+    try:
+        me = await call.bot.get_me()
+        invoice = await crypto_svc.create_invoice(
+            plan=None,
+            amount=amount,
+            payload=str(payment.id),
+            bot_username=me.username,
+            description="Partisans — Protection",
+        )
+    except Exception as e:
+        await call.answer(f"Ошибка создания инвойса: {e}", show_alert=True)
+        return
+
+    payment.external_id = invoice["invoice_id"]
+    payment.invoice_url = invoice["pay_url"]
+    await session.commit()
+
+    await call.message.edit_text(
+        t("protection_pay_crypto", lang, price=f"{amount:.0f}"),
+        reply_markup=pay_crypto_kb(invoice["pay_url"], payment.id),
+        parse_mode="HTML",
+    )
+    await call.answer()
+
+
+@router.callback_query(F.data == "protect:stars")
+async def cb_protect_stars(call: CallbackQuery, session: AsyncSession):
+    from bot.services.protection import is_protected
+    user = await sub_svc.get_or_create_user(session, call.from_user)
+    lang = _lang(user)
+    if is_protected(call.from_user.id):
+        await call.answer(t("protection_already", lang), show_alert=True)
+        return
+
+    stars = settings.price_protection_stars
+    payment = await sub_svc.create_payment(
+        session,
+        user_id=call.from_user.id,
+        plan=None,
+        method=PaymentMethod.STARS,
+        amount_stars=stars,
+        product="protection",
+    )
+
+    await call.message.answer_invoice(
+        title=t("protection_invoice_title", lang),
+        description=t("protection_invoice_desc", lang),
         payload=str(payment.id),
         currency="XTR",
         prices=[LabeledPrice(label="Stars", amount=stars)],
@@ -264,13 +406,27 @@ async def successful_stars_payment(message: Message, session: AsyncSession):
     from db.models import Payment
     result = await session.execute(select(Payment).where(Payment.id == int(payload)))
     payment = result.scalar_one_or_none()
-    if payment:
-        sub, _ = await sub_svc.confirm_payment(session, payment.id)
-        expires = sub.expires_at.strftime("%d.%m.%Y")
+    if not payment:
+        return
+
+    user = await sub_svc.get_user(session, message.from_user.id)
+    lang = _lang(user)
+
+    if payment.product == "protection":
+        await sub_svc.confirm_protection_payment(session, payment.id)
         await message.answer(
-            f"<b>Оплата звёздами подтверждена.</b>\n\n"
-            f"Подписка активна до <b>{expires}</b>.\n\n"
-            f"Подключи бота: Настройки → Автоматизация чатов → Чат-боты",
-            reply_markup=back_main_kb(),
+            t("protection_activated", lang),
+            reply_markup=back_main_kb(lang),
             parse_mode="HTML",
         )
+        return
+
+    sub, _ = await sub_svc.confirm_payment(session, payment.id)
+    expires = sub.expires_at.strftime("%d.%m.%Y")
+    await message.answer(
+        f"<b>Оплата звёздами подтверждена.</b>\n\n"
+        f"Подписка активна до <b>{expires}</b>.\n\n"
+        f"Подключи бота: Настройки → Автоматизация чатов → Чат-боты",
+        reply_markup=back_main_kb(lang),
+        parse_mode="HTML",
+    )

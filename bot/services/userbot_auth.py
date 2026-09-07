@@ -44,6 +44,24 @@ def _is_pending_alive(pending: PendingAuth) -> bool:
     return datetime.now(timezone.utc) - pending.created_at <= AUTH_TTL
 
 
+async def cleanup_expired_pending_auth() -> None:
+    """Отключает и удаляет заброшенные попытки логина (пользователь запросил код и пропал).
+
+    Без этого каждая незавершённая попытка навсегда держит открытым
+    MTProto-соединение в памяти процесса.
+    """
+    expired = [uid for uid, pending in _pending_auth.items() if not _is_pending_alive(pending)]
+    for uid in expired:
+        pending = _pending_auth.pop(uid, None)
+        if not pending:
+            continue
+        try:
+            await pending.client.disconnect()
+        except Exception:
+            pass
+        logger.info(f"Cleaned up expired pending auth for user {uid}")
+
+
 def normalize_phone(phone: str) -> str | None:
     digits = re.sub(r"[^\d+]", "", phone.strip())
     if digits.startswith("00"):
@@ -56,7 +74,10 @@ def normalize_phone(phone: str) -> str | None:
     return digits
 
 
-async def send_code(user_id: int, phone: str) -> dict:
+async def send_code(user_id: int, phone: str, accepted_terms: bool = False) -> dict:
+    if not accepted_terms:
+        return {"ok": False, "error": "You must accept the Privacy Policy and Terms of Use"}
+
     normalized_phone = normalize_phone(phone)
     if not normalized_phone:
         return {"ok": False, "error": "Invalid phone number"}
@@ -99,6 +120,9 @@ async def send_code(user_id: int, phone: str) -> dict:
                 "phone_code_hash": result.phone_code_hash,
                 "created_at": now.isoformat(),
             }
+            # Отметку о согласии не перезаписываем повторно — фиксируем только первый раз.
+            if not record.terms_accepted_at:
+                record.terms_accepted_at = now
             await session.commit()
 
         _pending_auth[user_id] = PendingAuth(

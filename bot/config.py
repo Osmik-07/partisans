@@ -1,3 +1,6 @@
+import json
+
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -6,7 +9,10 @@ class Settings(BaseSettings):
 
     # Telegram Bot
     bot_token: str
-    admin_ids: list[int] = []
+    # Хранится как строка, т.к. pydantic-settings пытается распарсить list[int]
+    # из env как JSON и падает на простом "123456789" (валидный JSON-int, но не список).
+    # Поддерживаем оба формата: "123456789", "111,222" и "[111, 222]".
+    admin_ids_raw: str = Field(default="", validation_alias="ADMIN_IDS")
 
     # Pyrogram (MTProto)
     telegram_api_id: int = 0
@@ -46,6 +52,10 @@ class Settings(BaseSettings):
     price_month_stars: int = 100
     price_year_stars: int = 500
 
+    # Protection (разовый продукт «Защита от перехвата»)
+    price_protection_usd: float = 100.00
+    price_protection_stars: int = 5000
+
     # Referral program
     referral_bonus_days: int = 1
     referral_stars_percent: int = 25
@@ -60,6 +70,15 @@ class Settings(BaseSettings):
     @property
     def use_webhook(self) -> bool:
         return bool(self.webhook_host)
+
+    @property
+    def admin_ids(self) -> list[int]:
+        raw = self.admin_ids_raw.strip()
+        if not raw:
+            return []
+        if raw.startswith("["):
+            return [int(x) for x in json.loads(raw)]
+        return [int(x.strip()) for x in raw.split(",") if x.strip()]
 
 
 settings = Settings()

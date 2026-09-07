@@ -12,6 +12,7 @@ FREE_CALLBACKS = {
     "sub:",
     "buy:",
     "pay:",
+    "protect:",
     "back:",
     "help:",
     "ref:",
@@ -38,6 +39,12 @@ class SubscriptionMiddleware(BaseMiddleware):
             return await handler(event, data)
 
         if isinstance(event, Message) and getattr(event, "business_connection_id", None):
+            return await handler(event, data)
+
+        # Подтверждение оплаты Stars приходит как Message без текста — пропускаем,
+        # иначе покупка подписки/защиты у пользователя без активной подписки
+        # блокируется до активации самой подписки.
+        if isinstance(event, Message) and event.successful_payment:
             return await handler(event, data)
 
         # Пропускаем свободные команды

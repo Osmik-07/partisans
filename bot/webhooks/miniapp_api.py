@@ -48,16 +48,22 @@ async def api_send_code(request: web.Request) -> web.Response:
         return web.json_response({"ok": False, "error": "Invalid JSON"}, status=400)
 
     phone = data.get("phone", "").strip()
+    accepted_terms = bool(data.get("accepted_terms"))
     user_id = await _get_authorized_user_id(request, data)
     if not user_id:
         return web.json_response({"ok": False, "error": "Invalid Telegram session"}, status=401)
 
+    if not accepted_terms:
+        return web.json_response(
+            {"ok": False, "error": "You must accept the Privacy Policy and Terms of Use"},
+            status=400,
+        )
     if not phone:
         return web.json_response({"ok": False, "error": "Missing phone"}, status=400)
     if not normalize_phone(phone):
         return web.json_response({"ok": False, "error": "Invalid phone number"}, status=400)
 
-    result = await send_code(user_id, phone)
+    result = await send_code(user_id, phone, accepted_terms=accepted_terms)
     return web.json_response(result)
 
 

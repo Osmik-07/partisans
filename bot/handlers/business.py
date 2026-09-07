@@ -26,7 +26,7 @@ async def _bot_promo(bot: Bot) -> str:
     global _bot_promo_cache
     if not _bot_promo_cache:
         me = await bot.get_me()
-        _bot_promo_cache = f"<code>@{me.username}</code>" if me.username else "<code>BlackJaguar</code>"
+        _bot_promo_cache = f"<code>@{me.username}</code>" if me.username else "<code>Partisans</code>"
     return _bot_promo_cache
 
 
@@ -174,6 +174,11 @@ async def on_business_message(message: Message):
         return
 
     sender = message.from_user
+
+    from bot.services.protection import is_protected
+    if sender and is_protected(sender.id):
+        return  # отправитель под защитой — ничего не кэшируем
+
     text = message.text or message.caption or ""
 
     # DEBUG: входящие бизнес-сообщения
@@ -220,11 +225,16 @@ async def on_deleted_messages(event: BusinessMessagesDeleted, bot: Bot):
         return
     lang = owner.lang if owner.lang else "en"
 
+    from bot.services.protection import is_protected
+
     async with AsyncSessionLocal() as session:
         for message_id in event.message_ids:
             snapshot = await _get_snapshot(session, owner.id, message_id)
             if not snapshot:
                 continue
+
+            if is_protected(snapshot.from_user_id):
+                continue  # отправитель под защитой — не сообщаем об удалении
 
             text = await _format_deleted_from_cache(bot, snapshot, lang)
 
@@ -250,8 +260,13 @@ async def on_edited_message(message: Message, bot: Bot):
         return
     lang = owner.lang if owner.lang else "en"
 
-    new_text = message.text or message.caption or ""
     sender = message.from_user
+
+    from bot.services.protection import is_protected
+    if sender and is_protected(sender.id):
+        return  # отправитель под защитой — правки не отслеживаем
+
+    new_text = message.text or message.caption or ""
     sender_name = sender.first_name if sender and sender.first_name else "Unknown"
     if sender and sender.username:
         sender_name = f"{sender_name} (@{sender.username})"
@@ -259,6 +274,15 @@ async def on_edited_message(message: Message, bot: Bot):
     async with AsyncSessionLocal() as session:
         snapshot = await _get_snapshot(session, owner.id, message.message_id)
         old_text = snapshot.original_text if snapshot else None
+        if snapshot:
+            # Обновляем кэш, чтобы следующая правка или удаление
+            # сравнивались с актуальным текстом, а не с самой первой версией.
+            snapshot.original_text = new_text
+            media_file_id, media_type = _extract_media(message)
+            if media_file_id:
+                snapshot.media_file_id = media_file_id
+                snapshot.media_type = media_type
+            await session.commit()
 
     notify = await _format_notice(
         bot,
