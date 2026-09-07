@@ -34,7 +34,8 @@ services:
       redis:
         condition: service_healthy
     ports:
-      - "127.0.0.1:8443:8443"
+      # Порт берётся из .env (WEBHOOK_PORT), чтобы не расходиться при смене порта.
+      - "127.0.0.1:${WEBHOOK_PORT:-8443}:${WEBHOOK_PORT:-8443}"
 
 volumes:
   pgdata:
