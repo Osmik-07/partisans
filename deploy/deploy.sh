@@ -14,6 +14,9 @@ main() {
   # Папку проекта берём от самого скрипта, чтобы не зависеть от пути на сервере.
   cd "$(dirname "${BASH_SOURCE[0]}")/.."
   export GIT_TERMINAL_PROMPT=0
+  # Без этого BuildKit кладёт в образ attestation со временем сборки: ID образа
+  # меняется на каждой сборке, и compose пересоздаёт бота даже без правок кода.
+  export BUILDX_NO_DEFAULT_ATTESTATIONS=1
 
   if docker compose version >/dev/null 2>&1; then
     dc="docker compose"

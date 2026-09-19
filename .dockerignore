@@ -1,0 +1,28 @@
+# Секреты: в образ не нужны, переменные приходят из env_file в docker-compose
+.env
+.env.*
+
+# История git меняется при каждом fetch. Пока она попадала в образ, слой COPY
+# пересобирался на каждый деплой и бот перезапускался, даже если код не менялся.
+.git
+.github
+.gitignore
+.claude
+
+# Деплой, инфраструктура и документация — бот их не читает
+deploy
+ops
+Makefile
+nginx.conf
+docker-compose.yml
+Dockerfile
+.dockerignore
+setup_vps.sh
+notspybot.service
+README.md
+
+# Мусор
+__pycache__
+*.pyc
+.DS_Store
+*.dump
