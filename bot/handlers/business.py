@@ -1,7 +1,9 @@
 from datetime import datetime, timezone, timedelta
 import logging
+import re
 
 from aiogram import Router, Bot
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import BusinessMessagesDeleted, Message, BusinessConnection
 from sqlalchemy import select
 
@@ -30,15 +32,55 @@ async def _bot_promo(bot: Bot) -> str:
     return _bot_promo_cache
 
 
-async def _format_notice(bot: Bot, title: str, sender_name: str, body: list[str], lang: str) -> str:
-    lines = [
-        f"<b>{title}</b>",
-        f"{t('sender_label', lang)}:",
-        f"<blockquote>{_escape(sender_name)}</blockquote>",
-    ]
-    lines.extend(body)
-    joined = "\n\n".join(lines)
-    return f"{joined}\n\n{await _bot_promo(bot)}"
+# Лимиты Telegram считаются по тексту после разбора разметки; берём с запасом
+# на заголовок и подпись бота.
+_TEXT_BUDGET = 3500
+_CAPTION_BUDGET = 700
+# Длинные цитаты сворачиваем — так делает и сам Telegram.
+_EXPANDABLE_FROM = 300
+
+
+def _clip(text: str, limit: int) -> str:
+    return text if len(text) <= limit else text[: limit - 1].rstrip() + "…"
+
+
+def _who(lang: str, user_id: int | None, first_name: str | None, username: str | None) -> str:
+    """Имя отправителя как в журнале действий Telegram: жирное, ссылкой на профиль."""
+    name = f"<b>{_escape(first_name or t('unknown_sender', lang))}</b>"
+    if user_id:
+        name = f'<a href="tg://user?id={user_id}">{name}</a>'
+    if username:
+        name += f" (@{_escape(username)})"
+    return name
+
+
+def _quote(text: str, title: str | None = None) -> str:
+    body = _escape(text)
+    if title:
+        body = f"<b>{title}</b>\n{body}"
+    tag = "<blockquote expandable>" if len(text) > _EXPANDABLE_FROM else "<blockquote>"
+    return f"{tag}{body}</blockquote>"
+
+
+async def _format_notice(bot: Bot, header: str, quote: str | None = None) -> str:
+    body = f"{header}\n{quote}" if quote else header
+    return f"{body}\n\n{await _bot_promo(bot)}"
+
+
+_USER_LINK = re.compile(r'<a href="tg://user\?id=\d+">(.*?)</a>', re.S)
+
+
+async def _with_link_fallback(send, text: str) -> None:
+    """Ссылка на профиль — косметика. Если Telegram отклонил разметку, шлём то же
+    без ссылки, чтобы уведомление не потерялось."""
+    try:
+        await send(text)
+    except TelegramBadRequest:
+        plain = _USER_LINK.sub(r"\1", text)
+        if plain == text:
+            raise
+        logger.warning("Notice rejected with a profile link, resending without it")
+        await send(plain)
 
 
 # Расширенная поддержка медиа
@@ -62,33 +104,25 @@ def _extract_media(message: Message):
     return None, None
 
 
-async def _format_deleted_from_cache(bot: Bot, snapshot: SavedMessage, lang: str) -> str:
-    sender_name = snapshot.from_first_name or "Неизвестный"
-    if snapshot.from_username:
-        sender_name = f"{sender_name} (@{snapshot.from_username})"
+async def _format_deleted_from_cache(bot: Bot, snapshot: SavedMessage, lang: str, limit: int) -> str:
+    who = _who(lang, snapshot.from_user_id, snapshot.from_first_name, snapshot.from_username)
+    header = t("deleted_notice", lang, name=who)
 
     if snapshot.original_text:
-        body = [f"<blockquote>{_escape(snapshot.original_text)}</blockquote>"]
-    elif snapshot.media_type == "photo":
-        body = [f"<blockquote>{t('media_photo', lang)}</blockquote>"]
-    elif snapshot.media_type == "video":
-        body = [f"<blockquote>{t('media_video', lang)}</blockquote>"]
-    elif snapshot.media_type == "animation":
-        body = [f"<blockquote>{t('media_animation', lang)}</blockquote>"]
-    elif snapshot.media_type == "audio":
-        body = [f"<blockquote>{t('media_audio', lang)}</blockquote>"]
-    elif snapshot.media_type == "voice":
-        body = [f"<blockquote>{t('media_voice', lang)}</blockquote>"]
-    elif snapshot.media_type == "video_note":
-        body = [f"<blockquote>{t('media_video_note', lang)}</blockquote>"]
-    elif snapshot.media_type == "sticker":
-        body = [f"<blockquote>{t('media_sticker', lang)}</blockquote>"]
-    elif snapshot.media_type == "document":
-        body = [f"<blockquote>{t('media_document', lang)}</blockquote>"]
+        quote = _quote(_clip(snapshot.original_text, limit))
+    elif snapshot.media_file_id:
+        quote = None  # само медиа придёт следом, пояснять нечем
     else:
-        body = [f"<blockquote>{t('media_unknown', lang)}</blockquote>"]
+        quote = _quote(t("media_unknown", lang))
 
-    return await _format_notice(bot, t("deleted_title", lang), sender_name, body, lang)
+    return await _format_notice(bot, header, quote)
+
+
+async def _format_edited(bot: Bot, lang: str, who: str, original: str) -> str:
+    # Новый текст не дублируем: он уже виден в самом чате.
+    header = t("edited_notice", lang, name=who)
+    quote = _quote(_clip(original, _TEXT_BUDGET), t("original_message", lang))
+    return await _format_notice(bot, header, quote)
 
 
 async def _get_business_owner(business_connection_id: str) -> User | None:
@@ -236,18 +270,26 @@ async def on_deleted_messages(event: BusinessMessagesDeleted, bot: Bot):
             if is_protected(snapshot.from_user_id):
                 continue  # отправитель под защитой — не сообщаем об удалении
 
-            text = await _format_deleted_from_cache(bot, snapshot, lang)
+            has_media = bool(snapshot.media_file_id)
+            # У кружков и стикеров подписи не бывает: заголовок идёт отдельным
+            # сообщением (как «плашка» в журнале Telegram), а следом само медиа.
+            captionless = snapshot.media_type in ("video_note", "sticker")
+            limit = _CAPTION_BUDGET if has_media and not captionless else _TEXT_BUDGET
+            text = await _format_deleted_from_cache(bot, snapshot, lang, limit)
 
-            if snapshot.media_file_id:
-                await _send_media(
-                    bot,
-                    owner.id,
-                    snapshot.media_file_id,
-                    snapshot.media_type,
+            if has_media and not captionless:
+                await _with_link_fallback(
+                    lambda caption: _send_media(
+                        bot, owner.id, snapshot.media_file_id, snapshot.media_type, caption
+                    ),
                     text,
                 )
             else:
-                await bot.send_message(owner.id, text, parse_mode="HTML")
+                await _with_link_fallback(
+                    lambda msg: bot.send_message(owner.id, msg, parse_mode="HTML"), text
+                )
+                if has_media:
+                    await _send_media(bot, owner.id, snapshot.media_file_id, snapshot.media_type, "")
 
         await session.commit()
 
@@ -267,9 +309,6 @@ async def on_edited_message(message: Message, bot: Bot):
         return  # отправитель под защитой — правки не отслеживаем
 
     new_text = message.text or message.caption or ""
-    sender_name = sender.first_name if sender and sender.first_name else "Unknown"
-    if sender and sender.username:
-        sender_name = f"{sender_name} (@{sender.username})"
 
     async with AsyncSessionLocal() as session:
         snapshot = await _get_snapshot(session, owner.id, message.message_id)
@@ -284,15 +323,24 @@ async def on_edited_message(message: Message, bot: Bot):
                 snapshot.media_type = media_type
             await session.commit()
 
-    notify = await _format_notice(
-        bot,
-        t("edited_title", lang),
-        sender_name,
-        [
-            f"{t('was', lang)}\n<blockquote>{_escape(old_text or t('not_saved', lang))}</blockquote>",
-            f"{t('became', lang)}\n<blockquote>{_escape(new_text)}</blockquote>",
-        ],
-        lang,
-    )
+    if snapshot and old_text == new_text:
+        return  # видимый текст не менялся (например, правка форматирования) — показывать нечего
 
-    await bot.send_message(owner.id, notify, parse_mode="HTML")
+    if not snapshot:
+        original = t("not_saved", lang)
+    elif old_text:
+        original = old_text
+    else:
+        original = t("media_unknown", lang)  # раньше было медиа без подписи
+
+    who = _who(
+        lang,
+        sender.id if sender else None,
+        sender.first_name if sender else None,
+        sender.username if sender else None,
+    )
+    notify = await _format_edited(bot, lang, who, original)
+
+    await _with_link_fallback(
+        lambda msg: bot.send_message(owner.id, msg, parse_mode="HTML"), notify
+    )

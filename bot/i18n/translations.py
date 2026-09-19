@@ -427,17 +427,30 @@ _T = {
     },
 
     # ── Бизнес-события ────────────────────────────────────────────────────
-    "deleted_title": {
-        "ru": "Удалённое сообщение",
-        "en": "Deleted message",
-        "pt": "Mensagem apagada",
-        "id": "Pesan dihapus",
+    # Оформление повторяет журнал действий Telegram: «Имя удалил(а) сообщение:»
+    "deleted_notice": {
+        "ru": "{name} удалил(а) сообщение:",
+        "en": "{name} deleted a message:",
+        "pt": "{name} apagou uma mensagem:",
+        "id": "{name} menghapus pesan:",
     },
-    "edited_title": {
-        "ru": "Изменённое сообщение",
-        "en": "Edited message",
-        "pt": "Mensagem editada",
-        "id": "Pesan diedit",
+    "edited_notice": {
+        "ru": "{name} изменил(а) сообщение:",
+        "en": "{name} edited a message:",
+        "pt": "{name} editou uma mensagem:",
+        "id": "{name} mengedit pesan:",
+    },
+    "original_message": {
+        "ru": "Исходное сообщение",
+        "en": "Original message",
+        "pt": "Mensagem original",
+        "id": "Pesan asli",
+    },
+    "unknown_sender": {
+        "ru": "Неизвестный",
+        "en": "Unknown",
+        "pt": "Desconhecido",
+        "id": "Tidak dikenal",
     },
     "vanishing_title": {
         "ru": "Одноразовое медиа",
@@ -451,71 +464,11 @@ _T = {
         "pt": "Remetente",
         "id": "Pengirim",
     },
-    "was": {
-        "ru": "Было:",
-        "en": "Was:",
-        "pt": "Era:",
-        "id": "Sebelumnya:",
-    },
-    "became": {
-        "ru": "Стало:",
-        "en": "Became:",
-        "pt": "Ficou:",
-        "id": "Menjadi:",
-    },
     "not_saved": {
         "ru": "(не сохранено)",
         "en": "(not saved)",
         "pt": "(não salvo)",
         "id": "(tidak tersimpan)",
-    },
-    "media_photo": {
-        "ru": "[Фото]",
-        "en": "[Photo]",
-        "pt": "[Foto]",
-        "id": "[Foto]",
-    },
-    "media_video": {
-        "ru": "[Видео]",
-        "en": "[Video]",
-        "pt": "[Vídeo]",
-        "id": "[Video]",
-    },
-    "media_animation": {
-        "ru": "[GIF]",
-        "en": "[GIF]",
-        "pt": "[GIF]",
-        "id": "[GIF]",
-    },
-    "media_audio": {
-        "ru": "[Аудио]",
-        "en": "[Audio]",
-        "pt": "[Áudio]",
-        "id": "[Audio]",
-    },
-    "media_voice": {
-        "ru": "[Голосовое]",
-        "en": "[Voice message]",
-        "pt": "[Mensagem de voz]",
-        "id": "[Pesan suara]",
-    },
-    "media_video_note": {
-        "ru": "[Видеосообщение]",
-        "en": "[Video note]",
-        "pt": "[Vídeo circular]",
-        "id": "[Pesan video]",
-    },
-    "media_sticker": {
-        "ru": "[Стикер]",
-        "en": "[Sticker]",
-        "pt": "[Sticker]",
-        "id": "[Stiker]",
-    },
-    "media_document": {
-        "ru": "[Документ]",
-        "en": "[Document]",
-        "pt": "[Documento]",
-        "id": "[Dokumen]",
     },
     "media_unknown": {
         "ru": "[Медиа без текста]",
