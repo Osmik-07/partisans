@@ -3,7 +3,7 @@ from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject, Message, CallbackQuery
 
 from bot.i18n import t
-from bot.keyboards.main import plans_kb
+from bot.keyboards.main import payment_method_kb
 from bot.services.subscription import get_active_subscription, get_user
 
 # Команды/колбэки, доступные без подписки
@@ -83,7 +83,7 @@ class SubscriptionMiddleware(BaseMiddleware):
         if isinstance(event, Message):
             await event.answer(
                 t("sub_inactive", lang),
-                reply_markup=plans_kb(lang, trial_available=not user.trial_used),
+                reply_markup=payment_method_kb(lang, trial_available=not user.trial_used),
                 parse_mode="HTML",
             )
         elif isinstance(event, CallbackQuery):

@@ -3,3 +3,6 @@ __pycache__/
 *.pyc
 .DS_Store
 postgres.dump
+
+# Токен Telegraph и адреса опубликованных страниц (ops/publish_legal.py)
+ops/.telegraph_state.json

@@ -13,30 +13,84 @@ def main_menu_kb(lang: str = "en") -> InlineKeyboardMarkup:
     b.button(text=t("btn_connect", lang), callback_data="help:connect")
     b.button(text=t("btn_userbot", lang), callback_data="userbot:menu")
     b.button(text=t("btn_protection", lang), callback_data="protect:menu")
+    b.button(text=t("btn_support", lang), callback_data="help:support")
     b.button(text=t("btn_language", lang),callback_data="lang:menu")
     b.adjust(1)
     return b.as_markup()
 
 
-def plans_kb(lang: str = "en", trial_available: bool = False) -> InlineKeyboardMarkup:
+# Названия способов оплаты и цены по каждому из них. Порядок задаёт и порядок кнопок.
+METHOD_LABELS = {
+    "sbp": None,  # берётся из переводов: btn_method_sbp
+    "crypto": "CryptoBot",
+    "stars": "Telegram Stars",
+}
+
+
+def method_label(method: str, lang: str = "en") -> str:
+    return METHOD_LABELS.get(method) or t("btn_method_sbp", lang)
+
+
+def plan_price(method: str, plan: str) -> str:
+    prices = {
+        "sbp": {
+            "week": f"{settings.price_week_rub} ₽",
+            "month": f"{settings.price_month_rub} ₽",
+            "year": f"{settings.price_year_rub} ₽",
+        },
+        "crypto": {
+            "week": f"${settings.price_week_usd:.2f}",
+            "month": f"${settings.price_month_usd:.2f}",
+            "year": f"${settings.price_year_usd:.2f}",
+        },
+        "stars": {
+            "week": f"{settings.price_week_stars} ★",
+            "month": f"{settings.price_month_stars} ★",
+            "year": f"{settings.price_year_stars} ★",
+        },
+    }
+    return prices[method][plan]
+
+
+def payment_method_kb(lang: str = "en", trial_available: bool = False) -> InlineKeyboardMarkup:
+    """Первый экран покупки: сначала способ оплаты, затем тариф в его валюте."""
     b = InlineKeyboardBuilder()
     if trial_available:
         b.button(text=t("btn_trial", lang), callback_data="buy:trial")
-    b.button(text=f"7 {_days(lang)} — ${settings.price_week_usd:.2f}",  callback_data="buy:week")
-    b.button(text=f"30 {_days(lang)} — ${settings.price_month_usd:.2f}", callback_data="buy:month")
-    b.button(text=f"1 {_year(lang)} — ${settings.price_year_usd:.2f}",   callback_data="buy:year")
-    b.button(text=t("btn_back", lang), callback_data="back:main")
+    for method in METHOD_LABELS:
+        b.button(text=method_label(method, lang), callback_data=f"sub:m:{method}")
+    b.button(text=t("btn_back_main", lang), callback_data="back:main")
     b.adjust(1)
     return b.as_markup()
 
 
-def payment_method_kb(plan: str) -> InlineKeyboardMarkup:
-    builder = InlineKeyboardBuilder()
-    builder.button(text="CryptoBot", callback_data=f"pay:crypto:{plan}")
-    builder.button(text="Telegram Stars", callback_data=f"pay:stars:{plan}")
-    builder.button(text="« Назад", callback_data="sub:plans")
-    builder.adjust(1)
-    return builder.as_markup()
+def plans_kb(lang: str = "en", method: str = "crypto") -> InlineKeyboardMarkup:
+    b = InlineKeyboardBuilder()
+    labels = {
+        "week": f"7 {_days(lang)}",
+        "month": f"30 {_days(lang)}",
+        "year": f"1 {_year(lang)}",
+    }
+    for plan, label in labels.items():
+        b.button(text=f"{label} — {plan_price(method, plan)}", callback_data=f"buy:{method}:{plan}")
+    b.button(text=t("btn_back", lang), callback_data="sub:plans")
+    b.adjust(1)
+    return b.as_markup()
+
+
+def support_kb(lang: str = "en") -> InlineKeyboardMarkup:
+    b = InlineKeyboardBuilder()
+    b.button(
+        text=t("btn_write_support", lang),
+        url=f"https://t.me/{settings.support_contact.lstrip('@')}",
+    )
+    if settings.privacy_url:
+        b.button(text=t("btn_privacy", lang), url=settings.privacy_url)
+    if settings.terms_url:
+        b.button(text=t("btn_terms", lang), url=settings.terms_url)
+    b.button(text=t("btn_back_main", lang), callback_data="back:main")
+    b.adjust(1)
+    return b.as_markup()
 
 
 def pay_crypto_kb(pay_url: str, payment_id: int) -> InlineKeyboardMarkup:

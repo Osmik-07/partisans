@@ -52,6 +52,21 @@ class Settings(BaseSettings):
     price_month_stars: int = 100
     price_year_stars: int = 500
 
+    # Prices RUB (СБП через PlateGo). Цены дублируются в miniapp/legal.json —
+    # ops/publish_legal.py сверяет их и падает при расхождении.
+    price_week_rub: int = 99
+    price_month_rub: int = 149
+    price_year_rub: int = 799
+
+    # СБП включается, когда PlateGo выдаст доступ. Пока False — в боте показывается
+    # экран «скоро», платёж не создаётся.
+    sbp_enabled: bool = False
+
+    # Поддержка и юридические документы (требование эквайринга)
+    support_contact: str = "@partisansfromNJ"
+    privacy_url: str = "https://telegra.ph/Politika-konfidencialnosti--Partisans-09-19"
+    terms_url: str = "https://telegra.ph/Polzovatelskoe-soglashenie--Partisans-09-19"
+
     # Protection (разовый продукт «Защита от перехвата»)
     price_protection_usd: float = 100.00
     price_protection_stars: int = 5000

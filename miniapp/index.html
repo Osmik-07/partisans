@@ -381,8 +381,27 @@
     font-size: 13px;
     line-height: 1.65;
     color: var(--muted2);
-    white-space: pre-wrap;
   }
+  .doc-updated { font-size: 12px; color: var(--muted); margin: 10px 0 2px; }
+  .doc-h {
+    color: var(--white);
+    font-weight: 500;
+    font-size: 13.5px;
+    margin: 18px 0 6px;
+  }
+  .doc-p { margin: 0 0 7px; }
+  .doc-ext {
+    display: block;
+    margin-top: 20px;
+    padding: 11px;
+    text-align: center;
+    border: 1px solid var(--border-h);
+    border-radius: 9px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 12.5px;
+  }
+  .doc-ext:hover { background: var(--s2); color: var(--white); }
 </style>
 </head>
 <body>
@@ -638,159 +657,79 @@
   }
   setLang(currentLang);
 
-  const DOC_TITLES = {
-    privacy: { en: 'Privacy Policy', ru: 'Политика конфиденциальности', pt: 'Política de Privacidade', id: 'Kebijakan Privasi' },
-    terms:   { en: 'Terms of Use',   ru: 'Условия использования',       pt: 'Termos de Uso',           id: 'Ketentuan Penggunaan' },
+  // Публичные копии документов: на них же ссылается бот и эквайер.
+  const DOC_URLS = {
+    privacy: 'https://telegra.ph/Politika-konfidencialnosti--Partisans-09-19',
+    terms:   'https://telegra.ph/Polzovatelskoe-soglashenie--Partisans-09-19',
+  };
+  const DOC_EXT_LABEL = {
+    ru: 'Открыть на Telegra.ph ↗', en: 'Open on Telegra.ph ↗',
+    pt: 'Abrir no Telegra.ph ↗',   id: 'Buka di Telegra.ph ↗',
   };
 
-  const DOCS = {
-    privacy: {
-      ru: `1. Общие положения
-Настоящая Политика конфиденциальности определяет порядок обработки персональных данных пользователей сервиса Partisans («Сервис», «мы»). Используя этот Mini App и подключая Telegram-аккаунт, вы соглашаетесь с условиями настоящей Политики.
+  // Тексты документов лежат в legal.json рядом с этой страницей — один источник
+  // и для Mini App, и для страниц Telegra.ph (ops/publish_legal.py).
+  let LEGAL = null;
+  // Абсолютный путь, а не относительный: страница отдаётся и на /, и на /auth.
+  const legalReady = fetch('/static/legal.json', { cache: 'no-cache' })
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(data => { LEGAL = data; })
+    .catch(err => { console.warn('legal.json недоступен:', err); });
 
-2. Какие данные мы собираем
-— Идентификаторы Telegram (ID, username, имя, код языка) при первом обращении к боту.
-— Содержимое вашей бизнес-переписки (текст, вложения в виде file_id, данные отправителя), если вы подключили Сервис через «Telegram для бизнеса → Чат-боты» — для функции восстановления удалённых и изменённых сообщений.
-— Номер телефона и зашифрованную сессию авторизации Telegram (MTProto-сессия) — только если вы добровольно проходите привязку личного аккаунта через этот Mini App для перехвата исчезающих фото и видео.
-— Данные о платежах (сумма, тариф, статус, ID транзакции CryptoBot или Telegram). Реквизиты карт и криптокошельков нам не передаются и не хранятся.
+  function renderDoc(key) {
+    const body = document.getElementById('docBody');
+    body.textContent = '';
+    const docLang = (currentLang === 'ru') ? 'ru' : 'en';
+    const doc = LEGAL && LEGAL.docs && LEGAL.docs[key];
 
-3. Как мы используем данные
-— Предоставление функций Сервиса (восстановление сообщений, перехват исчезающих медиа).
-— Обработка оплаты и продление подписки.
-— Техническая поддержка и уведомления о статусе подписки.
-— Улучшение работы Сервиса.
+    document.getElementById('docTitle').textContent =
+      (doc && (doc.title[currentLang] || doc.title.en)) || '';
 
-4. Хранение сессии Telegram-аккаунта
-Сессия авторизации хранится в зашифрованном виде на нашем сервере и используется исключительно для обнаружения одноразовых (исчезающих) фото и видео. Мы не используем её для чтения вашей обычной переписки, рассылок от вашего имени или иных действий. Вы можете отключить привязку в любой момент через меню бота — сессия будет немедленно удалена с сервера.
+    if (doc) {
+      const updated = (LEGAL.updated && (LEGAL.updated[currentLang] || LEGAL.updated.en)) || '';
+      if (updated) {
+        const u = document.createElement('div');
+        u.className = 'doc-updated';
+        u.textContent = (docLang === 'ru' ? 'Редакция от ' : 'Version of ') + updated;
+        body.appendChild(u);
+      }
+      (doc.sections[docLang] || doc.sections.en || []).forEach(section => {
+        const h = document.createElement('div');
+        h.className = 'doc-h';
+        h.textContent = section.h;
+        body.appendChild(h);
+        section.p.forEach(text => {
+          const para = document.createElement('div');
+          para.className = 'doc-p';
+          para.textContent = text;
+          body.appendChild(para);
+        });
+      });
+    } else {
+      // legal.json не загрузился — не оставляем пустое окно, ведём на публичную копию
+      const note = document.createElement('div');
+      note.className = 'doc-p';
+      note.textContent = docLang === 'ru'
+        ? 'Не удалось загрузить текст. Открой документ по ссылке ниже.'
+        : 'Could not load the text. Open the document at the link below.';
+      body.appendChild(note);
+    }
 
-5. Срок хранения данных
-— Кэш сообщений бизнес-чата хранится не дольше 3 дней и удаляется автоматически.
-— Данные аккаунта и подписки хранятся, пока вы пользуетесь Сервисом, либо до запроса на удаление.
-
-6. Передача данных третьим лицам
-Мы передаём минимально необходимые данные платёжным сервисам (CryptoBot, Telegram Payments) для обработки оплаты. Мы не продаём и не передаём ваши данные третьим лицам в рекламных или иных целях.
-
-7. Ваши права
-Вы вправе в любой момент отключить перехват сообщений и/или сессию аккаунта через меню бота, запросить удаление своих данных через поддержку и отозвать согласие на обработку данных (это приведёт к отключению соответствующих функций).
-
-8. Возраст пользователей
-Сервис предназначен для лиц старше 18 лет.
-
-9. Изменения политики
-Мы можем время от времени обновлять данную Политику. Продолжая пользоваться Сервисом после публикации изменений, вы принимаете обновлённую редакцию.
-
-10. Контакты
-По вопросам обработки персональных данных обращайтесь в поддержку через бота.`,
-      en: `1. General
-This Privacy Policy explains how Partisans ("the Service", "we") processes personal data. By using this Mini App and linking your Telegram account, you agree to this Policy.
-
-2. Data we collect
-— Telegram identifiers (ID, username, name, language code) once you first interact with the bot.
-— The content of your business chats (text, attachments as file IDs, sender info) if you connect the Service via Telegram Business → Chat Bots, used for the deleted/edited message recovery feature.
-— Your phone number and an encrypted Telegram login session (MTProto session) — only if you voluntarily link your personal account through this Mini App to intercept disappearing photos and videos.
-— Payment data (amount, plan, status, CryptoBot/Telegram transaction ID). We never receive or store card numbers or wallet credentials.
-
-3. How we use data
-— To provide the Service's features (recovering deleted/edited messages, intercepting disappearing media).
-— To process payments and renew subscriptions.
-— For support and subscription status notifications.
-— To improve the Service.
-
-4. Storage of your Telegram account session
-Your login session is stored encrypted on our server and used exclusively to detect one-time (disappearing) photos and videos. We do not use it to read your regular conversations, send messages on your behalf, or for any other purpose. You can disconnect at any time from the bot menu — the session is deleted from our server immediately.
-
-5. Retention period
-— Cached business-chat content is kept for no more than 3 days and deleted automatically.
-— Account and subscription data is kept while you use the Service, or until you request deletion.
-
-6. Sharing with third parties
-We share the minimum data necessary with payment processors (CryptoBot, Telegram Payments) to process payments. We do not sell or share your data for advertising or any other purpose.
-
-7. Your rights
-You may at any time disconnect message interception and/or your linked account session from the bot menu, request deletion of your data via support, and withdraw consent to processing (this will disable the related features).
-
-8. Age requirement
-The Service is intended for users aged 18 and over.
-
-9. Changes to this Policy
-We may update this Policy from time to time. Continued use of the Service after changes are published constitutes acceptance of the updated version.
-
-10. Contact
-For questions about data processing, please contact support through the bot.`,
-    },
-    terms: {
-      ru: `1. Предмет соглашения
-Настоящие Условия регулируют использование Telegram-бота Partisans («Сервис»). Подключая Сервис или оплачивая подписку, вы подтверждаете согласие с настоящими Условиями.
-
-2. Описание функций
-Сервис предоставляет: (а) бесплатное восстановление удалённых и изменённых сообщений в чатах, подключённых через функцию «Telegram для бизнеса»; (б) платную функцию перехвата одноразовых (исчезающих) фото и видео через привязку личного аккаунта пользователя.
-
-3. Требования к пользователю
-Используя Сервис, вы подтверждаете, что: вам исполнилось 18 лет; вы являетесь владельцем или уполномоченным пользователем подключаемого бизнес-аккаунта и/или личного Telegram-аккаунта; вы используете Сервис в соответствии с применимым законодательством, включая законодательство о защите персональных данных и тайне переписки; вы несёте единоличную ответственность за законность использования полученной через Сервис информации в отношении третьих лиц.
-
-4. Привязка аккаунта (MTProto-сессия)
-Функция перехвата исчезающих медиа требует добровольной авторизации вашего личного Telegram-аккаунта через официальный протокол Telegram (номер телефона, код подтверждения, при необходимости — облачный пароль). Вы предоставляете этот доступ добровольно и можете отозвать его в любой момент через меню бота.
-
-5. Оплата и подписка
-Доступ к платным функциям предоставляется на срок, соответствующий выбранному тарифу. Оплата принимается через CryptoBot (криптовалюта) и Telegram Stars. Подписка не продлевается автоматически — для продолжения доступа нужно оплатить новый период. Платежи в криптовалюте и Telegram Stars, как правило, не подлежат возврату, за исключением случаев технической ошибки на нашей стороне.
-
-6. Ограничение ответственности
-Сервис предоставляется «как есть». Мы не гарантируем перехват 100% удалённых, изменённых или исчезающих сообщений — это зависит от технических ограничений API Telegram и действий третьих лиц. Мы не несём ответственности за то, как вы используете полученную через Сервис информацию, а также за последствия нарушения вами прав третьих лиц или применимого законодательства.
-
-7. Запрещённое использование
-Запрещается использовать Сервис для слежки за несовершеннолетними без законных на то оснований, для нарушения тайны переписки лиц, не связанных с вашим бизнес-аккаунтом, а также для реверс-инжиниринга, автоматизированного сбора данных о работе Сервиса или попыток обхода ограничений подписки.
-
-8. Блокировка доступа
-Мы вправе заблокировать доступ к Сервису при нарушении настоящих Условий без возврата уплаченных средств.
-
-9. Изменения условий
-Мы можем время от времени изменять настоящие Условия. Актуальная версия всегда доступна в этом Mini App.
-
-10. Защита от перехвата («призрачный режим»)
-Отдельный разовый продукт «Защита» делает вас невидимым внутри Partisans: бот перестаёт перехватывать ваши одноразовые медиа и сохранять ваши удалённые и изменённые сообщения. Важно понимать: защита действует ТОЛЬКО в рамках Partisans и не защищает от скриншотов, съёмки со второго устройства, отметки о прочтении и других ботов. Защита покупается только на свой собственный аккаунт, её нельзя оформить на другого человека. После оплаты активация может занять несколько минут. Продукт является разовым и невозвратным.
-
-11. Применимое право и контакты
-Вопросы, не урегулированные настоящими Условиями, разрешаются в соответствии с применимым законодательством. По всем вопросам обращайтесь в поддержку через бота.`,
-      en: `1. Subject
-These Terms govern the use of the Partisans Telegram bot ("the Service"). By connecting the Service or paying for a subscription, you confirm your agreement to these Terms.
-
-2. Description of features
-The Service provides: (a) free recovery of deleted and edited messages in chats connected via the Telegram Business feature; (b) a paid feature that intercepts one-time (disappearing) photos and videos by linking your personal account.
-
-3. User requirements
-By using the Service, you confirm that: you are at least 18 years old; you are the owner or an authorized user of the connected business account and/or personal Telegram account; you will use the Service in compliance with applicable law, including data protection and communication-privacy law; you are solely responsible for the lawfulness of how you use information obtained through the Service with respect to third parties.
-
-4. Account linking (MTProto session)
-The disappearing-media interception feature requires voluntary authorization of your personal Telegram account via Telegram's official protocol (phone number, verification code, and cloud password if enabled). You grant this access voluntarily and may revoke it at any time from the bot menu.
-
-5. Payments and subscription
-Access to paid features is granted for the period corresponding to the selected plan. Payment is accepted via CryptoBot (cryptocurrency) and Telegram Stars. Subscriptions do not renew automatically — a new payment is required to continue access. Cryptocurrency and Telegram Stars payments are generally non-refundable, except in case of a technical error on our part.
-
-6. Limitation of liability
-The Service is provided "as is". We do not guarantee interception of 100% of deleted, edited, or disappearing messages — this depends on Telegram API limitations and third-party actions. We are not liable for how you use information obtained through the Service, or for any consequences of your violation of third parties' rights or applicable law.
-
-7. Prohibited use
-You may not use the Service to monitor minors without a lawful basis, to violate the communication privacy of individuals unrelated to your business account, or to reverse-engineer, scrape, or attempt to bypass subscription restrictions.
-
-8. Suspension
-We may suspend access to the Service for violation of these Terms without refunding amounts already paid.
-
-9. Changes to these Terms
-We may update these Terms from time to time. The current version is always available in this Mini App.
-
-10. Anti-interception protection ("ghost mode")
-"Protection" is a separate one-time product that makes you invisible inside Partisans: the bot stops intercepting your one-time media and stops saving your deleted and edited messages. Important: protection works ONLY within Partisans and does not protect against screenshots, a second device, read receipts, or other bots. Protection can be purchased only for your own account and cannot be assigned to another person. After payment, activation may take a few minutes. The product is one-time and non-refundable.
-
-11. Governing law and contact
-Any matters not covered by these Terms are governed by applicable law. For any questions, please contact support through the bot.`,
-    },
-  };
+    const link = document.createElement('a');
+    link.className = 'doc-ext';
+    link.href = DOC_URLS[key];
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.textContent = DOC_EXT_LABEL[currentLang] || DOC_EXT_LABEL.en;
+    link.onclick = (e) => {
+      if (tg && tg.openLink) { e.preventDefault(); tg.openLink(DOC_URLS[key]); }
+    };
+    body.appendChild(link);
+  }
 
   function openDoc(key) {
-    const docLang = (currentLang === 'ru') ? 'ru' : 'en';
-    document.getElementById('docTitle').textContent = (DOC_TITLES[key] && (DOC_TITLES[key][currentLang] || DOC_TITLES[key].en)) || '';
-    document.getElementById('docBody').textContent = (DOCS[key] && (DOCS[key][docLang] || DOCS[key].en)) || '';
     document.getElementById('docModal').classList.add('show');
+    legalReady.then(() => renderDoc(key));
   }
   function closeDoc() {
     document.getElementById('docModal').classList.remove('show');

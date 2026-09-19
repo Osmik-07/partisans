@@ -1,0 +1,399 @@
+{
+  "version": "2026-09-19",
+  "updated": {
+    "ru": "19 сентября 2026 года",
+    "en": "September 19, 2026",
+    "pt": "19 de setembro de 2026",
+    "id": "19 September 2026"
+  },
+  "support": "@partisansfromNJ",
+  "bot": "@partisansfromNJbot",
+  "docs": {
+    "privacy": {
+      "title": {
+        "ru": "Политика конфиденциальности",
+        "en": "Privacy Policy",
+        "pt": "Política de Privacidade",
+        "id": "Kebijakan Privasi"
+      },
+      "sections": {
+        "ru": [
+          {
+            "h": "1. Общие положения",
+            "p": [
+              "1.1. Настоящая Политика конфиденциальности («Политика») определяет порядок обработки и защиты сведений о пользователях сервиса Partisans — Telegram-бота @partisansfromNJbot и связанного с ним Mini App (далее — «Сервис»).",
+              "1.2. Администрирование Сервиса осуществляет его владелец (далее — «Администрация», «мы»). Канал связи: @partisansfromNJ в Telegram.",
+              "1.3. Начиная диалог с ботом, подключая его к бизнес-аккаунту, привязывая личный аккаунт через Mini App или оплачивая подписку, вы подтверждаете, что ознакомились с настоящей Политикой и принимаете её условия. Если вы не согласны с Политикой, прекратите использование Сервиса.",
+              "1.4. Сервис предназначен для лиц, достигших 18 лет."
+            ]
+          },
+          {
+            "h": "2. Сбор информации",
+            "p": [
+              "2.1. Данные аккаунта Telegram: числовой идентификатор, имя, username, код языка. Передаются мессенджером автоматически при первом обращении к боту.",
+              "2.2. Содержимое подключённых бизнес-чатов: текст сообщений, идентификаторы вложений (file_id), сведения об отправителе. Обрабатывается только для чатов, которые вы самостоятельно подключили через «Telegram для бизнеса → Чат-боты», и только для функции восстановления удалённых и изменённых сообщений.",
+              "2.3. Данные привязки личного аккаунта: номер телефона и сессия авторизации Telegram (MTProto). Собираются исключительно при добровольной привязке аккаунта через Mini App для функции перехвата одноразовых медиа.",
+              "2.4. Платёжные данные: сумма, тариф, валюта, статус и идентификатор транзакции платёжного провайдера. Реквизиты банковских карт, банковских счетов и криптокошельков Сервису не передаются и в нём не хранятся.",
+              "2.5. Технические данные: время обращений, сведения о статусе подписки, служебные журналы работы Сервиса."
+            ]
+          },
+          {
+            "h": "3. Использование информации",
+            "p": [
+              "3.1. Предоставление функций Сервиса: восстановление удалённых и изменённых сообщений, перехват одноразовых фото и видео, работа функции «Защита».",
+              "3.2. Обработка оплаты, учёт срока действия подписки и уведомления о её статусе.",
+              "3.3. Ответы на обращения в поддержку.",
+              "3.4. Обеспечение работоспособности и безопасности Сервиса, предотвращение злоупотреблений.",
+              "3.5. Мы не используем данные пользователей для рекламных рассылок третьих лиц и не осуществляем профилирование в рекламных целях."
+            ]
+          },
+          {
+            "h": "4. Передача информации третьим лицам",
+            "p": [
+              "4.1. Платёжным провайдерам передаётся минимально необходимый объём данных для проведения и подтверждения платежа.",
+              "4.2. Инфраструктура Сервиса размещается на арендованном сервере; административный доступ к нему имеет только Администрация.",
+              "4.3. Данные могут быть переданы уполномоченным органам в случаях, прямо предусмотренных применимым законодательством.",
+              "4.4. Мы не продаём данные пользователей и не передаём их третьим лицам в иных целях."
+            ]
+          },
+          {
+            "h": "5. Хранение и защита данных",
+            "p": [
+              "5.1. Кэш сообщений подключённых бизнес-чатов хранится не более 3 (трёх) суток и удаляется автоматически.",
+              "5.2. Сессия авторизации личного аккаунта хранится в зашифрованном виде и используется исключительно для обнаружения одноразовых фото и видео. Она не используется для чтения вашей обычной переписки, отправки сообщений от вашего имени или иных действий.",
+              "5.3. Данные аккаунта и сведения о подписке хранятся, пока вы пользуетесь Сервисом, либо до получения запроса на удаление.",
+              "5.4. Доступ к данным ограничен Администрацией. Применяются технические меры защиты, включая шифрование сессий и ограничение сетевого доступа к серверу."
+            ]
+          },
+          {
+            "h": "6. Права пользователя",
+            "p": [
+              "6.1. Отключить привязку личного аккаунта в любой момент через меню бота — сессия удаляется с сервера немедленно.",
+              "6.2. Отключить бота от бизнес-аккаунта в настройках Telegram — сбор содержимого чатов прекращается.",
+              "6.3. Запросить удаление своих данных, обратившись в поддержку: @partisansfromNJ.",
+              "6.4. Отозвать согласие на обработку данных. Это влечёт отключение соответствующих функций Сервиса."
+            ]
+          },
+          {
+            "h": "7. Отказ от ответственности",
+            "p": [
+              "7.1. Сервис не контролирует действия мессенджера Telegram и иных третьих лиц и не отвечает за их политику обработки данных.",
+              "7.2. Пользователь самостоятельно несёт ответственность за правомерность подключения бизнес-аккаунта и за использование полученной через Сервис информации в отношении третьих лиц.",
+              "7.3. Мы принимаем разумные меры защиты, однако не можем гарантировать абсолютную безопасность передачи данных через сеть Интернет."
+            ]
+          },
+          {
+            "h": "8. Изменения в Политике",
+            "p": [
+              "8.1. Администрация вправе изменять настоящую Политику. Актуальная редакция всегда доступна в Mini App Сервиса и по постоянной ссылке на эту страницу.",
+              "8.2. Продолжение использования Сервиса после публикации изменений означает согласие с обновлённой редакцией."
+            ]
+          },
+          {
+            "h": "9. Контакты",
+            "p": [
+              "По вопросам обработки персональных данных, а также для направления запроса на удаление данных: @partisansfromNJ (Telegram). Срок ответа — как правило, в течение 24 часов."
+            ]
+          }
+        ],
+        "en": [
+          {
+            "h": "1. General provisions",
+            "p": [
+              "1.1. This Privacy Policy (the \"Policy\") sets out how information about users of Partisans — the Telegram bot @partisansfromNJbot and its Mini App (the \"Service\") — is processed and protected.",
+              "1.2. The Service is administered by its owner (the \"Administration\", \"we\"). Contact channel: @partisansfromNJ on Telegram.",
+              "1.3. By starting a conversation with the bot, connecting it to a business account, linking a personal account through the Mini App, or paying for a subscription, you confirm that you have read this Policy and accept it. If you do not agree with the Policy, stop using the Service.",
+              "1.4. The Service is intended for persons aged 18 and over."
+            ]
+          },
+          {
+            "h": "2. Information we collect",
+            "p": [
+              "2.1. Telegram account data: numeric identifier, name, username, language code. Provided automatically by the messenger when you first interact with the bot.",
+              "2.2. Content of connected business chats: message text, attachment identifiers (file_id), sender details. Processed only for chats you connected yourself via Telegram Business → Chat Bots, and only for the deleted and edited message recovery feature.",
+              "2.3. Personal account linking data: phone number and a Telegram authorization session (MTProto). Collected solely when you voluntarily link your account through the Mini App for the one-time media interception feature.",
+              "2.4. Payment data: amount, plan, currency, status, and the payment provider's transaction identifier. Bank card details, bank account details, and crypto wallet credentials are never transmitted to or stored by the Service.",
+              "2.5. Technical data: request timestamps, subscription status records, and service logs."
+            ]
+          },
+          {
+            "h": "3. How we use information",
+            "p": [
+              "3.1. To provide the Service's features: recovery of deleted and edited messages, interception of one-time photos and videos, and the Protection feature.",
+              "3.2. To process payments, track subscription periods, and send status notifications.",
+              "3.3. To respond to support requests.",
+              "3.4. To keep the Service operational and secure and to prevent abuse.",
+              "3.5. We do not use user data for third-party advertising and do not carry out profiling for advertising purposes."
+            ]
+          },
+          {
+            "h": "4. Sharing with third parties",
+            "p": [
+              "4.1. Payment providers receive the minimum data necessary to process and confirm a payment.",
+              "4.2. The Service's infrastructure is hosted on a rented server to which only the Administration has administrative access.",
+              "4.3. Data may be disclosed to authorized state bodies in cases directly provided for by applicable law.",
+              "4.4. We do not sell user data and do not share it with third parties for any other purpose."
+            ]
+          },
+          {
+            "h": "5. Storage and protection of data",
+            "p": [
+              "5.1. Cached content of connected business chats is kept for no more than three (3) days and is deleted automatically.",
+              "5.2. The personal account authorization session is stored in encrypted form and is used solely to detect one-time photos and videos. It is not used to read your regular conversations, to send messages on your behalf, or for any other action.",
+              "5.3. Account and subscription data is kept while you use the Service, or until a deletion request is received.",
+              "5.4. Access to data is limited to the Administration. Technical safeguards are applied, including session encryption and restricted network access to the server."
+            ]
+          },
+          {
+            "h": "6. Your rights",
+            "p": [
+              "6.1. Disconnect your linked personal account at any time from the bot menu — the session is deleted from the server immediately.",
+              "6.2. Disconnect the bot from your business account in Telegram settings — collection of chat content stops.",
+              "6.3. Request deletion of your data by contacting support: @partisansfromNJ.",
+              "6.4. Withdraw your consent to data processing. This disables the corresponding features of the Service."
+            ]
+          },
+          {
+            "h": "7. Disclaimer",
+            "p": [
+              "7.1. The Service does not control the actions of Telegram or other third parties and is not responsible for their data processing practices.",
+              "7.2. The user is solely responsible for the lawfulness of connecting a business account and for the use of information obtained through the Service with respect to third parties.",
+              "7.3. We apply reasonable protective measures but cannot guarantee absolute security of data transmission over the Internet."
+            ]
+          },
+          {
+            "h": "8. Changes to this Policy",
+            "p": [
+              "8.1. The Administration may amend this Policy. The current version is always available in the Service's Mini App and at the permanent link to this page.",
+              "8.2. Continued use of the Service after changes are published constitutes acceptance of the updated version."
+            ]
+          },
+          {
+            "h": "9. Contact",
+            "p": [
+              "For questions about personal data processing and to submit a data deletion request: @partisansfromNJ (Telegram). Responses are usually provided within 24 hours."
+            ]
+          }
+        ]
+      }
+    },
+    "terms": {
+      "title": {
+        "ru": "Пользовательское соглашение",
+        "en": "Terms of Use",
+        "pt": "Termos de Uso",
+        "id": "Ketentuan Penggunaan"
+      },
+      "sections": {
+        "ru": [
+          {
+            "h": "1. Общие положения",
+            "p": [
+              "1.1. Настоящее Пользовательское соглашение («Соглашение») регулирует отношения между Администрацией сервиса Partisans — Telegram-бота @partisansfromNJbot и связанного с ним Mini App (далее — «Сервис») — и пользователями Сервиса.",
+              "1.2. Начиная использование Сервиса или оплачивая подписку, вы подтверждаете, что ознакомились с Соглашением в полном объёме и принимаете его условия.",
+              "1.3. Сервис предназначен для лиц, достигших 18 лет.",
+              "1.4. Контакт поддержки: @partisansfromNJ в Telegram."
+            ]
+          },
+          {
+            "h": "2. Характер услуг и цифровых товаров",
+            "p": [
+              "2.1. Сервис предоставляет доступ к цифровым функциям внутри мессенджера Telegram: (а) восстановление удалённых и изменённых сообщений в чатах, подключённых через «Telegram для бизнеса»; (б) перехват одноразовых (исчезающих) фото и видео, требующий добровольной привязки личного аккаунта; (в) «Защита» — разовый продукт, исключающий пользователя из перехвата внутри Сервиса.",
+              "2.2. Всё предоставляемое является цифровым товаром. Ценность услуги состоит в автоматизации, систематизации и форме подачи информации, доступной пользователю в его собственных чатах.",
+              "2.3. Сервис не является средством негласного получения информации и не предназначен для нарушения тайны переписки."
+            ]
+          },
+          {
+            "h": "3. Тарифы и цены",
+            "p": [
+              "3.1. Подписка на функцию перехвата одноразовых фото и видео:",
+              "— 7 дней — 99 ₽, либо 1,00 $, либо 50 звёзд Telegram;",
+              "— 30 дней — 149 ₽, либо 2,00 $, либо 100 звёзд Telegram;",
+              "— 365 дней — 799 ₽, либо 10,00 $, либо 500 звёзд Telegram.",
+              "3.2. Пробный период — 3 дня, бесплатно, однократно для одного аккаунта.",
+              "3.3. «Защита от перехвата» — разовый платёж 100,00 $ либо 5000 звёзд Telegram, без ограничения срока действия.",
+              "3.4. Восстановление удалённых и изменённых сообщений в подключённых бизнес-чатах предоставляется бесплатно.",
+              "3.5. Указанные цены являются окончательными и включают все комиссии Сервиса. Итоговая сумма и валюта отображаются на экране оплаты до подтверждения платежа.",
+              "3.6. Администрация вправе изменять тарифы. Изменения не распространяются на уже оплаченные периоды."
+            ]
+          },
+          {
+            "h": "4. Платежи и возвраты",
+            "p": [
+              "4.1. Оплата принимается через Систему быстрых платежей (СБП), сервис CryptoBot (криптовалюта) и Telegram Stars. Перечень доступных способов отображается в боте на экране оплаты.",
+              "4.2. Доступ к платной функции открывается автоматически после подтверждения платежа платёжным провайдером; как правило, это занимает до нескольких минут.",
+              "4.3. Подписка не продлевается автоматически. Для продолжения доступа требуется новый платёж.",
+              "4.4. Цифровой товар считается поставленным в момент открытия доступа к оплаченной функции.",
+              "4.5. Возврат средств производится, если доступ не был предоставлен по технической причине на стороне Сервиса. Запрос направляется в поддержку @partisansfromNJ в течение 24 часов с момента оплаты с указанием даты, суммы и способа платежа. Возврат производится тем же способом, которым была произведена оплата, в срок до 10 рабочих дней.",
+              "4.6. Возврат не производится, если оплаченная функция была предоставлена и использовалась, а также при ограничении доступа за нарушение настоящего Соглашения."
+            ]
+          },
+          {
+            "h": "5. Законность использования",
+            "p": [
+              "5.1. Используя Сервис, вы подтверждаете, что являетесь владельцем либо уполномоченным пользователем подключаемого бизнес-аккаунта и личного аккаунта Telegram.",
+              "5.2. Вы обязуетесь соблюдать применимое законодательство, включая нормы о защите персональных данных и тайне переписки, и самостоятельно отвечаете за правомерность использования полученной информации.",
+              "5.3. Запрещается использовать Сервис для слежки за несовершеннолетними, для нарушения тайны переписки лиц, не связанных с вашим бизнес-аккаунтом, а также для любых иных противоправных целей.",
+              "5.4. Запрещаются реверс-инжиниринг, автоматизированный сбор данных о работе Сервиса, попытки обхода ограничений подписки и вмешательство в работу Сервиса."
+            ]
+          },
+          {
+            "h": "6. Привязка личного аккаунта",
+            "p": [
+              "6.1. Функция перехвата одноразовых медиа требует авторизации вашего личного аккаунта Telegram по официальному протоколу мессенджера: номер телефона, код подтверждения и, при его наличии, облачный пароль.",
+              "6.2. Доступ предоставляется вами добровольно и может быть отозван в любой момент через меню бота.",
+              "6.3. Порядок хранения и защиты сессии описан в Политике конфиденциальности."
+            ]
+          },
+          {
+            "h": "7. Отказ от гарантий и ответственности",
+            "p": [
+              "7.1. Сервис предоставляется на условиях «как есть» (AS IS).",
+              "7.2. Мы не гарантируем перехват всех без исключения удалённых, изменённых или одноразовых сообщений: результат зависит от ограничений API Telegram, настроек собеседников и действий третьих лиц.",
+              "7.3. Администрация не несёт ответственности за то, как пользователь распорядился полученной информацией, и за последствия нарушения им прав третьих лиц.",
+              "7.4. Ответственность Администрации в любом случае ограничена суммой, фактически уплаченной пользователем за последний оплаченный период.",
+              "7.5. Функция «Защита» действует исключительно в пределах Сервиса и не защищает от снимков экрана, съёмки вторым устройством, отметок о прочтении и сторонних программ."
+            ]
+          },
+          {
+            "h": "8. Интеллектуальная собственность",
+            "p": [
+              "8.1. Программный код, оформление, тексты и иные материалы Сервиса принадлежат Администрации.",
+              "8.2. Копирование, распространение, а также создание производных продуктов на их основе без письменного согласия Администрации не допускаются."
+            ]
+          },
+          {
+            "h": "9. Ограничение доступа",
+            "p": [
+              "9.1. Администрация вправе ограничить либо прекратить доступ к Сервису при нарушении настоящего Соглашения без возврата уплаченных средств.",
+              "9.2. Доступ может быть временно приостановлен на время проведения технических работ."
+            ]
+          },
+          {
+            "h": "10. Конфиденциальность",
+            "p": [
+              "10.1. Порядок обработки данных пользователей определяется Политикой конфиденциальности, которая является неотъемлемой частью настоящего Соглашения."
+            ]
+          },
+          {
+            "h": "11. Изменение условий",
+            "p": [
+              "11.1. Администрация вправе изменять настоящее Соглашение. Актуальная редакция доступна в Mini App Сервиса и по постоянной ссылке на эту страницу.",
+              "11.2. Продолжение использования Сервиса после публикации изменений означает согласие с обновлённой редакцией."
+            ]
+          },
+          {
+            "h": "12. Контактная информация",
+            "p": [
+              "Поддержка: @partisansfromNJ (Telegram). Бот: @partisansfromNJbot. Срок ответа — как правило, в течение 24 часов."
+            ]
+          }
+        ],
+        "en": [
+          {
+            "h": "1. General provisions",
+            "p": [
+              "1.1. These Terms of Use (the \"Terms\") govern the relationship between the Administration of Partisans — the Telegram bot @partisansfromNJbot and its Mini App (the \"Service\") — and the users of the Service.",
+              "1.2. By starting to use the Service or paying for a subscription, you confirm that you have read these Terms in full and accept them.",
+              "1.3. The Service is intended for persons aged 18 and over.",
+              "1.4. Support contact: @partisansfromNJ on Telegram."
+            ]
+          },
+          {
+            "h": "2. Nature of the services and digital goods",
+            "p": [
+              "2.1. The Service provides access to digital features inside Telegram: (a) recovery of deleted and edited messages in chats connected via Telegram Business; (b) interception of one-time (disappearing) photos and videos, which requires voluntarily linking a personal account; (c) Protection — a one-time product that excludes the user from interception within the Service.",
+              "2.2. Everything provided is a digital good. The value of the service lies in the automation, structuring, and presentation of information available to the user in their own chats.",
+              "2.3. The Service is not a means of covert information gathering and is not intended to violate the privacy of correspondence."
+            ]
+          },
+          {
+            "h": "3. Plans and prices",
+            "p": [
+              "3.1. Subscription to the one-time photo and video interception feature:",
+              "— 7 days — RUB 99, or USD 1.00, or 50 Telegram Stars;",
+              "— 30 days — RUB 149, or USD 2.00, or 100 Telegram Stars;",
+              "— 365 days — RUB 799, or USD 10.00, or 500 Telegram Stars.",
+              "3.2. Trial period — 3 days, free of charge, once per account.",
+              "3.3. Anti-interception Protection — a one-time payment of USD 100.00 or 5000 Telegram Stars, with no expiry.",
+              "3.4. Recovery of deleted and edited messages in connected business chats is provided free of charge.",
+              "3.5. The prices stated are final and include all fees charged by the Service. The final amount and currency are shown on the payment screen before the payment is confirmed.",
+              "3.6. The Administration may change the plans. Changes do not affect periods already paid for."
+            ]
+          },
+          {
+            "h": "4. Payments and refunds",
+            "p": [
+              "4.1. Payment is accepted via the Faster Payments System (SBP), CryptoBot (cryptocurrency), and Telegram Stars. The list of available methods is shown on the payment screen in the bot.",
+              "4.2. Access to a paid feature is granted automatically once the payment provider confirms the payment; this usually takes up to a few minutes.",
+              "4.3. Subscriptions do not renew automatically. A new payment is required to continue access.",
+              "4.4. The digital good is deemed delivered at the moment access to the paid feature is granted.",
+              "4.5. A refund is issued if access was not granted due to a technical reason on the Service's side. The request must be sent to support @partisansfromNJ within 24 hours of payment, stating the date, amount, and payment method. Refunds are made using the original payment method within 10 business days.",
+              "4.6. No refund is issued if the paid feature was granted and used, or where access was restricted for a breach of these Terms."
+            ]
+          },
+          {
+            "h": "5. Lawful use",
+            "p": [
+              "5.1. By using the Service, you confirm that you are the owner or an authorized user of the connected business account and of the personal Telegram account.",
+              "5.2. You undertake to comply with applicable law, including rules on personal data protection and the privacy of correspondence, and you are solely responsible for the lawfulness of your use of the information obtained.",
+              "5.3. The Service may not be used to monitor minors, to violate the privacy of correspondence of persons unrelated to your business account, or for any other unlawful purpose.",
+              "5.4. Reverse engineering, automated harvesting of data about the Service, attempts to bypass subscription restrictions, and interference with the Service's operation are prohibited."
+            ]
+          },
+          {
+            "h": "6. Linking a personal account",
+            "p": [
+              "6.1. The one-time media interception feature requires authorization of your personal Telegram account through the messenger's official protocol: phone number, verification code, and cloud password if one is set.",
+              "6.2. You grant this access voluntarily and may revoke it at any time from the bot menu.",
+              "6.3. How the session is stored and protected is described in the Privacy Policy."
+            ]
+          },
+          {
+            "h": "7. Disclaimer of warranties and liability",
+            "p": [
+              "7.1. The Service is provided on an \"AS IS\" basis.",
+              "7.2. We do not guarantee interception of every deleted, edited, or one-time message: the result depends on Telegram API limitations, the settings of other participants, and the actions of third parties.",
+              "7.3. The Administration is not liable for how the user disposes of the information obtained, or for the consequences of the user violating the rights of third parties.",
+              "7.4. In any event, the Administration's liability is limited to the amount actually paid by the user for the most recent paid period.",
+              "7.5. The Protection feature operates solely within the Service and does not protect against screenshots, filming with a second device, read receipts, or third-party software."
+            ]
+          },
+          {
+            "h": "8. Intellectual property",
+            "p": [
+              "8.1. The software code, design, texts, and other materials of the Service belong to the Administration.",
+              "8.2. Copying, distribution, and the creation of derivative products based on them without the Administration's written consent are not permitted."
+            ]
+          },
+          {
+            "h": "9. Restriction of access",
+            "p": [
+              "9.1. The Administration may restrict or terminate access to the Service for a breach of these Terms without refunding amounts already paid.",
+              "9.2. Access may be temporarily suspended for maintenance."
+            ]
+          },
+          {
+            "h": "10. Privacy",
+            "p": [
+              "10.1. The processing of user data is governed by the Privacy Policy, which forms an integral part of these Terms."
+            ]
+          },
+          {
+            "h": "11. Changes to the Terms",
+            "p": [
+              "11.1. The Administration may amend these Terms. The current version is available in the Service's Mini App and at the permanent link to this page.",
+              "11.2. Continued use of the Service after changes are published constitutes acceptance of the updated version."
+            ]
+          },
+          {
+            "h": "12. Contact information",
+            "p": [
+              "Support: @partisansfromNJ (Telegram). Bot: @partisansfromNJbot. Responses are usually provided within 24 hours."
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

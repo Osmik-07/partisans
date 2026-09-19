@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.config import settings
 from bot.services.subscription import get_or_create_user, get_user, get_referral_summary
-from bot.keyboards.main import main_menu_kb, plans_kb, back_main_kb, language_kb, referral_kb
+from bot.keyboards.main import main_menu_kb, payment_method_kb, back_main_kb, language_kb, referral_kb
 from bot.i18n import t, get_lang, LANGUAGES
 
 router = Router()
@@ -239,7 +239,7 @@ async def cb_status(call: CallbackQuery, session: AsyncSession):
     trial_ok = not user.trial_used if user else True
     await call.message.edit_text(
         text,
-        reply_markup=plans_kb(lang, trial_ok),
+        reply_markup=payment_method_kb(lang, trial_available=trial_ok),
         parse_mode="HTML",
     )
     await call.answer()

@@ -339,6 +339,124 @@ _T = {
         "pt": "<b>Escolha um plano:</b>",
         "id": "<b>Pilih paket:</b>",
     },
+    "method_title": {
+        "ru": (
+            "<b>Подписка на перехват одноразовых фото и видео</b>\n\n"
+            "Одноразовые фото и видео из личных чатов сохраняются и приходят тебе файлами.\n"
+            "Восстановление удалённых и изменённых сообщений работает бесплатно.\n\n"
+            "Выбери способ оплаты:"
+        ),
+        "en": (
+            "<b>Subscription: one-time photo and video interception</b>\n\n"
+            "One-time photos and videos from private chats are saved and sent to you as files.\n"
+            "Recovery of deleted and edited messages is free.\n\n"
+            "Choose a payment method:"
+        ),
+        "pt": (
+            "<b>Assinatura: interceptação de fotos e vídeos temporários</b>\n\n"
+            "Fotos e vídeos temporários de chats privados são salvos e enviados a você como arquivos.\n"
+            "A recuperação de mensagens apagadas e editadas é gratuita.\n\n"
+            "Escolha a forma de pagamento:"
+        ),
+        "id": (
+            "<b>Langganan: intersepsi foto dan video sekali-pakai</b>\n\n"
+            "Foto dan video sekali-pakai dari chat pribadi disimpan dan dikirim kepada Anda sebagai file.\n"
+            "Pemulihan pesan yang dihapus dan diedit gratis.\n\n"
+            "Pilih metode pembayaran:"
+        ),
+    },
+    "plans_title_method": {
+        "ru": "<b>Оплата через {method}</b>\n\nВыбери тариф:",
+        "en": "<b>Payment via {method}</b>\n\nChoose a plan:",
+        "pt": "<b>Pagamento via {method}</b>\n\nEscolha um plano:",
+        "id": "<b>Pembayaran via {method}</b>\n\nPilih paket:",
+    },
+    "btn_method_sbp": {
+        "ru": "СБП — рубли",
+        "en": "SBP — Russian banks",
+        "pt": "SBP — bancos russos",
+        "id": "SBP — bank Rusia",
+    },
+    "sbp_soon": {
+        "ru": (
+            "<b>Оплата через СБП скоро заработает.</b>\n\n"
+            "Мы подключаем приём платежей по Системе быстрых платежей. "
+            "Пока оплатить подписку можно через CryptoBot или Telegram Stars."
+        ),
+        "en": (
+            "<b>SBP payments are coming soon.</b>\n\n"
+            "We are connecting the Faster Payments System. "
+            "For now you can pay with CryptoBot or Telegram Stars."
+        ),
+        "pt": (
+            "<b>Os pagamentos via SBP estarão disponíveis em breve.</b>\n\n"
+            "Estamos a ligar o Sistema de Pagamentos Rápidos. "
+            "Por enquanto, pode pagar com CryptoBot ou Telegram Stars."
+        ),
+        "id": (
+            "<b>Pembayaran SBP segera hadir.</b>\n\n"
+            "Kami sedang menghubungkan Faster Payments System. "
+            "Untuk saat ini Anda dapat membayar dengan CryptoBot atau Telegram Stars."
+        ),
+    },
+    "btn_support": {
+        "ru": "Поддержка и документы",
+        "en": "Support and documents",
+        "pt": "Suporte e documentos",
+        "id": "Dukungan dan dokumen",
+    },
+    "support_title": {
+        "ru": (
+            "<b>Поддержка</b>\n\n"
+            "Пиши в любое время: {contact}\n"
+            "Обычно отвечаем в течение 24 часов.\n\n"
+            "<b>Документы</b>\n"
+            "Ниже — Политика конфиденциальности и Пользовательское соглашение "
+            "с актуальными тарифами и условиями возврата."
+        ),
+        "en": (
+            "<b>Support</b>\n\n"
+            "Write any time: {contact}\n"
+            "We usually reply within 24 hours.\n\n"
+            "<b>Documents</b>\n"
+            "Below are the Privacy Policy and the Terms of Use "
+            "with current prices and refund conditions."
+        ),
+        "pt": (
+            "<b>Suporte</b>\n\n"
+            "Escreva a qualquer momento: {contact}\n"
+            "Normalmente respondemos em 24 horas.\n\n"
+            "<b>Documentos</b>\n"
+            "Abaixo estão a Política de Privacidade e os Termos de Uso "
+            "com os preços atuais e as condições de reembolso."
+        ),
+        "id": (
+            "<b>Dukungan</b>\n\n"
+            "Hubungi kapan saja: {contact}\n"
+            "Kami biasanya membalas dalam 24 jam.\n\n"
+            "<b>Dokumen</b>\n"
+            "Di bawah ini adalah Kebijakan Privasi dan Ketentuan Penggunaan "
+            "dengan harga terkini dan ketentuan pengembalian dana."
+        ),
+    },
+    "btn_privacy": {
+        "ru": "Политика конфиденциальности",
+        "en": "Privacy Policy",
+        "pt": "Política de Privacidade",
+        "id": "Kebijakan Privasi",
+    },
+    "btn_terms": {
+        "ru": "Пользовательское соглашение",
+        "en": "Terms of Use",
+        "pt": "Termos de Uso",
+        "id": "Ketentuan Penggunaan",
+    },
+    "btn_write_support": {
+        "ru": "Написать в поддержку",
+        "en": "Message support",
+        "pt": "Falar com o suporte",
+        "id": "Hubungi dukungan",
+    },
     "btn_trial": {
         "ru": "Пробный период — бесплатно",
         "en": "Trial period — free",

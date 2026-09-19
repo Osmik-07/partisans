@@ -12,6 +12,9 @@ from bot.keyboards.main import (
     payment_method_kb,
     protection_kb,
     protection_method_kb,
+    support_kb,
+    method_label,
+    plan_price,
 )
 from bot.services import subscription as sub_svc
 from bot.services import cryptobot as crypto_svc
@@ -43,8 +46,8 @@ async def _send_plans_message(message: Message, session: AsyncSession):
     trial_ok = not user.trial_used if user else True
     lang = _lang(user)
     await message.answer(
-        t("plans_title", lang),
-        reply_markup=plans_kb(lang, trial_available=trial_ok),
+        t("method_title", lang),
+        reply_markup=payment_method_kb(lang, trial_available=trial_ok),
         parse_mode="HTML",
     )
 
@@ -54,16 +57,44 @@ async def cmd_premium(message: Message, session: AsyncSession):
     await _send_plans_message(message, session)
 
 
-# ── Показать планы ──────────────────────────────────────────────────
+# ── Шаг 1: способ оплаты ────────────────────────────────────────────
 @router.callback_query(F.data == "sub:plans")
 async def cb_plans(call: CallbackQuery, session: AsyncSession):
     user = await sub_svc.get_user(session, call.from_user.id)
     trial_ok = not user.trial_used if user else True
     lang = _lang(user)
     await call.message.edit_text(
-        t("plans_title", lang),
-        reply_markup=plans_kb(lang, trial_available=trial_ok),
+        t("method_title", lang),
+        reply_markup=payment_method_kb(lang, trial_available=trial_ok),
         parse_mode="HTML",
+    )
+    await call.answer()
+
+
+# ── Шаг 2: тариф в валюте выбранного способа ────────────────────────
+@router.callback_query(F.data.regexp(r"^sub:m:(sbp|crypto|stars)$"))
+async def cb_method(call: CallbackQuery, session: AsyncSession):
+    method = call.data.split(":")[2]
+    user = await sub_svc.get_user(session, call.from_user.id)
+    lang = _lang(user)
+    await call.message.edit_text(
+        t("plans_title_method", lang, method=method_label(method, lang)),
+        reply_markup=plans_kb(lang, method=method),
+        parse_mode="HTML",
+    )
+    await call.answer()
+
+
+# ── Поддержка и документы ───────────────────────────────────────────
+@router.callback_query(F.data == "help:support")
+async def cb_support(call: CallbackQuery, session: AsyncSession):
+    user = await sub_svc.get_user(session, call.from_user.id)
+    lang = _lang(user)
+    await call.message.edit_text(
+        t("support_title", lang, contact=settings.support_contact),
+        reply_markup=support_kb(lang),
+        parse_mode="HTML",
+        disable_web_page_preview=True,
     )
     await call.answer()
 
@@ -90,25 +121,28 @@ async def cb_trial(call: CallbackQuery, session: AsyncSession):
     await call.answer()
 
 
-# ── Выбор плана (неделя/месяц/год) → выбор метода оплаты ───────────
-@router.callback_query(F.data.startswith("buy:"))
-async def cb_buy_plan(call: CallbackQuery):
-    plan_key = call.data.split(":")[1]
-    if plan_key == "trial":
-        return  # обрабатывается выше
+# ── СБП ─────────────────────────────────────────────────────────────
+@router.callback_query(F.data.regexp(r"^buy:sbp:(week|month|year)$"))
+async def cb_pay_sbp(call: CallbackQuery, session: AsyncSession):
+    """Заглушка до подключения эквайринга: платёж не создаётся.
 
-    label = PLAN_LABELS.get(plan_key, plan_key)
-
+    Когда PlateGo выдаст доступ, здесь появится создание счёта СБП; тариф и
+    цена в рублях уже приходят в callback_data и берутся из настроек.
+    """
+    user = await sub_svc.get_user(session, call.from_user.id)
+    lang = _lang(user)
     await call.message.edit_text(
-        f"<b>Оплата тарифа «{label}»</b>\n\nВыбери способ оплаты:",
-        reply_markup=payment_method_kb(plan_key),
+        t("sbp_soon", lang),
+        reply_markup=payment_method_kb(lang, trial_available=not (user and user.trial_used)),
         parse_mode="HTML",
     )
     await call.answer()
 
 
 # ── Оплата крипто ───────────────────────────────────────────────────
-@router.callback_query(F.data.startswith("pay:crypto:"))
+# Формат callback_data — buy:crypto:<план>; старый pay:crypto:<план> оставлен,
+# чтобы кнопки в уже отправленных сообщениях продолжали работать.
+@router.callback_query(F.data.regexp(r"^(buy|pay):crypto:(week|month|year)$"))
 async def cb_pay_crypto(call: CallbackQuery, session: AsyncSession):
     plan_key = call.data.split(":")[2]
     plan = PLAN_MAP.get(plan_key)
@@ -251,7 +285,7 @@ async def cb_pay_check(call: CallbackQuery, session: AsyncSession):
 
 
 # ── Telegram Stars ──────────────────────────────────────────────────
-@router.callback_query(F.data.startswith("pay:stars:"))
+@router.callback_query(F.data.regexp(r"^(buy|pay):stars:(week|month|year)$"))
 async def cb_pay_stars(call: CallbackQuery, session: AsyncSession):
     plan_key = call.data.split(":")[2]
     plan = PLAN_MAP.get(plan_key)
