@@ -1,0 +1,27 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Два быстрых пуша подряд не должны гонять сборку и миграции параллельно.
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH и деплой на VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: root
+          key: ${{ secrets.VPS_DEPLOY_KEY }}
+          command_timeout: 15m
+          # Команда не имеет значения: у ключа deploy на сервере forced command
+          # в authorized_keys — что бы сюда ни написали, выполнится ровно
+          # deploy/deploy.sh и ничего больше.
+          script: echo triggering deploy

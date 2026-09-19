@@ -99,6 +99,34 @@ docker compose ps            # статус контейнеров
 
 ---
 
+## Автодеплой (GitHub Actions)
+
+Пуш в `main` сам выкатывает изменения на сервер. GitHub Actions подключается по SSH ключом, который на сервере ограничен `authorized_keys`-командой на ровно один скрипт (`deploy/deploy.sh`) — что бы CI ни отправил, выполнится только он. Скрипт тянет код, собирает образ, прогоняет `alembic upgrade head` и только потом перезапускает бота. Если миграция упала, перезапуска не будет — бот продолжит работать на старой версии.
+
+Запустить деплой без пуша: Actions → Deploy → Run workflow. Ручные шаги выше нужны только для первого запуска сервера.
+
+### Одноразовая настройка
+
+1. Ключ, на своём компьютере:
+
+   ```bash
+   ssh-keygen -t ed25519 -f ~/.ssh/partisans_deploy -N "" -C partisans-deploy
+   ```
+
+2. На сервере добавить публичный ключ (`partisans_deploy.pub`) в `/root/.ssh/authorized_keys` одной строкой, путь — к папке проекта:
+
+   ```text
+   restrict,command="/root/partisans/deploy/deploy.sh" ssh-ed25519 AAAA... partisans-deploy
+   ```
+
+3. В репозитории на GitHub: Settings → Secrets and variables → Actions:
+   - `VPS_HOST` — IP или домен сервера
+   - `VPS_DEPLOY_KEY` — содержимое приватного ключа `~/.ssh/partisans_deploy`
+
+4. Проверить на сервере, что `cd /root/partisans && git fetch origin main` проходит без запроса пароля и что `git status` чистый. Деплой делает `git reset --hard origin/main` и сотрёт ручные правки отслеживаемых файлов. `.env` в git не лежит и не затрагивается.
+
+---
+
 ## Настройка Telegram
 
 ### BotFather
