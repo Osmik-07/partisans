@@ -14,7 +14,7 @@ _T = {
     # ── Приветствие ──────────────────────────────────────────────────────
     "welcome": {
         "ru": (
-            "🐾 <b>Partisans</b> — знай всё, что скрывают\n\n"
+            "🐾 <b>Partisans mekbuda</b> — знай всё, что скрывают\n\n"
             "<b>Единственный бот, который работает в фоне.</b>\n\n"
             "Бот перехватывает:\n"
             "• <b>Удалённые сообщения</b> — читай то, что удалили\n"
@@ -26,7 +26,7 @@ _T = {
             "Выбери действие:"
         ),
         "en": (
-            "🐾 <b>Partisans</b> — know everything they hide\n\n"
+            "🐾 <b>Partisans mekbuda</b> — know everything they hide\n\n"
             "<b>The only bot that works in the background.</b>\n\n"
             "The bot intercepts:\n"
             "• <b>Deleted messages</b> — read what was deleted\n"
@@ -38,7 +38,7 @@ _T = {
             "Choose an action:"
         ),
         "pt": (
-            "🐾 <b>Partisans</b> — saiba tudo que escondem\n\n"
+            "🐾 <b>Partisans mekbuda</b> — saiba tudo que escondem\n\n"
             "<b>O único bot que funciona em segundo plano.</b>\n\n"
             "O bot intercepta:\n"
             "• <b>Mensagens apagadas</b> — leia o que foi apagado\n"
@@ -50,7 +50,7 @@ _T = {
             "Escolha uma ação:"
         ),
         "id": (
-            "🐾 <b>Partisans</b> — ketahui semua yang disembunyikan\n\n"
+            "🐾 <b>Partisans mekbuda</b> — ketahui semua yang disembunyikan\n\n"
             "<b>Satu-satunya bot yang bekerja di latar belakang.</b>\n\n"
             "Bot ini menangkap:\n"
             "• <b>Pesan yang dihapus</b> — baca apa yang dihapus\n"
