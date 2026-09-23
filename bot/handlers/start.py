@@ -1,8 +1,6 @@
-from pathlib import Path
-
 from aiogram import Router, F
 from aiogram.filters import CommandStart
-from aiogram.types import Message, CallbackQuery, FSInputFile, BotCommand
+from aiogram.types import Message, CallbackQuery, BotCommand
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.config import settings
@@ -11,13 +9,6 @@ from bot.keyboards.main import main_menu_kb, payment_method_kb, back_main_kb, la
 from bot.i18n import t, get_lang, LANGUAGES
 
 router = Router()
-START_VIDEO_PATH = Path(__file__).resolve().parents[2] / "media" / "start.mp4"
-CONNECT_VIDEO_PATH = Path(__file__).resolve().parents[2] / "media" / "connect.mp4"
-REFERRAL_GUIDE_PATHS = [
-    Path(__file__).resolve().parents[2] / "media" / "referral-stars.png",
-    Path(__file__).resolve().parents[2] / "media" / "referral-stars.jpg",
-    Path(__file__).resolve().parents[2] / "media" / "referral-stars.jpeg",
-]
 
 
 def _get_user_lang(user_db) -> str:
@@ -53,9 +44,6 @@ async def set_bot_commands(bot) -> None:
 
 
 async def send_welcome(message: Message, lang: str) -> None:
-    if START_VIDEO_PATH.exists():
-        await message.answer_video(FSInputFile(START_VIDEO_PATH))
-
     await message.answer(
         t("welcome", lang),
         reply_markup=main_menu_kb(lang),
@@ -75,18 +63,6 @@ def _extract_referrer_id(payload: str) -> int | None:
         return int(payload.split("_", 1)[1])
     except ValueError:
         return None
-
-
-async def _send_optional_video(message: Message, path: Path) -> None:
-    if path.exists():
-        await message.answer_video(FSInputFile(path))
-
-
-async def _send_optional_photo(message: Message, paths: list[Path]) -> None:
-    for path in paths:
-        if path.exists():
-            await message.answer_photo(FSInputFile(path))
-            return
 
 
 @router.message(CommandStart())
@@ -162,7 +138,6 @@ async def cb_help_connect(call: CallbackQuery, session: AsyncSession):
     lang = _get_user_lang(user)
     me = await call.bot.get_me()
     text = t("how_to_connect", lang, bot_username=me.username)
-    await _send_optional_video(call.message, CONNECT_VIDEO_PATH)
     await call.message.answer(
         text,
         reply_markup=back_main_kb(lang),
@@ -179,7 +154,6 @@ async def cb_referral_menu(call: CallbackQuery, session: AsyncSession):
     me = await call.bot.get_me()
     referral_url = f"https://t.me/{me.username}?start=ref_{call.from_user.id}"
     share_text = t("referral_share_text", lang)
-    await _send_optional_photo(call.message, REFERRAL_GUIDE_PATHS)
     text = t(
         "referral_program",
         lang,

@@ -1,7 +1,5 @@
-from pathlib import Path
-
 from aiogram import Router, F
-from aiogram.types import CallbackQuery, FSInputFile
+from aiogram.types import CallbackQuery
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -13,7 +11,6 @@ from bot.services.subscription import get_active_subscription
 from db.models import UserbotSession
 
 router = Router()
-USERBOT_VIDEO_PATH = Path(__file__).resolve().parents[2] / "media" / "userbot.mp4"
 
 
 def _lang(user_db) -> str:
@@ -60,9 +57,6 @@ async def cb_userbot_menu(call: CallbackQuery, session: AsyncSession):
     else:
         text = t("userbot_title", lang)
 
-    if USERBOT_VIDEO_PATH.exists():
-        await call.message.answer_video(FSInputFile(USERBOT_VIDEO_PATH))
-
     await call.message.answer(
         text,
         reply_markup=userbot_kb(lang, is_active, miniapp_url),
@@ -83,10 +77,30 @@ async def cb_userbot_disconnect(call: CallbackQuery, session: AsyncSession):
 
     await call.message.edit_text(
         {
-            "ru": "Перехват отключён.",
-            "en": "Interception disabled.",
-            "pt": "Interceptação desativada.",
-            "id": "Intersepsi dinonaktifkan.",
+            "ru": (
+                "🔌 <b>Перехват отключён</b>\n\n"
+                "Твоя сессия удалена с сервера. Исчезающие фото и видео больше не "
+                "сохраняются.\n\n"
+                "Захочешь вернуть — включается за минуту в любой момент."
+            ),
+            "en": (
+                "🔌 <b>Interception disabled</b>\n\n"
+                "Your session has been deleted from the server. Disappearing photos and "
+                "videos are no longer saved.\n\n"
+                "Want it back? It turns on again in a minute, anytime."
+            ),
+            "pt": (
+                "🔌 <b>Interceptação desativada</b>\n\n"
+                "Sua sessão foi apagada do servidor. Fotos e vídeos temporários não são "
+                "mais salvos.\n\n"
+                "Quer de volta? Reativa em um minuto, quando quiser."
+            ),
+            "id": (
+                "🔌 <b>Intersepsi dinonaktifkan</b>\n\n"
+                "Sesi Anda telah dihapus dari server. Foto dan video sementara tidak lagi "
+                "disimpan.\n\n"
+                "Mau aktif lagi? Bisa dihidupkan dalam satu menit, kapan saja."
+            ),
         }.get(lang, "Interception disabled."),
         reply_markup=back_main_kb(lang),
         parse_mode="HTML",

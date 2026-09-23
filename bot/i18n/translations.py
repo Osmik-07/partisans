@@ -14,52 +14,76 @@ _T = {
     # ── Приветствие ──────────────────────────────────────────────────────
     "welcome": {
         "ru": (
-            "🐾 <b>Partisans mekbuda</b> — знай всё, что скрывают\n\n"
-            "<b>Единственный бот, который работает в фоне.</b>\n\n"
-            "Бот перехватывает:\n"
-            "• <b>Удалённые сообщения</b> — читай то, что удалили\n"
-            "• <b>Правки сообщений</b> — сравни оригинал и изменённый текст\n"
-            "• <b>Исчезающие фото/видео</b> — сохраняются навсегда\n\n"
-            "Удалённые и изменённые сообщения работают <b>бесплатно</b> после подключения через "
-            "<b>Настройки → Автоматизация чатов</b>.\n"
-            "Одноразовые фото/видео доступны по подписке.\n\n"
-            "Выбери действие:"
+            "🐾 <b>Partisans mekbuda</b>\n\n"
+            "<b>Ни одно сообщение больше не исчезнет бесследно.</b>\n\n"
+            "Собеседник удалил переписку, поправил слова задним числом или прислал "
+            "самоуничтожающееся фото? Ты видишь пустоту — Partisans видит всё.\n\n"
+            "<b>🗑 Удалённые сообщения</b>\n"
+            "Прилетают тебе, даже если их стёрли через секунду.\n\n"
+            "<b>✏️ Изменённые сообщения</b>\n"
+            "Показываем оригинал — то, что написали на самом деле.\n\n"
+            "<b>👻 Исчезающие фото и видео</b>\n"
+            "Остаются у тебя навсегда, а не на пару секунд.\n\n"
+            "🎁 <b>Удалённые и правки — бесплатно.</b> Подключается за минуту:\n"
+            "<b>Настройки → Автоматизация чатов → Чат-боты → добавь этого бота → "
+            "разреши доступ к чатам.</b>\n\n"
+            "🔓 <b>Исчезающие фото и видео — по подписке.</b> Настроил один раз — "
+            "работает в фоне.\n\n"
+            "Выбери, с чего начать 👇"
         ),
         "en": (
-            "🐾 <b>Partisans mekbuda</b> — know everything they hide\n\n"
-            "<b>The only bot that works in the background.</b>\n\n"
-            "The bot intercepts:\n"
-            "• <b>Deleted messages</b> — read what was deleted\n"
-            "• <b>Edited messages</b> — compare original and edited text\n"
-            "• <b>Disappearing photos/videos</b> — saved forever\n\n"
-            "Deleted and edited messages work <b>for free</b> after connecting via "
-            "<b>Settings → Chat Automation</b>.\n"
-            "One-time photos/videos are available with a subscription.\n\n"
-            "Choose an action:"
+            "🐾 <b>Partisans mekbuda</b>\n\n"
+            "<b>No message disappears without a trace anymore.</b>\n\n"
+            "Someone deleted the chat, edited their words after the fact, or sent a "
+            "self-destructing photo? You see a blank — Partisans sees everything.\n\n"
+            "<b>🗑 Deleted messages</b>\n"
+            "Land in your chat even if they were wiped a second later.\n\n"
+            "<b>✏️ Edited messages</b>\n"
+            "We show the original — what was really written.\n\n"
+            "<b>👻 Disappearing photos and videos</b>\n"
+            "Stay with you forever, not for a couple of seconds.\n\n"
+            "🎁 <b>Deleted and edits — free.</b> Takes a minute to connect:\n"
+            "<b>Settings → Chat Automation → Chat Bots → add this bot → "
+            "allow access to your chats.</b>\n\n"
+            "🔓 <b>Disappearing photos and videos — with a subscription.</b> Set it up "
+            "once — it works in the background.\n\n"
+            "Pick where to start 👇"
         ),
         "pt": (
-            "🐾 <b>Partisans mekbuda</b> — saiba tudo que escondem\n\n"
-            "<b>O único bot que funciona em segundo plano.</b>\n\n"
-            "O bot intercepta:\n"
-            "• <b>Mensagens apagadas</b> — leia o que foi apagado\n"
-            "• <b>Mensagens editadas</b> — compare o original e o editado\n"
-            "• <b>Fotos/vídeos temporários</b> — salvos para sempre\n\n"
-            "Mensagens apagadas e editadas funcionam <b>grátis</b> após conectar via "
-            "<b>Configurações → Automação de chats</b>.\n"
-            "Fotos/vídeos temporários estão disponíveis com assinatura.\n\n"
-            "Escolha uma ação:"
+            "🐾 <b>Partisans mekbuda</b>\n\n"
+            "<b>Nenhuma mensagem desaparece sem deixar rasto.</b>\n\n"
+            "Apagaram a conversa, editaram as palavras depois ou enviaram uma foto que "
+            "se autodestrói? Você vê o vazio — o Partisans vê tudo.\n\n"
+            "<b>🗑 Mensagens apagadas</b>\n"
+            "Chegam até você mesmo que apaguem um segundo depois.\n\n"
+            "<b>✏️ Mensagens editadas</b>\n"
+            "Mostramos o original — o que foi realmente escrito.\n\n"
+            "<b>👻 Fotos e vídeos temporários</b>\n"
+            "Ficam com você para sempre, não por alguns segundos.\n\n"
+            "🎁 <b>Apagadas e edições — grátis.</b> Conecta em um minuto:\n"
+            "<b>Configurações → Automação de chats → Chatbots → adicione este bot → "
+            "permita acesso aos chats.</b>\n\n"
+            "🔓 <b>Fotos e vídeos temporários — com assinatura.</b> Configure uma vez — "
+            "funciona em segundo plano.\n\n"
+            "Escolha por onde começar 👇"
         ),
         "id": (
-            "🐾 <b>Partisans mekbuda</b> — ketahui semua yang disembunyikan\n\n"
-            "<b>Satu-satunya bot yang bekerja di latar belakang.</b>\n\n"
-            "Bot ini menangkap:\n"
-            "• <b>Pesan yang dihapus</b> — baca apa yang dihapus\n"
-            "• <b>Pesan yang diedit</b> — bandingkan asli dan yang diedit\n"
-            "• <b>Foto/video sementara</b> — tersimpan selamanya\n\n"
-            "Pesan yang dihapus dan diedit berfungsi <b>gratis</b> setelah menghubungkan melalui "
-            "<b>Pengaturan → Otomatisasi Chat</b>.\n"
-            "Foto/video sekali-pakai tersedia dengan langganan.\n\n"
-            "Pilih tindakan:"
+            "🐾 <b>Partisans mekbuda</b>\n\n"
+            "<b>Tidak ada pesan yang hilang tanpa jejak lagi.</b>\n\n"
+            "Lawan bicara menghapus obrolan, mengubah kata belakangan, atau mengirim foto "
+            "yang menghancurkan diri? Anda melihat kosong — Partisans melihat semuanya.\n\n"
+            "<b>🗑 Pesan yang dihapus</b>\n"
+            "Tetap sampai ke Anda meski dihapus sedetik kemudian.\n\n"
+            "<b>✏️ Pesan yang diedit</b>\n"
+            "Kami tampilkan aslinya — yang benar-benar ditulis.\n\n"
+            "<b>👻 Foto dan video sementara</b>\n"
+            "Tersimpan selamanya, bukan cuma beberapa detik.\n\n"
+            "🎁 <b>Dihapus dan diedit — gratis.</b> Terhubung dalam satu menit:\n"
+            "<b>Pengaturan → Otomatisasi Chat → Bot Chat → tambahkan bot ini → "
+            "izinkan akses ke chat.</b>\n\n"
+            "🔓 <b>Foto dan video sementara — dengan langganan.</b> Atur sekali — "
+            "bekerja di latar belakang.\n\n"
+            "Pilih dari mana memulai 👇"
         ),
     },
 
@@ -79,40 +103,40 @@ _T = {
 
     # ── Меню ─────────────────────────────────────────────────────────────
     "btn_buy": {
-        "ru": "Купить подписку",
-        "en": "Buy subscription",
-        "pt": "Comprar assinatura",
-        "id": "Beli langganan",
+        "ru": "🔓 Открыть исчезающие фото",
+        "en": "🔓 Unlock disappearing photos",
+        "pt": "🔓 Abrir fotos que somem",
+        "id": "🔓 Buka foto yang menghilang",
     },
     "btn_status": {
-        "ru": "Мой статус",
-        "en": "My status",
-        "pt": "Meu status",
-        "id": "Status saya",
+        "ru": "👤 Мой статус",
+        "en": "👤 My status",
+        "pt": "👤 Meu status",
+        "id": "👤 Status saya",
     },
     "btn_referral": {
-        "ru": "Реферальная программа",
-        "en": "Referral program",
-        "pt": "Programa de indicação",
-        "id": "Program referral",
+        "ru": "🎁 Пригласить друзей",
+        "en": "🎁 Invite friends",
+        "pt": "🎁 Convidar amigos",
+        "id": "🎁 Undang teman",
     },
     "btn_connect": {
-        "ru": "Как подключить",
-        "en": "How to connect",
-        "pt": "Como conectar",
-        "id": "Cara menghubungkan",
+        "ru": "📲 Как подключить",
+        "en": "📲 How to connect",
+        "pt": "📲 Como conectar",
+        "id": "📲 Cara menghubungkan",
     },
     "btn_language": {
-        "ru": "Язык",
-        "en": "Language",
-        "pt": "Idioma",
-        "id": "Bahasa",
+        "ru": "🌐 Язык",
+        "en": "🌐 Language",
+        "pt": "🌐 Idioma",
+        "id": "🌐 Bahasa",
     },
     "btn_userbot": {
-        "ru": "Подключить перехват фото",
-        "en": "Connect photo intercept",
-        "pt": "Conectar interceptação de fotos",
-        "id": "Hubungkan intersepsi foto",
+        "ru": "👻 Ловить исчезающие медиа",
+        "en": "👻 Catch disappearing media",
+        "pt": "👻 Capturar mídia que some",
+        "id": "👻 Tangkap media menghilang",
     },
     "btn_back": {
         "ru": "« Назад",
@@ -136,114 +160,121 @@ _T = {
     # ── Подключение ───────────────────────────────────────────────────────
     "how_to_connect": {
         "ru": (
-            "<b>Как подключить бота:</b>\n\n"
-            "1. Открой <b>Настройки</b> в Telegram\n"
-            "2. Перейди в <b>Автоматизация чатов</b>\n"
-            "3. Выбери раздел <b>Чат-боты</b>\n"
-            "4. Найди <b>@{bot_username}</b> и подключи его\n"
-            "5. Разреши доступ ко <b>всем нужным чатам</b>\n\n"
-            "Если у тебя старая версия Telegram, этот пункт может называться "
-            "<b>Telegram для бизнеса → Чат-боты</b>.\n\n"
-            "После подключения бот начнёт отслеживать сообщения в реальном времени."
+            "<b>Подключение за 1 минуту</b>\n\n"
+            "Нужен <b>Telegram Premium</b> — режим для бизнеса включается только на нём.\n\n"
+            "<b>1.</b> Открой <b>Настройки</b> в Telegram\n"
+            "<b>2.</b> Зайди в <b>Автоматизация чатов</b>\n"
+            "   <i>(в старых версиях — «Telegram для бизнеса»)</i>\n"
+            "<b>3.</b> Выбери <b>Чат-боты</b>\n"
+            "<b>4.</b> Впиши <b>@{bot_username}</b> и добавь\n"
+            "<b>5.</b> Разреши доступ к чатам, которые хочешь защитить\n\n"
+            "Готово. Дальше бот работает сам: как только в чате удалят или изменят "
+            "сообщение — оно тут же прилетит тебе.\n\n"
+            "🎁 Удалённые и изменённые сообщения — <b>бесплатно, без подписки.</b>"
         ),
         "en": (
-            "<b>How to connect the bot:</b>\n\n"
-            "1. Open <b>Settings</b> in Telegram\n"
-            "2. Go to <b>Chat Automation</b>\n"
-            "3. Open <b>Chat Bots</b>\n"
-            "4. Find <b>@{bot_username}</b> and connect it\n"
-            "5. Allow access to <b>all needed chats</b>\n\n"
-            "On older Telegram versions, this section may be called "
-            "<b>Telegram for Business → Chat Bots</b>.\n\n"
-            "After connecting, the bot will start tracking messages in real time."
+            "<b>Connect in 1 minute</b>\n\n"
+            "You need <b>Telegram Premium</b> — the business mode only turns on with it.\n\n"
+            "<b>1.</b> Open <b>Settings</b> in Telegram\n"
+            "<b>2.</b> Go to <b>Chat Automation</b>\n"
+            "   <i>(on older versions — “Telegram Business”)</i>\n"
+            "<b>3.</b> Open <b>Chat Bots</b>\n"
+            "<b>4.</b> Enter <b>@{bot_username}</b> and add it\n"
+            "<b>5.</b> Allow access to the chats you want to protect\n\n"
+            "Done. From here the bot runs on its own: the moment a message is deleted or "
+            "edited in a chat, it lands in yours.\n\n"
+            "🎁 Deleted and edited messages — <b>free, no subscription.</b>"
         ),
         "pt": (
-            "<b>Como conectar o bot:</b>\n\n"
-            "1. Abra as <b>Configurações</b> no Telegram\n"
-            "2. Vá em <b>Automação de chats</b>\n"
-            "3. Abra <b>Chatbots</b>\n"
-            "4. Encontre <b>@{bot_username}</b> e conecte\n"
-            "5. Permita acesso a <b>todos os chats necessários</b>\n\n"
-            "Em versões antigas do Telegram, esta seção pode se chamar "
-            "<b>Telegram para Empresas → Chatbots</b>.\n\n"
-            "Após conectar, o bot começará a rastrear mensagens em tempo real."
+            "<b>Conecte em 1 minuto</b>\n\n"
+            "É preciso <b>Telegram Premium</b> — o modo empresarial só ativa com ele.\n\n"
+            "<b>1.</b> Abra as <b>Configurações</b> no Telegram\n"
+            "<b>2.</b> Vá em <b>Automação de chats</b>\n"
+            "   <i>(em versões antigas — “Telegram para Empresas”)</i>\n"
+            "<b>3.</b> Abra <b>Chatbots</b>\n"
+            "<b>4.</b> Digite <b>@{bot_username}</b> e adicione\n"
+            "<b>5.</b> Permita acesso aos chats que quer proteger\n\n"
+            "Pronto. A partir daí o bot trabalha sozinho: assim que apagarem ou editarem "
+            "uma mensagem num chat, ela chega até você.\n\n"
+            "🎁 Mensagens apagadas e editadas — <b>grátis, sem assinatura.</b>"
         ),
         "id": (
-            "<b>Cara menghubungkan bot:</b>\n\n"
-            "1. Buka <b>Pengaturan</b> di Telegram\n"
-            "2. Masuk ke <b>Otomatisasi Chat</b>\n"
-            "3. Buka <b>Bot Chat</b>\n"
-            "4. Temukan <b>@{bot_username}</b> dan hubungkan\n"
-            "5. Izinkan akses ke <b>semua chat yang diperlukan</b>\n\n"
-            "Pada versi Telegram lama, bagian ini mungkin bernama "
-            "<b>Telegram untuk Bisnis → Bot Chat</b>.\n\n"
-            "Setelah terhubung, bot akan mulai melacak pesan secara real time."
+            "<b>Hubungkan dalam 1 menit</b>\n\n"
+            "Perlu <b>Telegram Premium</b> — mode bisnis hanya aktif dengannya.\n\n"
+            "<b>1.</b> Buka <b>Pengaturan</b> di Telegram\n"
+            "<b>2.</b> Masuk ke <b>Otomatisasi Chat</b>\n"
+            "   <i>(pada versi lama — “Telegram Bisnis”)</i>\n"
+            "<b>3.</b> Buka <b>Bot Chat</b>\n"
+            "<b>4.</b> Ketik <b>@{bot_username}</b> lalu tambahkan\n"
+            "<b>5.</b> Izinkan akses ke chat yang ingin Anda lindungi\n\n"
+            "Selesai. Selanjutnya bot bekerja sendiri: begitu sebuah pesan dihapus atau "
+            "diedit di chat, pesan itu langsung sampai ke Anda.\n\n"
+            "🎁 Pesan yang dihapus dan diedit — <b>gratis, tanpa langganan.</b>"
         ),
     },
     "referral_program": {
         "ru": (
-            "<b>Реферальная программа</b>\n\n"
-            "Здесь работают <b>2 разные реферальные программы</b>:\n\n"
-            "<b>1. Бонус в Telegram Stars</b>\n"
-            "Официальная программа Telegram. Ссылка для неё берётся в профиле бота.\n"
-            "Смотри скриншот выше: он показывает, где именно открыть эту ссылку.\n"
-            "Награда: <b>до {stars_percent}% в Stars</b> от оплаты приглашённого пользователя.\n\n"
-            "<b>2. Бонусные дни в Partisans</b>\n"
-            "Используй свою личную ссылку ниже.\n"
-            "За каждого нового пользователя, который запустит бота по ней, ты получаешь "
-            "<b>{bonus_days}</b> бесплатный день.\n"
-            "Если подписка уже активна, день просто прибавляется к оставшемуся сроку.\n\n"
-            "Всего приглашено: <b>{invites_count}</b>\n"
-            "Всего начислено бонусных дней: <b>{total_bonus_days}</b>\n\n"
-            "<b>Твоя ссылка на бонусные дни:</b>\n"
+            "<b>Приглашай друзей — зарабатывай дважды</b>\n\n"
+            "У тебя работают <b>две программы одновременно.</b>\n\n"
+            "<b>💰 1. Stars за каждую оплату</b>\n"
+            "Официальная программа Telegram. Возвращает тебе <b>до {stars_percent}% в Stars</b> "
+            "с каждой оплаты приглашённого — снова и снова, а не один раз.\n"
+            "Ссылка для неё — в профиле бота: открой карточку бота и нажми "
+            "<b>«Пригласить друзей»</b> (или <b>«Мои Stars»</b>).\n\n"
+            "<b>🎁 2. Бесплатные дни подписки</b>\n"
+            "За каждого, кто впервые запустит бота по твоей ссылке ниже, — "
+            "<b>+{bonus_days} день</b> к подписке. Есть активная — просто прибавим к сроку.\n\n"
+            "Уже приглашено: <b>{invites_count}</b>\n"
+            "Начислено дней: <b>{total_bonus_days}</b>\n\n"
+            "<b>Твоя ссылка:</b>\n"
             "<code>{referral_url}</code>"
         ),
         "en": (
-            "<b>Referral program</b>\n\n"
-            "There are <b>2 different referral programs</b> here:\n\n"
-            "<b>1. Telegram Stars bonus</b>\n"
-            "This is the official Telegram program. Its link is taken from the bot profile.\n"
-            "See the screenshot above to find where to open it.\n"
-            "Reward: <b>up to {stars_percent}% in Stars</b> from an invited user's payment.\n\n"
-            "<b>2. Bonus days in Partisans</b>\n"
-            "Use your personal link below.\n"
-            "For every new user who starts the bot from it, you get <b>{bonus_days}</b> free day.\n"
-            "If your subscription is already active, the day is added to the remaining time.\n\n"
-            "Total invited: <b>{invites_count}</b>\n"
-            "Total bonus days earned: <b>{total_bonus_days}</b>\n\n"
-            "<b>Your bonus-days link:</b>\n"
+            "<b>Invite friends — earn twice</b>\n\n"
+            "You have <b>two programs running at once.</b>\n\n"
+            "<b>💰 1. Stars on every payment</b>\n"
+            "Telegram's official program. It pays you back <b>up to {stars_percent}% in Stars</b> "
+            "on every payment an invited user makes — again and again, not just once.\n"
+            "Its link is in the bot profile: open the bot's card and tap "
+            "<b>“Invite friends”</b> (or <b>“My Stars”</b>).\n\n"
+            "<b>🎁 2. Free subscription days</b>\n"
+            "For everyone who starts the bot for the first time from your link below — "
+            "<b>+{bonus_days} day</b> of subscription. Already active? We just add it to your time.\n\n"
+            "Invited so far: <b>{invites_count}</b>\n"
+            "Days earned: <b>{total_bonus_days}</b>\n\n"
+            "<b>Your link:</b>\n"
             "<code>{referral_url}</code>"
         ),
         "pt": (
-            "<b>Programa de indicação</b>\n\n"
-            "Aqui existem <b>2 programas de indicação diferentes</b>:\n\n"
-            "<b>1. Bônus em Telegram Stars</b>\n"
-            "Este é o programa oficial do Telegram. O link dele é obtido no perfil do bot.\n"
-            "Veja a captura de tela acima para encontrar onde abri-lo.\n"
-            "Recompensa: <b>até {stars_percent}% em Stars</b> do pagamento do usuário convidado.\n\n"
-            "<b>2. Dias bônus no Partisans</b>\n"
-            "Use seu link pessoal abaixo.\n"
-            "Para cada novo usuário que iniciar o bot por ele, você recebe <b>{bonus_days}</b> dia grátis.\n"
-            "Se sua assinatura já estiver ativa, o dia é somado ao tempo restante.\n\n"
-            "Total de convidados: <b>{invites_count}</b>\n"
-            "Total de dias bônus: <b>{total_bonus_days}</b>\n\n"
-            "<b>Seu link de dias bônus:</b>\n"
+            "<b>Convide amigos — ganhe duas vezes</b>\n\n"
+            "Você tem <b>dois programas rodando ao mesmo tempo.</b>\n\n"
+            "<b>💰 1. Stars em cada pagamento</b>\n"
+            "Programa oficial do Telegram. Devolve para você <b>até {stars_percent}% em Stars</b> "
+            "de cada pagamento de um convidado — sempre, não só uma vez.\n"
+            "O link dele está no perfil do bot: abra o cartão do bot e toque em "
+            "<b>“Convidar amigos”</b> (ou <b>“Meus Stars”</b>).\n\n"
+            "<b>🎁 2. Dias grátis de assinatura</b>\n"
+            "Para cada pessoa que iniciar o bot pela primeira vez pelo seu link abaixo — "
+            "<b>+{bonus_days} dia</b> de assinatura. Já tem ativa? Somamos ao seu tempo.\n\n"
+            "Convidados até agora: <b>{invites_count}</b>\n"
+            "Dias acumulados: <b>{total_bonus_days}</b>\n\n"
+            "<b>Seu link:</b>\n"
             "<code>{referral_url}</code>"
         ),
         "id": (
-            "<b>Program referral</b>\n\n"
-            "Di sini ada <b>2 program referral yang berbeda</b>:\n\n"
-            "<b>1. Bonus Telegram Stars</b>\n"
-            "Ini adalah program resmi Telegram. Tautannya diambil dari profil bot.\n"
-            "Lihat screenshot di atas untuk mengetahui di mana membukanya.\n"
-            "Hadiah: <b>hingga {stars_percent}% dalam Stars</b> dari pembayaran pengguna yang diundang.\n\n"
-            "<b>2. Hari bonus di Partisans</b>\n"
-            "Gunakan tautan pribadi Anda di bawah ini.\n"
-            "Untuk setiap pengguna baru yang menjalankan bot dari tautan itu, Anda mendapat <b>{bonus_days}</b> hari gratis.\n"
-            "Jika langganan Anda sudah aktif, hari tersebut akan ditambahkan ke sisa waktu.\n\n"
-            "Total undangan: <b>{invites_count}</b>\n"
-            "Total hari bonus: <b>{total_bonus_days}</b>\n\n"
-            "<b>Tautan hari bonus Anda:</b>\n"
+            "<b>Undang teman — dapat dua kali</b>\n\n"
+            "Anda punya <b>dua program sekaligus.</b>\n\n"
+            "<b>💰 1. Stars di setiap pembayaran</b>\n"
+            "Program resmi Telegram. Mengembalikan <b>hingga {stars_percent}% dalam Stars</b> "
+            "dari setiap pembayaran orang yang diundang — berulang, bukan sekali saja.\n"
+            "Tautannya ada di profil bot: buka kartu bot dan ketuk "
+            "<b>“Undang teman”</b> (atau <b>“Stars Saya”</b>).\n\n"
+            "<b>🎁 2. Hari langganan gratis</b>\n"
+            "Untuk setiap orang yang pertama kali menjalankan bot lewat tautan Anda di bawah — "
+            "<b>+{bonus_days} hari</b> langganan. Sudah aktif? Kami tambahkan ke sisa waktu.\n\n"
+            "Sudah diundang: <b>{invites_count}</b>\n"
+            "Hari terkumpul: <b>{total_bonus_days}</b>\n\n"
+            "<b>Tautan Anda:</b>\n"
             "<code>{referral_url}</code>"
         ),
     },
@@ -257,54 +288,70 @@ _T = {
     # ── Статус подписки ───────────────────────────────────────────────────
     "sub_active": {
         "ru": (
-            "<b>Подписка активна</b>\n\n"
+            "✅ <b>Подписка активна</b>\n\n"
             "Тариф: <b>{plan}</b>\n"
-            "Действует до: <b>{expires} UTC</b>\n\n"
-            "Автоматизация чатов: {connected}"
+            "Действует до: <b>{expires} UTC</b>\n"
+            "Автоматизация чатов: <b>{connected}</b>\n\n"
+            "Исчезающие фото и видео теперь сохраняются автоматически. Отдыхай — "
+            "Partisans на страже."
         ),
         "en": (
-            "<b>Subscription active</b>\n\n"
+            "✅ <b>Subscription active</b>\n\n"
             "Plan: <b>{plan}</b>\n"
-            "Valid until: <b>{expires} UTC</b>\n\n"
-            "Chat Automation: {connected}"
+            "Valid until: <b>{expires} UTC</b>\n"
+            "Chat Automation: <b>{connected}</b>\n\n"
+            "Disappearing photos and videos are now saved automatically. Relax — "
+            "Partisans is on guard."
         ),
         "pt": (
-            "<b>Assinatura ativa</b>\n\n"
+            "✅ <b>Assinatura ativa</b>\n\n"
             "Plano: <b>{plan}</b>\n"
-            "Válido até: <b>{expires} UTC</b>\n\n"
-            "Automação de chats: {connected}"
+            "Válido até: <b>{expires} UTC</b>\n"
+            "Automação de chats: <b>{connected}</b>\n\n"
+            "Fotos e vídeos temporários agora são salvos automaticamente. Relaxe — "
+            "o Partisans está de guarda."
         ),
         "id": (
-            "<b>Langganan aktif</b>\n\n"
+            "✅ <b>Langganan aktif</b>\n\n"
             "Paket: <b>{plan}</b>\n"
-            "Berlaku hingga: <b>{expires} UTC</b>\n\n"
-            "Otomatisasi Chat: {connected}"
+            "Berlaku hingga: <b>{expires} UTC</b>\n"
+            "Otomatisasi Chat: <b>{connected}</b>\n\n"
+            "Foto dan video sementara kini tersimpan otomatis. Santai saja — "
+            "Partisans yang berjaga."
         ),
     },
     "sub_inactive": {
         "ru": (
-            "<b>Подписка не активна</b>\n\n"
-            "Удалённые и изменённые сообщения доступны бесплатно после подключения через "
-            "<b>Автоматизацию чатов</b>.\n\n"
-            "Подписка нужна для перехвата одноразовых фото и видео."
+            "<b>У тебя ещё нет подписки</b>\n\n"
+            "🎁 <b>Бесплатно уже сейчас:</b> удалённые и изменённые сообщения — "
+            "просто подключи бота через <b>Автоматизацию чатов</b>.\n\n"
+            "🔓 <b>По подписке:</b> исчезающие фото и видео сохраняются навсегда. "
+            "Именно то, что показывают на пару секунд и стирают.\n\n"
+            "Оформи за минуту — ниже."
         ),
         "en": (
-            "<b>Subscription inactive</b>\n\n"
-            "Deleted and edited messages are free after connecting via "
-            "<b>Chat Automation</b>.\n\n"
-            "A subscription is required for one-time photos and videos."
+            "<b>You don't have a subscription yet</b>\n\n"
+            "🎁 <b>Free right now:</b> deleted and edited messages — just connect the "
+            "bot via <b>Chat Automation</b>.\n\n"
+            "🔓 <b>With a subscription:</b> disappearing photos and videos are saved "
+            "forever. Exactly what they show for a couple of seconds and wipe.\n\n"
+            "Get it in a minute — below."
         ),
         "pt": (
-            "<b>Assinatura inativa</b>\n\n"
-            "Mensagens apagadas e editadas são grátis após conectar via "
-            "<b>Automação de chats</b>.\n\n"
-            "A assinatura é necessária para fotos e vídeos temporários."
+            "<b>Você ainda não tem assinatura</b>\n\n"
+            "🎁 <b>Grátis agora:</b> mensagens apagadas e editadas — basta conectar o "
+            "bot via <b>Automação de chats</b>.\n\n"
+            "🔓 <b>Com assinatura:</b> fotos e vídeos temporários são salvos para "
+            "sempre. Justo o que mostram por segundos e apagam.\n\n"
+            "Assine em um minuto — abaixo."
         ),
         "id": (
-            "<b>Langganan tidak aktif</b>\n\n"
-            "Pesan yang dihapus dan diedit gratis setelah terhubung melalui "
-            "<b>Otomatisasi Chat</b>.\n\n"
-            "Langganan diperlukan untuk foto dan video sekali-pakai."
+            "<b>Anda belum punya langganan</b>\n\n"
+            "🎁 <b>Gratis sekarang:</b> pesan yang dihapus dan diedit — cukup hubungkan "
+            "bot lewat <b>Otomatisasi Chat</b>.\n\n"
+            "🔓 <b>Dengan langganan:</b> foto dan video sementara tersimpan selamanya. "
+            "Persis yang ditampilkan sedetik lalu dihapus.\n\n"
+            "Berlangganan dalam satu menit — di bawah."
         ),
     },
     "sub_required_alert": {
@@ -341,28 +388,40 @@ _T = {
     },
     "method_title": {
         "ru": (
-            "<b>Подписка на перехват одноразовых фото и видео</b>\n\n"
-            "Одноразовые фото и видео из личных чатов сохраняются и приходят тебе файлами.\n"
-            "Восстановление удалённых и изменённых сообщений работает бесплатно.\n\n"
-            "Выбери способ оплаты:"
+            "🔓 <b>Открой исчезающие фото и видео</b>\n\n"
+            "Одноразовое фото исчезает через пару секунд после просмотра — и второго "
+            "шанса нет. С подпиской каждое такое фото и видео <b>сохраняется у тебя "
+            "навсегда</b> и приходит обычным файлом.\n\n"
+            "Настроил один раз — работает в фоне, ничего не нужно нажимать.\n\n"
+            "<i>Удалённые и изменённые сообщения остаются бесплатными.</i>\n\n"
+            "Выбери способ оплаты 👇"
         ),
         "en": (
-            "<b>Subscription: one-time photo and video interception</b>\n\n"
-            "One-time photos and videos from private chats are saved and sent to you as files.\n"
-            "Recovery of deleted and edited messages is free.\n\n"
-            "Choose a payment method:"
+            "🔓 <b>Unlock disappearing photos and videos</b>\n\n"
+            "A one-time photo vanishes seconds after it's opened — with no second chance. "
+            "With a subscription, every such photo and video <b>stays with you forever</b> "
+            "and arrives as a regular file.\n\n"
+            "Set it up once — it runs in the background, nothing to tap.\n\n"
+            "<i>Deleted and edited messages stay free.</i>\n\n"
+            "Choose a payment method 👇"
         ),
         "pt": (
-            "<b>Assinatura: interceptação de fotos e vídeos temporários</b>\n\n"
-            "Fotos e vídeos temporários de chats privados são salvos e enviados a você como arquivos.\n"
-            "A recuperação de mensagens apagadas e editadas é gratuita.\n\n"
-            "Escolha a forma de pagamento:"
+            "🔓 <b>Desbloqueie fotos e vídeos que desaparecem</b>\n\n"
+            "Uma foto de uso único some segundos após ser aberta — sem segunda chance. "
+            "Com a assinatura, cada foto e vídeo desses <b>fica com você para sempre</b> "
+            "e chega como um arquivo comum.\n\n"
+            "Configure uma vez — funciona em segundo plano, sem tocar em nada.\n\n"
+            "<i>Mensagens apagadas e editadas continuam grátis.</i>\n\n"
+            "Escolha a forma de pagamento 👇"
         ),
         "id": (
-            "<b>Langganan: intersepsi foto dan video sekali-pakai</b>\n\n"
-            "Foto dan video sekali-pakai dari chat pribadi disimpan dan dikirim kepada Anda sebagai file.\n"
-            "Pemulihan pesan yang dihapus dan diedit gratis.\n\n"
-            "Pilih metode pembayaran:"
+            "🔓 <b>Buka foto dan video yang menghilang</b>\n\n"
+            "Foto sekali-pakai lenyap beberapa detik setelah dibuka — tanpa kesempatan kedua. "
+            "Dengan langganan, setiap foto dan video seperti itu <b>tersimpan selamanya</b> "
+            "dan datang sebagai file biasa.\n\n"
+            "Atur sekali — bekerja di latar belakang, tanpa perlu menekan apa pun.\n\n"
+            "<i>Pesan yang dihapus dan diedit tetap gratis.</i>\n\n"
+            "Pilih metode pembayaran 👇"
         ),
     },
     "plans_title_method": {
@@ -400,10 +459,10 @@ _T = {
         ),
     },
     "btn_support": {
-        "ru": "Поддержка и документы",
-        "en": "Support and documents",
-        "pt": "Suporte e documentos",
-        "id": "Dukungan dan dokumen",
+        "ru": "💬 Поддержка и документы",
+        "en": "💬 Support and documents",
+        "pt": "💬 Suporte e documentos",
+        "id": "💬 Dukungan dan dokumen",
     },
     "support_title": {
         "ru": (
@@ -458,83 +517,105 @@ _T = {
         "id": "Hubungi dukungan",
     },
     "btn_trial": {
-        "ru": "Пробный период — бесплатно",
-        "en": "Trial period — free",
-        "pt": "Período de teste — grátis",
-        "id": "Periode percobaan — gratis",
+        "ru": "🎁 Попробовать бесплатно",
+        "en": "🎁 Try for free",
+        "pt": "🎁 Testar grátis",
+        "id": "🎁 Coba gratis",
     },
     "trial_activated": {
         "ru": (
-            "<b>Пробный период активирован.</b>\n\n"
-            "У тебя есть <b>{days} дня</b> для проверки бота.\n\n"
-            "Не забудь подключить бота через Автоматизацию чатов."
+            "🎉 <b>Готово! У тебя {days} дня бесплатно.</b>\n\n"
+            "Полный доступ, включая перехват исчезающих фото и видео — проверь бота "
+            "в деле.\n\n"
+            "<b>Один шаг до старта:</b> подключи бота через <b>Настройки → Автоматизация "
+            "чатов → Чат-боты</b>, и он сразу начнёт ловить всё в твоих чатах."
         ),
         "en": (
-            "<b>Trial period activated.</b>\n\n"
-            "You have <b>{days} days</b> to test the bot.\n\n"
-            "Don't forget to connect the bot via Chat Automation."
+            "🎉 <b>Done! You have {days} days free.</b>\n\n"
+            "Full access, including catching disappearing photos and videos — put the "
+            "bot to the test.\n\n"
+            "<b>One step to start:</b> connect the bot via <b>Settings → Chat Automation "
+            "→ Chat Bots</b>, and it will start catching everything in your chats."
         ),
         "pt": (
-            "<b>Período de teste ativado.</b>\n\n"
-            "Você tem <b>{days} dias</b> para testar o bot.\n\n"
-            "Não se esqueça de conectar o bot via Automação de chats."
+            "🎉 <b>Pronto! Você tem {days} dias grátis.</b>\n\n"
+            "Acesso completo, incluindo capturar fotos e vídeos que desaparecem — "
+            "coloque o bot à prova.\n\n"
+            "<b>Um passo para começar:</b> conecte o bot via <b>Configurações → Automação "
+            "de chats → Chatbots</b>, e ele começará a capturar tudo nos seus chats."
         ),
         "id": (
-            "<b>Periode percobaan diaktifkan.</b>\n\n"
-            "Anda punya <b>{days} hari</b> untuk mencoba bot.\n\n"
-            "Jangan lupa menghubungkan bot melalui Otomatisasi Chat."
+            "🎉 <b>Selesai! Anda punya {days} hari gratis.</b>\n\n"
+            "Akses penuh, termasuk menangkap foto dan video yang menghilang — uji bot "
+            "ini.\n\n"
+            "<b>Satu langkah untuk mulai:</b> hubungkan bot lewat <b>Pengaturan → "
+            "Otomatisasi Chat → Bot Chat</b>, dan ia langsung menangkap semua di chat Anda."
         ),
     },
 
     # ── Userbot ────────────────────────────────────────────────────────────
     "userbot_title": {
         "ru": (
-            "<b>Перехват исчезающих фото и видео</b>\n\n"
-            "Для перехвата одноразовых медиа нужно авторизовать "
-            "твой аккаунт Telegram.\n\n"
-            "Нажми кнопку ниже — откроется безопасная форма авторизации."
+            "🔓 <b>Последний шаг</b>\n\n"
+            "Чтобы ловить исчезающие фото и видео, Telegram должен «видеть» их твоими "
+            "глазами — поэтому нужна разовая авторизация твоего аккаунта.\n\n"
+            "Нажми кнопку ниже — откроется безопасная форма входа <b>внутри Telegram</b>.\n"
+            "🔒 Мы не читаем твою переписку и не пишем от твоего имени. Отключить можно "
+            "в один тап в любой момент."
         ),
         "en": (
-            "<b>Intercept disappearing photos and videos</b>\n\n"
-            "To intercept one-time media, you need to authorize "
-            "your Telegram account.\n\n"
-            "Click the button below — a secure authorization form will open."
+            "🔓 <b>One last step</b>\n\n"
+            "To catch disappearing photos and videos, Telegram has to “see” them through "
+            "your eyes — so a one-time authorization of your account is required.\n\n"
+            "Tap the button below — a secure sign-in form opens <b>inside Telegram</b>.\n"
+            "🔒 We don't read your chats and never message on your behalf. Disconnect in "
+            "one tap anytime."
         ),
         "pt": (
-            "<b>Interceptar fotos e vídeos temporários</b>\n\n"
-            "Para interceptar mídia de uso único, você precisa autorizar "
-            "sua conta do Telegram.\n\n"
-            "Clique no botão abaixo — um formulário de autorização seguro será aberto."
+            "🔓 <b>Último passo</b>\n\n"
+            "Para capturar fotos e vídeos que desaparecem, o Telegram precisa “ver” por "
+            "seus olhos — por isso é necessária uma autorização única da sua conta.\n\n"
+            "Toque no botão abaixo — um formulário de login seguro abre <b>dentro do "
+            "Telegram</b>.\n"
+            "🔒 Não lemos suas conversas nem enviamos nada em seu nome. Desconecte com um "
+            "toque quando quiser."
         ),
         "id": (
-            "<b>Intersepsi foto dan video sementara</b>\n\n"
-            "Untuk menangkap media sekali-pakai, Anda perlu mengotorisasi "
-            "akun Telegram Anda.\n\n"
-            "Klik tombol di bawah — formulir otorisasi yang aman akan terbuka."
+            "🔓 <b>Langkah terakhir</b>\n\n"
+            "Untuk menangkap foto dan video yang menghilang, Telegram harus “melihat” lewat "
+            "mata Anda — jadi diperlukan otorisasi akun sekali saja.\n\n"
+            "Ketuk tombol di bawah — formulir masuk yang aman terbuka <b>di dalam "
+            "Telegram</b>.\n"
+            "🔒 Kami tidak membaca obrolan Anda dan tidak pernah mengirim atas nama Anda. "
+            "Putuskan dengan satu ketukan kapan saja."
         ),
     },
     "btn_open_miniapp": {
-        "ru": "Авторизоваться",
-        "en": "Authorize",
-        "pt": "Autorizar",
-        "id": "Otorisasi",
+        "ru": "🔒 Безопасный вход",
+        "en": "🔒 Secure sign-in",
+        "pt": "🔒 Entrada segura",
+        "id": "🔒 Masuk aman",
     },
     "userbot_active": {
         "ru": (
-            "<b>Перехват активен</b>\n\n"
-            "Одноразовые фото и видео будут приходить тебе как файлы."
+            "✅ <b>Всё работает</b>\n\n"
+            "Исчезающие фото и видео теперь сохраняются автоматически и приходят тебе "
+            "обычными файлами. Больше ничего делать не нужно."
         ),
         "en": (
-            "<b>Interception active</b>\n\n"
-            "One-time photos and videos will be sent to you as files."
+            "✅ <b>All set</b>\n\n"
+            "Disappearing photos and videos are now saved automatically and arrive as "
+            "regular files. Nothing else to do."
         ),
         "pt": (
-            "<b>Interceptação ativa</b>\n\n"
-            "Fotos e vídeos temporários serão enviados a você como arquivos."
+            "✅ <b>Tudo pronto</b>\n\n"
+            "Fotos e vídeos temporários agora são salvos automaticamente e chegam como "
+            "arquivos comuns. Nada mais a fazer."
         ),
         "id": (
-            "<b>Intersepsi aktif</b>\n\n"
-            "Foto dan video sekali-pakai akan dikirim kepada Anda sebagai file."
+            "✅ <b>Semua siap</b>\n\n"
+            "Foto dan video sementara kini tersimpan otomatis dan datang sebagai file "
+            "biasa. Tidak ada lagi yang perlu dilakukan."
         ),
     },
     "btn_disconnect_userbot": {
