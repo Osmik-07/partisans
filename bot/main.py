@@ -92,6 +92,10 @@ async def start_miniapp_server(bot: Bot, dp: Dispatcher) -> web.AppRunner:
     from bot.webhooks.cryptobot import register_cryptobot_webhook
     register_cryptobot_webhook(app)
 
+    # Platega (СБП) webhook routes
+    from bot.webhooks.platega import register_platega_webhook
+    register_platega_webhook(app)
+
     # Telegram webhook route — используется только если use_webhook=True
     if settings.use_webhook:
         handler = SimpleRequestHandler(dispatcher=dp, bot=bot)

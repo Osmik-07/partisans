@@ -62,6 +62,10 @@ class Settings(BaseSettings):
     # экран «скоро», платёж не создаётся.
     sbp_enabled: bool = False
 
+    # Platega (эквайер СБП). MerchantId/Secret — в ЛК Platega → «Настройки проекта».
+    platega_merchant_id: str = ""
+    platega_secret: str = ""
+
     # Поддержка и юридические документы (требование эквайринга)
     support_contact: str = "@partisansfromNJ"
     privacy_url: str = "https://telegra.ph/Politika-konfidencialnosti--Partisans-09-19"

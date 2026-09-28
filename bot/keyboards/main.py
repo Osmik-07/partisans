@@ -93,6 +93,9 @@ def support_kb(lang: str = "en") -> InlineKeyboardMarkup:
     return b.as_markup()
 
 
+# Название осталось от времён единственного процессора (CryptoBot); кнопки
+# внутри общие для любого «оплати по ссылке → нажми проверить» потока, поэтому
+# её же использует и оплата через Platega/СБП.
 def pay_crypto_kb(pay_url: str, payment_id: int) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.button(text="Оплатить", url=pay_url)

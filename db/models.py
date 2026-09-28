@@ -27,6 +27,7 @@ class SubscriptionPlan(str, PyEnum):
 class PaymentMethod(str, PyEnum):
     CRYPTOBOT = "cryptobot"
     STARS = "stars"
+    PLATEGA = "platega"
 
 
 class PaymentStatus(str, PyEnum):
@@ -143,6 +144,7 @@ class Payment(Base):
 
     amount_usd: Mapped[float | None] = mapped_column(Float)
     amount_stars: Mapped[int | None] = mapped_column(Integer)
+    amount_rub: Mapped[float | None] = mapped_column(Float)
 
     external_id: Mapped[str | None] = mapped_column(String(256))
     invoice_url: Mapped[str | None] = mapped_column(String(512))

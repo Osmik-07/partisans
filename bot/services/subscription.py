@@ -136,6 +136,7 @@ async def create_payment(
     method: PaymentMethod,
     amount_usd: float | None = None,
     amount_stars: int | None = None,
+    amount_rub: float | None = None,
     product: str = "subscription",
 ) -> Payment:
     payment = Payment(
@@ -146,6 +147,7 @@ async def create_payment(
         status=PaymentStatus.PENDING,
         amount_usd=amount_usd,
         amount_stars=amount_stars,
+        amount_rub=amount_rub,
     )
     session.add(payment)
     await session.commit()

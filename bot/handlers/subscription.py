@@ -18,6 +18,7 @@ from bot.keyboards.main import (
 )
 from bot.services import subscription as sub_svc
 from bot.services import cryptobot as crypto_svc
+from bot.services import platega as platega_svc
 from db.models import SubscriptionPlan, PaymentMethod, PaymentStatus
 
 router = Router()
@@ -121,19 +122,65 @@ async def cb_trial(call: CallbackQuery, session: AsyncSession):
     await call.answer()
 
 
-# ── СБП ─────────────────────────────────────────────────────────────
+# ── СБП (Platega) ────────────────────────────────────────────────────
 @router.callback_query(F.data.regexp(r"^buy:sbp:(week|month|year)$"))
 async def cb_pay_sbp(call: CallbackQuery, session: AsyncSession):
-    """Заглушка до подключения эквайринга: платёж не создаётся.
-
-    Когда PlateGo выдаст доступ, здесь появится создание счёта СБП; тариф и
-    цена в рублях уже приходят в callback_data и берутся из настроек.
-    """
-    user = await sub_svc.get_user(session, call.from_user.id)
+    user = await sub_svc.get_or_create_user(session, call.from_user)
     lang = _lang(user)
+
+    if not settings.sbp_enabled:
+        await call.message.edit_text(
+            t("sbp_soon", lang),
+            reply_markup=payment_method_kb(lang, trial_available=not user.trial_used),
+            parse_mode="HTML",
+        )
+        await call.answer()
+        return
+
+    plan_key = call.data.split(":")[2]
+    plan = PLAN_MAP.get(plan_key)
+    if not plan:
+        await call.answer("Неверный тариф", show_alert=True)
+        return
+
+    amounts = {
+        "week": settings.price_week_rub,
+        "month": settings.price_month_rub,
+        "year": settings.price_year_rub,
+    }
+    amount = amounts[plan_key]
+
+    payment = await sub_svc.create_payment(
+        session,
+        user_id=call.from_user.id,
+        plan=plan,
+        method=PaymentMethod.PLATEGA,
+        amount_rub=amount,
+    )
+
+    try:
+        me = await call.bot.get_me()
+        tx = await platega_svc.create_sbp_transaction(
+            amount_rub=amount,
+            payload=str(payment.id),
+            description=f"Partisans — {PLAN_LABELS[plan_key]}",
+            return_url=f"https://t.me/{me.username}",
+            failed_url=f"https://t.me/{me.username}",
+        )
+    except Exception as e:
+        await call.answer(f"Ошибка создания платежа: {e}", show_alert=True)
+        return
+
+    payment.external_id = tx["transactionId"]
+    payment.invoice_url = tx["redirect"]
+    await session.commit()
+
     await call.message.edit_text(
-        t("sbp_soon", lang),
-        reply_markup=payment_method_kb(lang, trial_available=not (user and user.trial_used)),
+        f"<b>Оплата через СБП</b>\n\n"
+        f"Тариф: <b>{PLAN_LABELS[plan_key]}</b>\n"
+        f"Сумма: <b>{amount:.0f} ₽</b>\n\n"
+        f"Нажми «Оплатить», затем вернись и нажми «Я оплатил».",
+        reply_markup=pay_crypto_kb(tx["redirect"], payment.id),
         parse_mode="HTML",
     )
     await call.answer()
@@ -241,45 +288,53 @@ async def cb_pay_check(call: CallbackQuery, session: AsyncSession):
         await call.answer("Для этого платежа ещё нет инвойса.", show_alert=True)
         return
 
-    # Проверяем через CryptoBot API
-    import aiohttp
-    try:
-        async with aiohttp.ClientSession() as http:
-            resp = await http.get(
-                f"{crypto_svc.CRYPTOBOT_API}/getInvoices",
-                headers={"Crypto-Pay-API-Token": settings.cryptobot_token},
-                params={"invoice_ids": payment.external_id},
-            )
-            data = await resp.json()
-    except Exception:
-        await call.answer("Не удалось проверить оплату. Попробуй позже.", show_alert=True)
-        return
-
-    if data.get("ok"):
-        items = data["result"].get("items", [])
-        if items and items[0]["status"] == "paid":
-            if payment.product == "protection":
-                await sub_svc.confirm_protection_payment(session, payment.id)
-                user = await sub_svc.get_user(session, call.from_user.id)
-                lang = _lang(user)
-                await call.message.edit_text(
-                    t("protection_activated", lang),
-                    reply_markup=back_main_kb(lang),
-                    parse_mode="HTML",
+    # Проверяем на стороне соответствующего процессора
+    if payment.method == PaymentMethod.PLATEGA:
+        try:
+            data = await platega_svc.get_transaction(payment.external_id)
+        except Exception:
+            await call.answer("Не удалось проверить оплату. Попробуй позже.", show_alert=True)
+            return
+        paid = data.get("status") == "CONFIRMED"
+    else:
+        import aiohttp
+        try:
+            async with aiohttp.ClientSession() as http:
+                resp = await http.get(
+                    f"{crypto_svc.CRYPTOBOT_API}/getInvoices",
+                    headers={"Crypto-Pay-API-Token": settings.cryptobot_token},
+                    params={"invoice_ids": payment.external_id},
                 )
-                await call.answer()
-                return
-            sub, _ = await sub_svc.confirm_payment(session, payment.id)
-            expires = sub.expires_at.strftime("%d.%m.%Y")
+                data = await resp.json()
+        except Exception:
+            await call.answer("Не удалось проверить оплату. Попробуй позже.", show_alert=True)
+            return
+        items = data.get("result", {}).get("items", []) if data.get("ok") else []
+        paid = bool(items) and items[0]["status"] == "paid"
+
+    if paid:
+        if payment.product == "protection":
+            await sub_svc.confirm_protection_payment(session, payment.id)
+            user = await sub_svc.get_user(session, call.from_user.id)
+            lang = _lang(user)
             await call.message.edit_text(
-                f"<b>Оплата подтверждена.</b>\n\n"
-                f"Подписка активна до <b>{expires}</b>.\n\n"
-                f"Подключи бота: Настройки → Автоматизация чатов → Чат-боты",
-                reply_markup=back_main_kb(),
+                t("protection_activated", lang),
+                reply_markup=back_main_kb(lang),
                 parse_mode="HTML",
             )
-            await call.answer("Оплата подтверждена.")
+            await call.answer()
             return
+        sub, _ = await sub_svc.confirm_payment(session, payment.id)
+        expires = sub.expires_at.strftime("%d.%m.%Y")
+        await call.message.edit_text(
+            f"<b>Оплата подтверждена.</b>\n\n"
+            f"Подписка активна до <b>{expires}</b>.\n\n"
+            f"Подключи бота: Настройки → Автоматизация чатов → Чат-боты",
+            reply_markup=back_main_kb(),
+            parse_mode="HTML",
+        )
+        await call.answer("Оплата подтверждена.")
+        return
 
     await call.answer("Платёж ещё не найден. Попробуй через минуту.", show_alert=True)
 
