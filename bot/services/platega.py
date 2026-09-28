@@ -17,6 +17,27 @@ PLATEGA_API = "https://app.platega.io"
 PAYMENT_METHOD_SBP = 2
 
 
+def gross_up_for_display_price(display_price: float) -> float:
+    """Сумма, которую нужно отправить в paymentDetails.amount, чтобы итоговый
+    счёт (с комиссией Platega, добавляемой ими сверху) совпал с display_price —
+    то есть с ценой, которую бот показывает в меню.
+
+    Комиссия — процент от отправленной базы, округляется до копеек:
+        comission = round(base * rate, 2)
+        итог      = base + comission
+    Проверено вживую 28.09.2026 на реальном мерчант-аккаунте: при рейте 8.5%
+    база 91.24 → итог 99.00, база 137.33 → итог 149.00 — совпало день в день
+    с формулой ниже, без единой копейки расхождения.
+
+    Для «круглых» рублёвых цен (как у нас) обратный пересчёт обычно даёт точное
+    совпадение, но при отправке дробь округляется дважды, поэтому теоретически
+    возможно разойтись на 1 копейку — это неустранимое свойство округления,
+    а не баг.
+    """
+    rate = settings.platega_sbp_commission_percent / 100
+    return round(display_price / (1 + rate), 2)
+
+
 def _headers() -> dict:
     return {
         "X-MerchantId": settings.platega_merchant_id,

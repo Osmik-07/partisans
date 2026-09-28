@@ -65,6 +65,12 @@ class Settings(BaseSettings):
     # Platega (эквайер СБП). MerchantId/Secret — в ЛК Platega → «Настройки проекта».
     platega_merchant_id: str = ""
     platega_secret: str = ""
+    # Комиссия Platega добавляется СВЕРХУ суммы, которую мы у них запрашиваем
+    # (подтверждено на реальной транзакции 28.09.2026), поэтому бот отправляет
+    # уменьшённую «базу», чтобы клиент увидел на оплате ровно тариф из меню —
+    # см. platega.gross_up_for_display_price(). Менеджер обещал снижать процент
+    # с ростом оборота — значение меняется здесь, без правки кода.
+    platega_sbp_commission_percent: float = 8.5
 
     # Поддержка и юридические документы (требование эквайринга)
     support_contact: str = "@partisansfromNJ"

@@ -148,20 +148,24 @@ async def cb_pay_sbp(call: CallbackQuery, session: AsyncSession):
         "month": settings.price_month_rub,
         "year": settings.price_year_rub,
     }
-    amount = amounts[plan_key]
+    # Цена в меню — то, что реально спишется с клиента. Platega добавляет свою
+    # комиссию СВЕРХУ суммы, которую мы у них запрашиваем, поэтому запрашиваем
+    # меньшую базу — см. platega_svc.gross_up_for_display_price().
+    display_price = amounts[plan_key]
+    base_amount = platega_svc.gross_up_for_display_price(display_price)
 
     payment = await sub_svc.create_payment(
         session,
         user_id=call.from_user.id,
         plan=plan,
         method=PaymentMethod.PLATEGA,
-        amount_rub=amount,
+        amount_rub=display_price,
     )
 
     try:
         me = await call.bot.get_me()
         tx = await platega_svc.create_sbp_transaction(
-            amount_rub=amount,
+            amount_rub=base_amount,
             payload=str(payment.id),
             description=f"Partisans — {PLAN_LABELS[plan_key]}",
             return_url=f"https://t.me/{me.username}",
@@ -178,7 +182,7 @@ async def cb_pay_sbp(call: CallbackQuery, session: AsyncSession):
     await call.message.edit_text(
         f"<b>Оплата через СБП</b>\n\n"
         f"Тариф: <b>{PLAN_LABELS[plan_key]}</b>\n"
-        f"Сумма: <b>{amount:.0f} ₽</b>\n\n"
+        f"Сумма: <b>{display_price:.0f} ₽</b>\n\n"
         f"Нажми «Оплатить», затем вернись и нажми «Я оплатил».",
         reply_markup=pay_crypto_kb(tx["redirect"], payment.id),
         parse_mode="HTML",
